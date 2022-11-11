@@ -1,0 +1,180 @@
+{% extends "base/index3.html" %}
+{% block content %}
+
+<form  method="POST" class="needs-validation" novalidate="" enctype="multipart/form-data">
+         
+{% csrf_token %}
+{% for n in eventos %}   
+
+{% comment %} <h4 class="mb-3 text-center">{{n}}</h4> {% endcomment %}
+
+   
+
+    <div class="col-lg-9">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5 class="card-title"></h5>
+            </div>
+            <div class="card-body pt-3">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                        <div class="widget-49-date-primary">
+                            <span class="widget-49-date-day">{{n.fechaEvento.day}}</span>
+                            <span class="widget-49-date-month">{{n.fechaEvento|date:"M, Y"}}</span>
+                        </div>
+                        <div class="widget-49-meeting-info">
+                            <span><strong><h3 style="color:#120C4B">{{n.tipo}} - {{n.lugar}} - {{n.nombreEvento}}</h3></strong></span>
+                            <span class="widget-49-meeting-time"></span>
+                        </div>
+                    </div>
+                    <ol class="widget-49-meeting-points">
+                        <li class="widget-49-meeting-item"><span>Cupo: <b>{{n.cupo}}</b></span></li>
+                        <li class="widget-49-meeting-item">
+                            <span>Modalidades:
+                                {% for modalidad in n.modalidad_disponible.all%}
+                                   <b>{{modalidad}} -</b> 
+                                {% endfor %}
+                            </span>
+                        </li>
+                        
+                        <li class="widget-49-meeting-item"><span>Distancias:
+                            {% for distancia in n.distancia_disponible.all%}
+                            <b>{{distancia}} -</b>
+                            {% endfor %}
+                        </span></li>
+
+                    </ol>
+                   
+                </div>
+            </div>
+        </div>
+        
+        
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5 class="card-title">Bases, Condiciones y Consideraciones:</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                       
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Leer Atentamente</span>
+                            <span class="widget-49-pro-title">{{n.contenido|safe}}</span>
+                        </div>
+                    </div>
+                    
+                    <div >
+                        <div class="d-flex justify-content-end">                  
+                        <a class="btn btn-secondary" href={% url 'eventos' %}>Volver</a>
+                        &nbsp;                 
+                        <a class="btn btn-primary" href={% url 'inscribirme' n.id %}>Inscribirme</a>
+                               
+                        </div>
+                    </div>
+                </div>
+            </div>
+        
+
+    
+    
+    {% comment %} <div class="col-lg-6">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5 class="card-title">Bases Y Condiciones</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                       
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Leer Atentamente</span>
+                            <span class="widget-49-meeting-time">{{n.contenido|safe}}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="widget-49-meeting-action">
+                        <a href="#" class="btn btn-sm btn-flash-border-warning">View All</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+    {% comment %} <div class="col-lg-4">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5 class="card-title">Dónde</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                       
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">PRO-027865 Opera module</span>
+                            <span class="widget-49-meeting-time">12:00 to 13.30 Hrs</span>
+                        </div>
+                    </div>
+                    <ol class="widget-49-meeting-points">
+                        <li class="widget-49-meeting-item"><span>Scope is revised and updated</span></li>
+                        <li class="widget-49-meeting-item"><span>Time-line has been changed</span></li>
+                        <li class="widget-49-meeting-item"><span>Received approval to start wire-frame</span></li>
+                    </ol>
+                    <div class="widget-49-meeting-action">
+                        <a href="#" class="btn btn-sm btn-flash-border-success">View All</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+</div>
+</div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            {% comment %} <div class="row">
+             
+                <h5 class="text-center">Fecha: {{n.fechaEvento}}</h5><br>
+                {{n.temporada}}<br>
+                {{n.tipo}}<br>
+                
+                Modalidad:
+                {% for x in  n.modalidad_disponible.all %}
+                <li>{{x}}</li> 
+                {% endfor %}
+                
+                <br>
+                Distancias:
+                {% for x in  n.distancia_disponible.all %}
+                <li>{{x}}</li> 
+                {% endfor %}
+                <br> 
+                {% for x in  n.categoria_disponible.all %}
+                {{x}},
+                {% endfor %}
+                <br>
+                
+                {{n.nombreEvento}}<br>
+                {{n.lugar}}<br>
+                Cupo: {{n.cupo}}<br>
+                {{n.contenido|safe}}<br>
+
+                
+            </div>        
+            
+             {% endcomment %}
+
+
+    {% endfor %}
+    </form>
+
+
+{% endblock  %}

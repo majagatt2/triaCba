@@ -1,0 +1,109 @@
+{% extends "base/index2.html" %}
+
+
+{% block content %}
+{% load static %}
+{%  if user.is_authenticated %} 
+{% if request.user.is_staff %}
+
+<form method='POST'>
+    {% csrf_token %}
+    <h3>Listado de Eventos </h3>
+    <div style="overflow-x:auto;">
+    <table class = "table table-borderless datatable" >
+        <thead>
+            <tr class="table-info">
+                <th>Nº</th>
+               
+                <th>año</th>
+                <th>Fecha Evento</th> 
+                <th>Temporada</th>
+                <th>Tipo</th>
+                <th>Nombre</th>
+                <th>Lugar</th>
+                <th>Cupo</th>
+                <th>Estado</th>
+                <th>Modalidad</th>
+                <th>Distancias</th>
+                <th>Categorias</th>
+               
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if eventos_list %}
+                {% for c in eventos_list %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                   
+                    <td>{{c.año}}</td>
+                    <td>{{c.fechaEvento|date:"d/m/Y"}}</td>
+                    <td>{{c.temporada}}</td>
+                    <td>{{c.tipo}}</td>
+
+                    <td>{{c.nombreEvento}}</td>
+                    <td>{{c.lugar}}</td>
+                    <td>{{c.cupo}}</td>
+                    {% if c.estado is not True %}
+                        <td  style="color:red">{{c.estado|yesno:'Activo,Terminado'}}</h1>
+                    {%  else %}
+                        <td>{{c.estado|yesno:"Activo,Terminado"}}</td>
+                    {% endif %}
+                    
+                    <td>
+                    {% if c.modalidad_disponible.all %}
+                    {% for m in c.modalidad_disponible.all %}
+                    {{m}}
+                    {% endfor %}
+                    {% else %}
+                    <td>----</td>
+                    {% endif %}
+                    </td>
+
+                    <td>
+                    {% if c.distancia_disponible.all %}
+                    {% for d in c.distancia_disponible.all %}
+                    {{d}}-
+                    {% endfor %}
+                    {% else %}
+                    <td>----</td>
+                    {% endif %}
+                    </td>
+
+                    <td>
+                    {% if c.categoria_disponible.all %}
+                    {% for c in c.categoria_disponible.all|slice:'2' %}
+                    {{c}}-
+                    {% endfor %}
+                    Entre otras
+                    {% else %}
+                    <td>----</td>
+                    {% endif %}
+                    </td>
+
+
+                    
+                 
+                    
+                    
+                  
+                    
+                   
+                </tr>
+                {% endfor %}
+            {% else%}
+              
+                    <td><h3>No hay eventos para mostrar</h3></td>
+                
+                
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+</form>
+    
+{% endif %}
+{% endif %}   
+            
+{% endblock  %}
+      

@@ -1,0 +1,51 @@
+{% extends "base/index2.html" %}
+{% block content %}
+{% comment %} {%  if user.is_authenticated %} 
+{% if request.user.is_staff %} {% endcomment %}
+    
+{%  block nav%}
+{% endblock %}
+
+
+        <h4>Lista asociados que ingresan al Kempes</h4>
+      
+    <div style="overflow-x:auto;">
+    <table class = "table table-borderless datatable" >
+        <thead>
+            <tr class="table-info">
+               
+                
+                
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>Dni</th>
+                <th>Entrenador</th>
+               
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if object_list %}
+            {% for s in object_list %}
+           
+                {% if  s.entrenador.nombre != 'Sin Entrenador'%}
+                <tr>      
+                    
+                    <td>{{s.persona|title}}</td>
+                    <td>{{s.persona.get_edad}}</td>
+                    <td>{{s.persona.dni}}</td>
+                    <td>{{s.entrenador}}</td>
+                </tr>   
+                {% endif  %}
+                
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% comment %} {% endif %}
+{% endif %} {% endcomment %}
+            
+{% endblock  %}
+      

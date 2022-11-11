@@ -1,0 +1,79 @@
+{% extends "base/index3.html" %}
+
+
+{% block content %}
+{% load static %}
+
+
+<form method='POST'>
+    {% csrf_token %}
+    {%  if user.is_authenticated %}
+   
+        <h2><strong>Te podes inscribir en los próximos eventos: </strong></h2><br>
+    
+    {% comment %} {% for eventos in eventos_list %}
+        <ul class= "list-group list-group-flush">
+            <li class="list-group-item"> <a href={% url 'eventos_detalles' eventos.id %} > {{eventos}} </li><br>
+        </ul>
+    {% endfor %} {% endcomment %}
+
+    {% for eventos in eventos_list %}
+        {% comment %} <ul class="list-group">
+            <a href={% url 'eventos_detalles' eventos.id %} class="list-group-item list-group-item-action"> {{eventos}} </a><br>
+        </ul> {% endcomment %}
+        
+    
+    
+    
+    <br>
+    <br>
+
+    <section class="features">
+	<div class="card p-3 shadow p-3 mb-5 bg-white rounded" style= "border-radius: 20px;
+                                        background-color:;
+                                        background-image: url({% static "registro/logo_triatloncba.png"%});
+                                        background-blend-mode: overlay; //saturation
+                                        background-repeat: repeat;
+                                        background-atachment: fixed;
+                                        background-position: center;  
+                                        background-size: contain;  
+                                        background-origin: content-box;  
+                                        " >
+		<div class="row-6">
+			<div class="col-lg-12">
+				<div class="feature-block d-lg-flex" >
+					
+                    <div class="feature-item mb-5 mb-lg-0" >
+						<div class="feature-icon mb-4">
+							<i class="icofont-surgeon-alt"></i>
+						</div>
+						<span>{{eventos.fechaEvento}}</span>
+						<h4 class="mb-2"><a href={% url 'eventos_detalles' eventos.id %} class="list-group-item list-group-item-action"> {{eventos}} </a></h4>
+						<p class="mb-4"><b>Cupo:</b> {{eventos.cupo}} , <b>Modalidades:</b> 
+                            {% for x in eventos.modalidad_disponible.all %}
+                            {{x}}-
+                            {% endfor %}
+                            
+                            <b>distancias:</b> 
+                            {% for x in eventos.distancia_disponible.all %}
+                            {{x}}-
+                            {% endfor %}
+                            .</p>
+						<a href="{% url 'eventos_detalles' eventos.id %}" class="btn btn-info btn-round-full">Inscribite acá</a>
+					</div>
+				
+					
+				</div>
+			</div>
+		</div>
+	</div>
+    </section>
+
+  {% endfor %}  
+  {% endif %}   
+  
+
+    
+</form>   
+            
+{% endblock  %}

@@ -1,0 +1,71 @@
+{% extends "base/index2.html" %}
+{% block content %}
+{%  if user.is_authenticated %} 
+{% if request.user.is_staff %}
+    <h4>Lista: {{object_list|length}} asociados</h4>
+    <div style="overflow-x:auto;">
+    <table class = "table table-borderless datatable" >
+        <thead>
+            <tr class="table-info">
+               
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>Email</th>
+                <th>Estado</th>
+                <th>Vto.Emmac</th>
+                <th>Vto.Carnet</th>
+                <th>Tipo Asociado</th>
+                <th>Entrenador</th>
+                <th>Emmac</th>
+               
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if object_list %}
+                {% for s in object_list %}
+                
+                
+                <tr >
+                  
+
+                  
+                    <td>{{s.persona.first_name|title}} {{s.persona.last_name|title}}</td>
+                    <td>{{s.persona.get_edad}}</td>
+                    <td>{{s.persona.email}}</td>
+                    
+                    {% if s.get_estado %}
+                    <td>3.Activo</td>
+                    {% elif s.dias_vencer and s.get_sit_emmac == False %}
+                        <th style="color:#129FEF">2.Emmac vencido</td>
+                    {% elif s.dias_vencer == False and s.get_sit_emmac == False  %}
+                        <th style="color:red">1.Arreglar</td>
+                    {% endif %}
+                    
+                    
+                    <td>{{s.get_vencimiento_emmac}}</td>
+                    
+                    <td>{{s.get_vencimiento}}</td>
+                    <td>{{s.tipoAsociado}}</td>
+                    <td>{{s.entrenador}}</td>
+                    <td><img src={{s.emmac_file.url}} width="15" height="15"></td>
+                </tr>
+                
+                {% endfor %}
+            {% else%}
+                <tr>
+                    <td><h2>No hay personas asociadas</h2></td>
+                </tr>
+                
+            {% endif %}
+        </tbody>
+    </table>
+    <div/>
+{% endif %}
+{% endif %}
+
+   
+   
+            
+{% endblock  %}
+      
