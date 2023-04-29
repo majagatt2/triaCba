@@ -1,0 +1,51 @@
+{% extends "base/index2.html" %}
+{% block content %}
+{% comment %} {%  if user.is_authenticated %} 
+{% if request.user.is_staff %} {% endcomment %}
+    
+{%  block nav%}
+{% endblock %}
+
+
+<h2><strong>SEGURO ASOCIADOS</strong></h2>        
+<h4>Lista asociados que ingresan al Kempes</h4>
+       
+    <div style="overflow-x:auto;">
+    <table class = "table datatable table-light" >
+        <thead>
+            <tr class="table-info">
+               
+                <th>Nº</th>
+                
+                <th>Nombre</th>
+                <th>Dni</th>
+                <th>Fecha Nacimiento</th>
+                <th>Nacionalidad</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if object_list %}
+                {% for s in object_list %}
+                
+                {% if  s.entrenador.nombre != 'Sin Entrenador'%}
+                <tr >
+                    <td>{{forloop.counter}}</td>
+                
+                    <td>{{s.persona|title}}</td>
+                    <td>{{s.persona.dni}}</td>
+                    <td>{{s.persona.fechaNacimiento|date:"d/m/Y"}}</td>
+                    <td>{{s.persona.nacionalidad}}</td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% comment %} {% endif %}
+{% endif %} {% endcomment %}
+            
+{% endblock  %}
+      

@@ -1,0 +1,98 @@
+{% extends "base/index2.html" %}
+
+
+{% block content %}
+{% load static %}
+{%  if user.is_authenticated %} 
+{% if request.user.is_staff or request.user.username == 'cmonasterolo' or request.user.username == 'mpolo'%}
+
+
+
+
+
+    {% csrf_token %}
+    <h3>Listado de pagos Bono Mensual Escuela</h3>
+    <div style="overflow-x:auto;">
+    <table class = "table table-borderless datatable">
+        <thead>
+            <tr class="table-info">
+                
+                {% comment %} <th>Nº</th> {% endcomment %}
+                <th>Nombre</th>
+                {% comment %} <th>Estado</th> {% endcomment %}
+                <th>Fecha de pago</th>
+                <th>Concepto</th>
+                <th>Monto Abonado</th>
+                
+                <th>Monto Correcto</th>
+                <th>Diferencia</th>
+                {% comment %} <th>Tipo Asociado Abonado</th> {% endcomment %}
+                
+                <th>Control</th>
+                <th>Comprobante</th>
+                <th>confirm_pago</th>
+                <th>Comentario</th>
+               
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if object_list %}
+                {% for c in object_list %}
+                <tr>
+                    {% comment %} <td>{{c.id}}</td> {% endcomment %}
+                    <td>{{c.asociado|title}}</td>
+                    {% comment %} <td>{{c.siAsociado}}</td> {% endcomment %}
+                    <td>{{c.fechaPago|date:"d/m/Y"}}</td>
+                    <td>{{c.formaPago}}</td>
+                    <th>${{c.montoAbonado|floatformat:"-3g"}}</td>
+                    
+                    <td>${{c.montoDebeAbonar|floatformat:"-3g"}}</td>
+                    <td>${{c.get_diferencia|floatformat:"-3g"}}</td>    
+
+
+                    
+                    {% comment %} <th>{{c.tipoPago}}</td> {% endcomment %}
+                    
+                    
+                   
+                    {% if c.montoAbonado == c.montoDebeAbonar %}
+                    <td><img src={% static 'registro/tilde2.png' %}  width="25" height="25"></td>
+                    {% else %}
+                    <td style="color:red">Dif monto</td>
+                    {% endif %}
+                   
+                    
+                    <td><a href={{c.comprobPago.url}}> <img src={{c.comprobPago.url}} width="25" height="20"></td></a>
+                    
+                    {% if c.confirm_pago == False  %}
+                    <th style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</td>
+                    {% else %}
+                    <td> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </td>
+                    {% endif %}
+
+                    <td>{{c.comentario|default:""}}</td>
+                    
+                    
+                        {% comment %} <td>
+                        <a class='btn btn-sm btn-primary' href=#>Editar</a>
+                    </td> {% endcomment %}
+                </tr>
+                {% endfor %}
+            {% else%}
+                <tr>
+                    <td><h3>No hay pagos registrados</h3></td>
+                </tr>
+                
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+   
+
+
+{% endif %}
+{% endif %}
+            
+{% endblock  %}
+      

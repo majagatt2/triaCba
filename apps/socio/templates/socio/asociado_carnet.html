@@ -1,0 +1,168 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load static %}
+
+
+
+<form method="POST"  enctype="multipart">
+{% csrf_token %}
+{%  if user.is_authenticated %} 
+    {% if asociado %}
+
+        {% for s in asociado %}
+            {% if forloop.last %}
+                {% if s.persona == request.user %}
+                    {% if s.get_vigente %}
+           
+                
+                        <div class=" d-flex flex-column align-items-center" >
+                            <div class="row d-flex justify-content-center align-items-center h-100 shadow-lg p-1 mb-2 bg-opacity-50" style= "background-color:red; border-radius: 15px"  >
+                                <div class=" text-black" style= "border-radius: 15px;
+                                            background-color:#EAF2F8;
+                                            background-image: url({% static "registro/logo_triatloncba.png"%});
+                                            background-blend-mode: overlay; //saturation
+                                            background-repeat: repeat;
+                                            background-atachment: fixed;
+                                            background-position: center;  
+                                            background-size: contain;  
+                                            background-origin: content-box;  
+                                            ">
+                                            <br>
+                                    <div class="row text-center ">
+                                                <br>
+                                        <p>Fecha carnet:
+                                            <b> 
+                                            {% now "j F Y H:i" %}
+                                        
+                                            {% comment %} <script>
+                                            date = new Date().toLocaleDateString();
+                                            document.write(date);
+                                            </script> {% endcomment %}
+                                            </b>
+                                        </p>
+                                        <br>
+                                        {% if s.estado %}
+                                            <h1  style="color:green">{{s.estado|yesno:'Activo,Inactivo'}}</h1>
+                                        {%  else %}
+                                        <h2  style="color:red">{{s.estado|yesno:'Activo,Pendiente de Activación'}}</h2>
+                                        {%  endif %}
+                                        <br>
+                                        <h4>{{s.tipoAsociado}}</h4>
+                                    </div>
+                                        
+                                    <div class="row people">
+                                        <div class="col-12 col-md-6 offset-md-3">
+                                            <div class="flex-box" ><img class="rounded mx-auto d-block"  src={{request.user.fotoPerfil.url}} width="70" height="80">
+                                                <h3 class="name text-center">{{s.persona.first_name}} {{s.persona.last_name}}</h3>
+                                                <br>    
+                                                <extends class="title text-center">Nº de Socio:</extendes>
+                                                <h5 class="name text-center">{{s.persona.cuil}}</h5>
+                                                
+                                                <extends class="title text-center">Vencimiento Carnet:</extends>
+                                                
+                                                {% if now > s.get_vencimiento %}
+                                                    <h4 class="name text-center" style="color:red">{{s.get_vencimiento|date:" d/mm/Y"}}</h4>
+                                                    {% else %}
+                                                    <h4 class="name text-center">{{s.get_vencimiento}}</h4>
+                                                {% endif %}
+                                                
+                                                
+                                                <extends class="title text-center">Entrenador Polo Kempes:</extends>
+                                                <h5 class="name text-center">{{s.entrenador}}</h5>
+                                                <br>
+
+                                                
+                                                <extends class="title text-center">Emmac : 
+                                                    <div class="border border-secondary border-opacity-25 ">
+                                                    {% if s.get_sit_emmac %}
+                                                        <div>
+                                                        <p style="color:green">Vigente</p>
+                                                        <p>Vencimiento: {{s.get_vencimiento_emmac}}</p>
+                                                        </div>            
+                                                    {%else %}
+                                                        <div>
+                                                        <h5 style="color:red"><b>Vencido</b></h5>
+                                                        Venció el: {{s.get_vencimiento_emmac}}       
+                                                        </div>            
+                                                    {% endif %}
+                                                        <div > 
+                                                        <a href={{s.emmac_file.url}}>Ver Emmac:
+                                                        </a>
+                                                        </div>
+                                                    </div>
+                                                </extends>
+                                            
+                                                
+                                                
+                                                
+                                                <br>
+                                                <strong><p class="description text-center">El presente carnet es válido para <br>constatar su situación Actual. </p></strong>
+                                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                                
+                                <div class="d-flex justify-content-end">           
+                                    <a class='btn btn-primary btn-sm' href={% url 'editar_socio' s.id %}>Actualizar</a>
+                                </div>     
+                        </div>
+                  
+                       
+                            
+          
+                    
+                {% else %}
+                    <div class="card page p-4" style="opacity:1">
+                        <h4> Hola {{request.user.first_name|title}}:</h4>    
+                        <h2>Vemos que se te ha vencido el período federativo:</h2>                 
+                        <div>
+                            {% for n in requisitos %}
+                            {{n|safe}}
+                            {% endfor %}
+
+                            <p> Tu último período asociativo venció el: <b>{{s.get_vencimiento}}</b>    
+                        </div>
+                            <p><b>
+                                Presioná en el siguiente link para volver a asociarte: </b></p>
+                            <div class="d-flex justify-content-center">   
+                                <a class="btn btn-outline-primary" href={% url 'asociarse' %}>Asociarme</a>
+                            </div>
+                        </div>
+                {% endif %}
+            {% endif %}
+            {% endif %}
+        {% endfor %}
+   
+    
+    {% else %}
+        <div class="card page p-4" style="opacity:1">
+            <h4> Hola {{request.user.first_name|title}}:</h4>
+            
+            <div >
+                <br>
+                {% for n in requisitos %}
+                {{n|safe}}
+                {% endfor %}
+            </div>
+        <p><b>Presioná en el siguiente link para asociarte: </b></p>
+            <div class="d-flex justify-content-center">   
+                <a class="btn btn-outline-primary" href={% url 'asociarse' %}>Asociarme</a>
+            </div>
+        </div>
+    {% endif %}        
+    
+{% endif %}        
+
+</form>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+
+{% endblock  %}
+      
+
+    

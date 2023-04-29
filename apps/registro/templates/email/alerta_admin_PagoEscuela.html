@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>alerta Pago</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'general/assets/vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+
+    </head>
+    <body>
+        <h1>Un nuevo Pago Escuela requiere validación: 
+            <strong style="color:green">{{asociado}}</strong> - 
+            <strong style="color:#F36808">{{cuota}}</strong></h1>
+
+        <strong style="font-size:20px;">Datos:</strong>
+        <ul style="font-size:15px;">
+            <li>Opción Elegida: <b>{{opcion_elegida}}</b></li>
+            <li>Tipo Asociado: <b>{{tipoAsociado}}</b></li>
+            <li>Vencimiento Carnet: <b>{{vencimiento}}</b></li>
+            <li>Cuota: <b>{{cuota}}</b></li>
+            <li>Monto Abonado: <b>$ {{monto_abonado}}</b></li>
+            <li>Monto debe abonar: <b>$ {{monto_debe_abonar}}</b></li>
+            <li>Fecha de Pago: <b>{{fecha_pago}}</b></li>
+            <li>Comentario: <b>{{comentario|default:"Sin comentario"}}</b></li>
+            
+
+        </ul>
+
+        <h3>Por favor ir a : </h3> <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/admin"> <b style="color:green">Admin</b> </a></h3>
+
+
+        <script src="" async defer></script>
+        
+    </body>
+</html>

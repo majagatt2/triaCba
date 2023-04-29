@@ -1,0 +1,43 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+{% load static %}
+
+{% block nav %}
+{% endblock %}
+
+{% block aside %}
+{% endblock %}
+
+
+<div class="mb-3 text-center bg-white bg-opacity-75 pt-3" style="border-radius: 15px;">
+    <img src="{% static "registro/logo_triatloncba.png"%}" alt="" width="240" height="90">
+<br>   <strong><b><h1 class="mb-3 text-center"><strong>Registro</strong></h1></b></strong><br>
+</div>
+    
+
+    <div class="form-control bg-white bg-opacity-25">
+        <form  method="POST" class="needs-validation form-control text-black"  novalidate="" enctype="multipart/form-data">
+        {% csrf_token %}
+            
+                <br>
+                 <b>{{form |crispy}}</b>
+                          
+            <div class="d-flex justify-content-end">       
+                 <input type="submit" class="btn btn-primary d-flex justify-content-end">
+            </div>
+                   
+        </form>
+        <br><br><br>
+    </div>     
+    <br>  <br>  
+
+            
+{% endblock  %}
+      
+
+          
+
+            
+            
+    "d-flex justify-content-end"

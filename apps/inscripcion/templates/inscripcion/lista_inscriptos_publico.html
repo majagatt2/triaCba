@@ -1,0 +1,106 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load static %}
+
+
+<form method='POST' class=" form-control bg-opacity-25">
+    {% csrf_token %}
+    
+   
+   {% for evento in evento %}
+        <h3>Lista Inscriptos</h3><h2><strong>{{evento}}</strong></h2><br>
+        
+        
+        
+        
+     
+        {% if object_list %}
+
+
+            <div style="overflow-x:auto;">
+                <table class ="table" id="mis_tablas">
+                    <thead >
+                        <tr class="table-info">
+                            {% comment %} <th scope="col">Nº</th> {% endcomment %}
+                            <th>Estado</th>
+                            <th>Triatleta</th>
+                            <th>Distancia</th>
+                            <th>Categoria</th>
+                            <th>Modalidad</th>
+                            <th>Equipo</th>
+                            
+                            
+                        </tr>
+                    </thead>
+                    
+                        <tbody>
+                            
+                            {% if inscriptos|length > 0 %}
+                                {% for c in inscripcion_list %}
+                                    {% if c.eventoRelacionado == evento %}
+                                        {% if c.confirm_pago %}
+                                            <tr>
+                                                {% if c.confirm_pago == False %}
+                                                    <th style="color:red">Pendiente</td>
+                                                {% else %}
+                                                    <td><img src={% static 'registro/tilde2.png' %}  width="30" height="30"></td>
+                                                {% endif %}    
+                                                    
+                                                    
+                                                <td><p><b>{{c.persona|title}}</p></td>
+                                                <td>{{c.distancia}}</td>
+                                                <td>{{c.categoria}}</td>
+                                                <td>{{c.modalidad}}</td>
+                                                
+                                                {% if c.nombreEquipoPosta == None %}
+                                                    <td>---</td>
+                                                {% else %}
+                                                    <td>{{c.nombreEquipoPosta}}</td>
+                                                {% endif %}
+                                            </tr>
+                                        {% else %}
+                                            {% if c.eventoRelacionado == evento %}
+                                                <tr style="color:#BE0D42">
+                                                    {% if c.confirm_pago == False %}
+                                                        <th style="color:red">Pendiente</td>
+                                                    {% endif %}    
+                                                    
+                                                    <td><p><b>{{c.persona|title}}</p></td>
+                                                    <td>{{c.distancia}}</td>
+                                                    <td>{{c.categoria}}</td>
+                                                    <td>{{c.modalidad}}</td>
+                                                
+                                                    {% if c.nombreEquipoPosta == None %}
+                                                        <td>---</td>
+                                                    {% else %}
+                                                        <td>{{c.nombreEquipoPosta}}</td>
+                                                    {% endif %}
+                                               
+                                                </tr>
+                                            {% endif %}
+                                        {% endif %}
+                                    {% endif %}    
+                                {% endfor %}
+                            {% else %}     
+                            <tr>
+                                <td>Sin datos</td>
+                                <td>Sin datos</td>
+                                <td>Sin datos</td>
+                                <td>Sin datos</td>
+                                <td>Sin datos</td>
+                                <td>Sin datos</td>
+                            </tr>
+                            
+                            {% endif %}
+                        </tbody>   
+                        
+                
+                </table>
+            </div>
+        
+        {% endif %}    
+    
+    {%  endfor %}
+</form>   
+            
+{% endblock  %}

@@ -1,0 +1,34 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+ 
+
+    <div class="container">
+        <form  method="POST" class="needs-validation form-control text-white bg-black bg-opacity-50" enctype="multipart/form-data" >
+            {% csrf_token %}
+            {%  if user.is_authenticated%}
+                <br>
+                <h3 class="text-center">Modificar tus datos de Asociado:</h3>
+                <h4 class="text-center" style="color:white">{{request.user.first_name}} {{request.user.last_name}}</h4>
+                <br>
+                <br>
+                <br>
+                   
+                        {{form| crispy}}
+                     
+
+                <br>
+                <div class="d-flex justify-content-end">                  
+                    <a type="reset" class="btn btn-secondary" href={% url 'carnet' %}>Cancelar</a>
+                    &nbsp;                 
+                    <input type="submit" class="btn btn-sm btn-primary" value="Confirmar">
+                </div>
+            {% else %}
+                <p> No hay nadie logueado</p>
+            {% endif %} 
+        </form>
+
+    </div>    
+   
+            
+{% endblock  %}

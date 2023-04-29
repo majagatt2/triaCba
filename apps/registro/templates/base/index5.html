@@ -1,0 +1,1386 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>TriaCba</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'registro/img/favicon2.png' %}" rel="icon">
+  {% comment %} <link href="{% static 'registro/img/favicon.png' %}" rel="icon"> {% endcomment %}
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'registro/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'registro/assets/css/style.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin - v2.4.1
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+
+  <style>
+.img{
+  opacity: 0.8;
+}
+
+  </style>
+</head>
+
+<body class="img text-black" style= "
+                {% comment %} background-image: url({% static 'registro/assets/img/nadador.jpg' %}) ; {% endcomment %}
+                background-color:#FFFF;
+                background-position: center;
+                background-atachment: fixed;
+                background-repeat:no-repeat;
+                background-size: cover;
+                background-origin: content-box;
+                background-blend-mode: normal; //saturation
+                 ">
+  
+
+  <!-- ======= Header ======= -->
+  
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <img src="{% static "registro/logo_triatloncba.png"%}" alt="">
+        <span class="d-none d-lg-block"></span>
+      </a>
+      {% block bottom %}
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+      {% endblock %}
+    </div><!-- End Logo -->
+
+    {% comment %} <div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
+        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
+    </div><!-- End Search Bar --> {% endcomment %}
+    {% block nav %}
+    {%  if user.is_authenticated %}
+    <nav class="header-nav ms-auto" >
+      <ul class="d-flex align-items-center">
+
+        {% comment %} <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon--> {% endcomment %}
+
+        {% comment %} <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-primary badge-number">4</span>
+          </a><!-- End Notification Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have 4 new notifications
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-exclamation-circle text-warning"></i>
+              <div>
+                <h4>Lorem Ipsum</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>30 min. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-x-circle text-danger"></i>
+              <div>
+                <h4>Atque rerum nesciunt</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>1 hr. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-check-circle text-success"></i>
+              <div>
+                <h4>Sit rerum fuga</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>2 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-info-circle text-primary"></i>
+              <div>
+                <h4>Dicta reprehenderit</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>4 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li class="dropdown-footer">
+              <a href="#">Show all notifications</a>
+            </li>
+
+          </ul><!-- End Notification Dropdown Items -->
+
+        </li><!-- End Notification Nav -->
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-chat-left-text"></i>
+            <span class="badge bg-success badge-number">3</span>
+          </a><!-- End Messages Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+            <li class="dropdown-header">
+              You have 3 new messages
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Maria Hudson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>4 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Anna Nelson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>6 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>David Muldon</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>8 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="dropdown-footer">
+              <a href="#">Show all messages</a>
+            </li>
+
+          </ul><!-- End Messages Dropdown Items -->
+
+        </li><!-- End Messages Nav --> {% endcomment %}
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="{{ request.user.fotoPerfil.url }}" alt="Foto Perfil" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{request.user.first_name}}  {{request.user.last_name}}</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>{{request.user.first_name}}  {{request.user.last_name}}</h6>
+              <span>Triatleta</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'datos_usuarios' %}">
+                <i class="bi bi-person"></i>
+                <span>Mis Datos</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            {% comment %} <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li> {% endcomment %}
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Salir</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+    {% else %}
+     <nav class="header-nav ms-auto" >
+      <ul class="d-flex align-items-center">
+        <li class="nav-item dropdown">
+          <a class=" nav-icon" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/" >
+            <i class=""><span class="badge bg-primary-light ">Login</span></i>
+          </a><!-- End Notification Icon -->
+        </li><!-- End Notification Nav -->
+
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="https://triatloncordoba.org" >
+            <i class=""><span class="badge bg-warning-light ">HOME</span></i>
+          </a><!-- End Messages Icon -->
+        </li><!-- End Messages Nav --> 
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+
+    {% endif %}
+    {% endblock %}
+
+  </header><!-- End Header -->
+  {%  if user.is_authenticated %}
+  <!-- ======= Sidebar ======= -->
+  {% block aside %}
+  <aside id="sidebar" class="sidebar" style="opacity:.9">
+      <ul class="sidebar-nav" id="sidebar-nav" >
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'datos_usuarios' %}">
+            <i class="bi bi-person"></i>
+            <span>Mis Datos</span>
+          </a>
+        </li><!-- End Profile Page Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'carnet' %}">
+            <i class="bi bi-postcard"></i>
+            <span>Mi Carnet</span>
+          </a>
+        </li><!-- End F.A.Q Page Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'lista_pagos_socio' %}">
+            <i class="bi bi-coin"></i>
+            <span>Pagos Asociado</span>
+          </a>
+        </li><!-- End Contact Page Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'eventos' %}">
+            <i class="bi bi-calendar3"></i>
+            <span>Próximos Eventos</span>
+          </a>
+        </li><!-- End Register Page Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'mis_inscripciones' %}">
+            <i class="bi bi-trophy"></i>
+            <span>Mis Eventos</span>
+          </a>
+        </li><!-- End Login Page Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'index' %}">
+            <i class="bi bi-house"></i>
+            <span>Inicio</span>
+          </a>
+        </li><!-- End Error 404 Page Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-in-right"></i>
+            <span>Salir</span>
+          </a>
+        </li><!-- End Blank Page Nav -->
+
+
+
+        {% if user.is_staff %}
+        <li class="nav-heading">Opciones Staff:</li>
+
+        <li class="nav-item">
+          <a class="nav-link " href="{% url 'adminWeb' %}">
+            <i class="bi bi-grid"></i>
+            <span>Administración</span>
+          </a>
+        </li><!-- End Dashboard Nav -->
+
+        {% comment %} <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#components-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-menu-button-wide"></i><span>Personas</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="components-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="components-alerts.html">
+                <i class="bi bi-circle"></i><span>Personas2</span>
+              </a>
+            </li>
+            <li>
+              <a href="components-accordion.html">
+                <i class="bi bi-circle"></i><span>Personas3</span>
+              </a>
+            </li>
+            <li>
+              <a href="components-badges.html">
+                <i class="bi bi-circle"></i><span>Personas 4</span>
+              </a>
+            </li>
+          </ul>
+        </li><!-- End Components Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-journal-text"></i><span>Estadísitcas</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="forms-elements.html">
+                <i class="bi bi-circle"></i><span>Estadísticas 1</span>
+              </a>
+            </li>
+            <li>
+              <a href="forms-layouts.html">
+                <i class="bi bi-circle"></i><span>Estadísticas 2</span>
+              </a>
+            </li>
+            <li>
+              <a href="forms-editors.html">
+                <i class="bi bi-circle"></i><span>Estadísticas 3</span>
+              </a>
+            </li>
+            <li>
+              <a href="forms-validation.html">
+                <i class="bi bi-circle"></i><span>Estadísticas 4</span>
+              </a>
+            </li>
+          </ul>
+        </li><!-- End Forms Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#tables-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-layout-text-window-reverse"></i><span>Asociados</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="tables-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="tables-general.html">
+                <i class="bi bi-circle"></i><span>General Tables</span>
+              </a>
+            </li>
+            <li>
+              <a href="tables-data.html">
+                <i class="bi bi-circle"></i><span>Data Tables</span>
+              </a>
+            </li>
+          </ul>
+        </li><!-- End Tables Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#charts-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-bar-chart"></i><span>Escuela</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="charts-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="charts-chartjs.html">
+                <i class="bi bi-circle"></i><span>Asociados</span>
+              </a>
+            </li>
+            <li>
+              <a href="charts-apexcharts.html">
+                <i class="bi bi-circle"></i><span>Seguro</span>
+              </a>
+            </li>
+            <li>
+              <a href="charts-echarts.html">
+                <i class="bi bi-circle"></i><span>Pagos</span>
+              </a>
+            </li>
+          </ul>
+        </li><!-- End Charts Nav -->
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" data-bs-target="#icons-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-gem"></i><span>Pagos</span><i class="bi bi-chevron-down ms-auto"></i>
+          </a>
+          <ul id="icons-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+            <li>
+              <a href="icons-bootstrap.html">
+                <i class="bi bi-circle"></i><span>Asociados</span>
+              </a>
+            </li>
+            <li>
+              <a href="icons-remix.html">
+                <i class="bi bi-circle"></i><span>Eventos</span>
+              </a>
+            </li>
+            <li>
+              <a href="icons-boxicons.html">
+                <i class="bi bi-circle"></i><span>Escuela</span>
+              </a>
+            </li>
+          </ul>
+        </li><!-- End Icons Nav --> {% endcomment %}
+
+        {% endif %}
+        
+        
+      </ul>
+    
+  </aside><!-- End Sidebar-->
+  {% endblock %}  
+  {% endif %}
+
+  <main id="main" class="main">
+    {% block content %}
+    {% for m in mensaje %} 
+    <div class="card page p-4" style="opacity:1">
+      {{m|safe}}
+    {% endfor %}
+    </div>
+    
+      
+      {% comment %} <div class="pagetitle">
+        <h1>Dashboard</h1>
+        <nav>
+          <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+            <li class="breadcrumb-item active">Dashboard</li>
+          </ol>
+        </nav>
+      </div><!-- End Page Title -->
+
+      <section class="section dashboard">
+        <div class="row">
+
+          <!-- Left side columns -->
+          <div class="col-lg-8">
+            <div class="row">
+
+              <!-- Sales Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card sales-card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Sales <span>| Today</span></h5>
+
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-cart"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>145</h6>
+                        <span class="text-success small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div><!-- End Sales Card -->
+
+              <!-- Revenue Card -->
+              <div class="col-xxl-4 col-md-6">
+                <div class="card info-card revenue-card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Revenue <span>| This Month</span></h5>
+
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-currency-dollar"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>$3,264</h6>
+                        <span class="text-success small pt-1 fw-bold">8%</span> <span class="text-muted small pt-2 ps-1">increase</span>
+
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div><!-- End Revenue Card -->
+
+              <!-- Customers Card -->
+              <div class="col-xxl-4 col-xl-12">
+
+                <div class="card info-card customers-card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Customers <span>| This Year</span></h5>
+
+                    <div class="d-flex align-items-center">
+                      <div class="card-icon rounded-circle d-flex align-items-center justify-content-center">
+                        <i class="bi bi-people"></i>
+                      </div>
+                      <div class="ps-3">
+                        <h6>1244</h6>
+                        <span class="text-danger small pt-1 fw-bold">12%</span> <span class="text-muted small pt-2 ps-1">decrease</span>
+
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div><!-- End Customers Card -->
+
+              <!-- Reports -->
+              <div class="col-12">
+                <div class="card">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Reports <span>/Today</span></h5>
+
+                    <!-- Line Chart -->
+                    <div id="reportsChart"></div>
+
+                    <script>
+                      document.addEventListener("DOMContentLoaded", () => {
+                        new ApexCharts(document.querySelector("#reportsChart"), {
+                          series: [{
+                            name: 'Sales',
+                            data: [31, 40, 28, 51, 42, 82, 56],
+                          }, {
+                            name: 'Revenue',
+                            data: [11, 32, 45, 32, 34, 52, 41]
+                          }, {
+                            name: 'Customers',
+                            data: [15, 11, 32, 18, 9, 24, 11]
+                          }],
+                          chart: {
+                            height: 350,
+                            type: 'area',
+                            toolbar: {
+                              show: false
+                            },
+                          },
+                          markers: {
+                            size: 4
+                          },
+                          colors: ['#4154f1', '#2eca6a', '#ff771d'],
+                          fill: {
+                            type: "gradient",
+                            gradient: {
+                              shadeIntensity: 1,
+                              opacityFrom: 0.3,
+                              opacityTo: 0.4,
+                              stops: [0, 90, 100]
+                            }
+                          },
+                          dataLabels: {
+                            enabled: false
+                          },
+                          stroke: {
+                            curve: 'smooth',
+                            width: 2
+                          },
+                          xaxis: {
+                            type: 'datetime',
+                            categories: ["2018-09-19T00:00:00.000Z", "2018-09-19T01:30:00.000Z", "2018-09-19T02:30:00.000Z", "2018-09-19T03:30:00.000Z", "2018-09-19T04:30:00.000Z", "2018-09-19T05:30:00.000Z", "2018-09-19T06:30:00.000Z"]
+                          },
+                          tooltip: {
+                            x: {
+                              format: 'dd/MM/yy HH:mm'
+                            },
+                          }
+                        }).render();
+                      });
+                    </script>
+                    <!-- End Line Chart -->
+
+                  </div>
+
+                </div>
+              </div><!-- End Reports -->
+
+              <!-- Recent Sales -->
+              <div class="col-12">
+                <div class="card recent-sales overflow-auto">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body">
+                    <h5 class="card-title">Recent Sales <span>| Today</span></h5>
+
+                    <table class="table table-borderless datatable">
+                      <thead>
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Customer</th>
+                          <th scope="col">Product</th>
+                          <th scope="col">Price</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row"><a href="#">#2457</a></th>
+                          <td>Brandon Jacob</td>
+                          <td><a href="#" class="text-primary">At praesentium minu</a></td>
+                          <td>$64</td>
+                          <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2147</a></th>
+                          <td>Bridie Kessler</td>
+                          <td><a href="#" class="text-primary">Blanditiis dolor omnis similique</a></td>
+                          <td>$47</td>
+                          <td><span class="badge bg-warning">Pending</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2049</a></th>
+                          <td>Ashleigh Langosh</td>
+                          <td><a href="#" class="text-primary">At recusandae consectetur</a></td>
+                          <td>$147</td>
+                          <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2644</a></th>
+                          <td>Angus Grady</td>
+                          <td><a href="#" class="text-primar">Ut voluptatem id earum et</a></td>
+                          <td>$67</td>
+                          <td><span class="badge bg-danger">Rejected</span></td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#">#2644</a></th>
+                          <td>Raheem Lehner</td>
+                          <td><a href="#" class="text-primary">Sunt similique distinctio</a></td>
+                          <td>$165</td>
+                          <td><span class="badge bg-success">Approved</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                </div>
+              </div><!-- End Recent Sales -->
+
+              <!-- Top Selling -->
+              <div class="col-12">
+                <div class="card top-selling overflow-auto">
+
+                  <div class="filter">
+                    <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                    <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                      <li class="dropdown-header text-start">
+                        <h6>Filter</h6>
+                      </li>
+
+                      <li><a class="dropdown-item" href="#">Today</a></li>
+                      <li><a class="dropdown-item" href="#">This Month</a></li>
+                      <li><a class="dropdown-item" href="#">This Year</a></li>
+                    </ul>
+                  </div>
+
+                  <div class="card-body pb-0">
+                    <h5 class="card-title">Top Selling <span>| Today</span></h5>
+
+                    <table class="table table-borderless">
+                      <thead>
+                        <tr>
+                          <th scope="col">Preview</th>
+                          <th scope="col">Product</th>
+                          <th scope="col">Price</th>
+                          <th scope="col">Sold</th>
+                          <th scope="col">Revenue</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="assets/img/product-1.jpg" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Ut inventore ipsa voluptas nulla</a></td>
+                          <td>$64</td>
+                          <td class="fw-bold">124</td>
+                          <td>$5,828</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="assets/img/product-2.jpg" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Exercitationem similique doloremque</a></td>
+                          <td>$46</td>
+                          <td class="fw-bold">98</td>
+                          <td>$4,508</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="assets/img/product-3.jpg" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Doloribus nisi exercitationem</a></td>
+                          <td>$59</td>
+                          <td class="fw-bold">74</td>
+                          <td>$4,366</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="assets/img/product-4.jpg" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Officiis quaerat sint rerum error</a></td>
+                          <td>$32</td>
+                          <td class="fw-bold">63</td>
+                          <td>$2,016</td>
+                        </tr>
+                        <tr>
+                          <th scope="row"><a href="#"><img src="assets/img/product-5.jpg" alt=""></a></th>
+                          <td><a href="#" class="text-primary fw-bold">Sit unde debitis delectus repellendus</a></td>
+                          <td>$79</td>
+                          <td class="fw-bold">41</td>
+                          <td>$3,239</td>
+                        </tr>
+                      </tbody>
+                    </table>
+
+                  </div>
+
+                </div>
+              </div><!-- End Top Selling -->
+
+            </div>
+          </div><!-- End Left side columns -->
+
+          <!-- Right side columns -->
+          <div class="col-lg-4">
+
+            <!-- Recent Activity -->
+            <div class="card">
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body">
+                <h5 class="card-title">Recent Activity <span>| Today</span></h5>
+
+                <div class="activity">
+
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">32 min</div>
+                    <i class='bi bi-circle-fill activity-badge text-success align-self-start'></i>
+                    <div class="activity-content">
+                      Quia quae rerum <a href="#" class="fw-bold text-dark">explicabo officiis</a> beatae
+                    </div>
+                  </div><!-- End activity item-->
+
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">56 min</div>
+                    <i class='bi bi-circle-fill activity-badge text-danger align-self-start'></i>
+                    <div class="activity-content">
+                      Voluptatem blanditiis blanditiis eveniet
+                    </div>
+                  </div><!-- End activity item-->
+
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">2 hrs</div>
+                    <i class='bi bi-circle-fill activity-badge text-primary align-self-start'></i>
+                    <div class="activity-content">
+                      Voluptates corrupti molestias voluptatem
+                    </div>
+                  </div><!-- End activity item-->
+
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">1 day</div>
+                    <i class='bi bi-circle-fill activity-badge text-info align-self-start'></i>
+                    <div class="activity-content">
+                      Tempore autem saepe <a href="#" class="fw-bold text-dark">occaecati voluptatem</a> tempore
+                    </div>
+                  </div><!-- End activity item-->
+
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">2 days</div>
+                    <i class='bi bi-circle-fill activity-badge text-warning align-self-start'></i>
+                    <div class="activity-content">
+                      Est sit eum reiciendis exercitationem
+                    </div>
+                  </div><!-- End activity item-->
+
+                  <div class="activity-item d-flex">
+                    <div class="activite-label">4 weeks</div>
+                    <i class='bi bi-circle-fill activity-badge text-muted align-self-start'></i>
+                    <div class="activity-content">
+                      Dicta dolorem harum nulla eius. Ut quidem quidem sit quas
+                    </div>
+                  </div><!-- End activity item-->
+
+                </div>
+
+              </div>
+            </div><!-- End Recent Activity -->
+
+            <!-- Budget Report -->
+            <div class="card">
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body pb-0">
+                <h5 class="card-title">Budget Report <span>| This Month</span></h5>
+
+                <div id="budgetChart" style="min-height: 400px;" class="echart"></div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    var budgetChart = echarts.init(document.querySelector("#budgetChart")).setOption({
+                      legend: {
+                        data: ['Allocated Budget', 'Actual Spending']
+                      },
+                      radar: {
+                        // shape: 'circle',
+                        indicator: [{
+                            name: 'Sales',
+                            max: 6500
+                          },
+                          {
+                            name: 'Administration',
+                            max: 16000
+                          },
+                          {
+                            name: 'Information Technology',
+                            max: 30000
+                          },
+                          {
+                            name: 'Customer Support',
+                            max: 38000
+                          },
+                          {
+                            name: 'Development',
+                            max: 52000
+                          },
+                          {
+                            name: 'Marketing',
+                            max: 25000
+                          }
+                        ]
+                      },
+                      series: [{
+                        name: 'Budget vs spending',
+                        type: 'radar',
+                        data: [{
+                            value: [4200, 3000, 20000, 35000, 50000, 18000],
+                            name: 'Allocated Budget'
+                          },
+                          {
+                            value: [5000, 14000, 28000, 26000, 42000, 21000],
+                            name: 'Actual Spending'
+                          }
+                        ]
+                      }]
+                    });
+                  });
+                </script>
+
+              </div>
+            </div><!-- End Budget Report -->
+
+            <!-- Website Traffic -->
+            <div class="card">
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body pb-0">
+                <h5 class="card-title">Website Traffic <span>| Today</span></h5>
+
+                <div id="trafficChart" style="min-height: 400px;" class="echart"></div>
+
+                <script>
+                  document.addEventListener("DOMContentLoaded", () => {
+                    echarts.init(document.querySelector("#trafficChart")).setOption({
+                      tooltip: {
+                        trigger: 'item'
+                      },
+                      legend: {
+                        top: '5%',
+                        left: 'center'
+                      },
+                      series: [{
+                        name: 'Access From',
+                        type: 'pie',
+                        radius: ['40%', '70%'],
+                        avoidLabelOverlap: false,
+                        label: {
+                          show: false,
+                          position: 'center'
+                        },
+                        emphasis: {
+                          label: {
+                            show: true,
+                            fontSize: '18',
+                            fontWeight: 'bold'
+                          }
+                        },
+                        labelLine: {
+                          show: false
+                        },
+                        data: [{
+                            value: 1048,
+                            name: 'Search Engine'
+                          },
+                          {
+                            value: 735,
+                            name: 'Direct'
+                          },
+                          {
+                            value: 580,
+                            name: 'Email'
+                          },
+                          {
+                            value: 484,
+                            name: 'Union Ads'
+                          },
+                          {
+                            value: 300,
+                            name: 'Video Ads'
+                          }
+                        ]
+                      }]
+                    });
+                  });
+                </script>
+
+              </div>
+            </div><!-- End Website Traffic -->
+
+            <!-- News & Updates Traffic -->
+            <div class="card">
+              <div class="filter">
+                <a class="icon" href="#" data-bs-toggle="dropdown"><i class="bi bi-three-dots"></i></a>
+                <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                  <li class="dropdown-header text-start">
+                    <h6>Filter</h6>
+                  </li>
+
+                  <li><a class="dropdown-item" href="#">Today</a></li>
+                  <li><a class="dropdown-item" href="#">This Month</a></li>
+                  <li><a class="dropdown-item" href="#">This Year</a></li>
+                </ul>
+              </div>
+
+              <div class="card-body pb-0">
+                <h5 class="card-title">News &amp; Updates <span>| Today</span></h5>
+
+                <div class="news">
+                  <div class="post-item clearfix">
+                    <img src="assets/img/news-1.jpg" alt="">
+                    <h4><a href="#">Nihil blanditiis at in nihil autem</a></h4>
+                    <p>Sit recusandae non aspernatur laboriosam. Quia enim eligendi sed ut harum...</p>
+                  </div>
+
+                  <div class="post-item clearfix">
+                    <img src="assets/img/news-2.jpg" alt="">
+                    <h4><a href="#">Quidem autem et impedit</a></h4>
+                    <p>Illo nemo neque maiores vitae officiis cum eum turos elan dries werona nande...</p>
+                  </div>
+
+                  <div class="post-item clearfix">
+                    <img src="assets/img/news-3.jpg" alt="">
+                    <h4><a href="#">Id quia et et ut maxime similique occaecati ut</a></h4>
+                    <p>Fugiat voluptas vero eaque accusantium eos. Consequuntur sed ipsam et totam...</p>
+                  </div>
+
+                  <div class="post-item clearfix">
+                    <img src="assets/img/news-4.jpg" alt="">
+                    <h4><a href="#">Laborum corporis quo dara net para</a></h4>
+                    <p>Qui enim quia optio. Eligendi aut asperiores enim repellendusvel rerum cuder...</p>
+                  </div>
+
+                  <div class="post-item clearfix">
+                    <img src="assets/img/news-5.jpg" alt="">
+                    <h4><a href="#">Et dolores corrupti quae illo quod dolor</a></h4>
+                    <p>Odit ut eveniet modi reiciendis. Atque cupiditate libero beatae dignissimos eius...</p>
+                  </div>
+
+                </div><!-- End sidebar recent posts-->
+
+              </div>
+            </div><!-- End News & Updates -->
+
+          </div><!-- End Right side columns -->
+
+        </div>
+      </section> {% endcomment %}
+    {% endblock %}  
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; <strong><span>Asociación de Triatlón, Duatlón y pruebas combinadas de la Provincia de Córdoba</span></strong>.
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      {% comment %} Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> {% endcomment %}
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'registro/assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/chart.js/chart.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/echarts/echarts.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/quill/quill.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/tinymce/tinymce.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/php-email-form/validate.js' %}"></script>
+  
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'registro/assets/js/main.js' %}"></script>
+  
+
+  
+ 
+
+
+
+
+
+
+
+{% comment %}
+<html lang="es-eu">
+    <head>
+         <meta charset="UTF-8" /> 
+        <meta http-equiv=”Content-Type” content=”text/html; charset=ISO-8859-1″ />
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+        <meta name="description" content="" />
+        <meta name="author" content="" />
+        <title>Triatlon Cba</title>
+        <!-- Favicon-->
+        <link rel="icon" type="image/x-icon" href="assets/favicon.ico" />
+        <!-- Core theme CSS (includes Bootstrap)-->
+       
+       
+       <link  rel="stylesheet"   href="{% static 'registro/css/bootstrap.min.css'  %}" />
+       <link  rel="stylesheet"   href="{% static 'registro/css/index3.css' %}"> 
+       <link  rel="stylesheet"   href="{% static 'registro/css/style.css'  %}" />
+         
+        
+    </head>
+    
+{%  if user.is_authenticated %}
+
+
+
+
+
+
+<!-- Vertical navbar -->
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+      
+      <div class="container-fluid">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <a class="navbar-brand" href="#">
+          <img src="{% static "registro/logo_triatloncba.png"%}" alt="" width="180" height="70">
+          </a>
+ 
+          
+        <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+          <div class="navbar-nav">
+            <div class="container justify-content-center">
+              <a>
+              <img src="{{ request.user.fotoPerfil.url }}" alt="..." width="75" class="mr-2 rounded-circle img-thumbnail shadow-sm">
+                <span>{{request.user.first_name}}  {{request.user.last_name}}</span>
+              </a>
+        
+
+        
+              <a href={% url 'datos_usuarios' %} class="nav-link active" aria-current="page">
+                        <i class="text-light"><img src="{% static "registro/img/icons/person.png"%}" width="30" height="30"></i>
+                        Mis datos
+                    </a>
+          
+              <a href={% url 'carnet' %} class="nav-link text-dark font-italic">
+                        <i><img src="{% static "registro/img/icons/carnet.png"%}" width="30" height="30"></i>
+                        Carnet asociado
+                    </a>
+          
+              <a href={% url 'lista_pagos_socio' %} class="nav-link text-dark font-italic">
+                        <i><img src="{% static "registro/img/icons/pagos_asociado.png"%}" width="30" height="30"></i>
+                        Pagos asociado
+                    </a>
+          
+              <a href={% url 'eventos' %} class="nav-link text-dark font-italic">
+                        <i><img src="{% static "registro/img/icons/runner.png"%}" width="30" height="30"></i>
+                        Próximos eventos
+                    </a>
+          
+              <a href={% url 'mis_inscripciones' %} class="nav-link text-dark font-italic">
+                        <i><img src="{% static "registro/img/icons/mis_eventos.png"%}" width="30" height="30"></i>
+                        Mis eventos
+                    </a>
+          
+            
+
+              {% if user.is_staff %}
+          
+              <a href={% url 'index2' %} class="nav-link text-dark font-italic">
+                        <img src="{% static "registro/img/icons/staff.png"%}" width="30" height="30">
+                        Staff
+                    </a>
+          
+              {% endif %}
+
+          
+              <a href={% url 'index' %} class="nav-link text-dark font-italic">
+                        <i><img src="{% static "registro/img/icons/inicio.png"%}" width="30" height="30"></i>
+                        Inicio
+                    </a>
+            
+              <a href={% url 'logout' %} class="nav-link text-dark font-italic">
+                        <i><img src="{% static "registro/img/icons/salir.png"%}" width="30" height="30"></i>
+                        Salir</h5>
+                    </a>
+            </div>
+          </div>
+        </div>
+      
+           </div>
+      <div class="container">
+    {% block content%}
+      <h1 >Triatlon Córdoba</h1>
+      <p>Con el aporte de las personas asociadas y aquellas que nos siguen , apoyan y acompañan en las carreras oficiales seguimos dando pasos de consolidación. La recuperación institucional y el desarrollo del triatlón de manera integral, nos permite este HECHO HISTÓRICO para nuestra INSTITUCIÓN.<br> 
+      <br>
+      La ASOCIACION CORDOBESA DE TRIATLON ya tiene SEDE PROPIA ubicada en la playa norte del Polo Deportivo kempes. Con acceso a baños, playa de estacionamiento y espacios propios de actividades denominado ZONA TRIATLÓN. <br>
+      <br>                    
+      Este SUEÑO CUMPLIDO sólo es posible con el esfuerzo de todos, al cual,  desde la actual dirigencia, correspondemos con profundo compromiso y transparencia, buscando dejar al deporte en lo más alto posible para las próximas generaciones de Dirigentes y Atletas comprometidos con la causa.<br>
+      <br>                    
+      </p>
+      <p>Make sure to keep all page content within the
+        <code>#page-content-wrapper</code>
+         . The top navbar is optional, and just for demonstration. Just create an element with the
+        <code>#sidebarToggle</code>
+        ID which will toggle the menu when clicked.
+        </p>
+    {% endblock %}
+    </div>
+    </nav>
+  
+  
+    <body>
+
+<!-- End vertical navbar -->
+    
+    <!-- Sidebar-->
+    {% block sidebar %}
+    {% endblock %}
+
+               
+            
+            <!-- Page content-->
+
+    
+
+  {% endcomment %}    
+      
+  
+        
+  {% if messages %}
+  {% for message in messages %}
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+      <script>
+        var m = "{{message}}";
+        swal("Genial !", m, "success");</script>
+  {% endfor %}
+  {% endif %}
+
+
+     {% comment %} <script src="{% static 'registro/js/jquery-3.6.1.min.js' %}"></script>
+        <script src="{% static 'registro/js/bootstrap.bundle.min.js' %}"></script>    
+        <script src="{% static 'registro/js/bootstrap.js' %}"></script>
+        <script src="{% static 'registro/js/bootstrap.min.js' %}"></script>
+        <script src="{% static 'registro/js/DataTables/datatables.min.js' %}"></script>
+        
+
+        <script>
+            $(document).ready( function () {
+                $('#mis_tablas').DataTable( {
+                    "languaje": {
+                        "url": "dataTables.spanish.lang"
+                    }
+                });
+            } );
+        </script> {% endcomment %}
+
+
+
+
+       
+     <script>
+        $(function() {
+        // Sidebar toggle behavior
+        $('#sidebarCollapse').on('click', 
+        function() {
+        $('#sidebar, #content').toggleClass('active');
+        });
+        });>
+        </script> 
+
+
+
+        
+   
+
+</body>
+</html>
+

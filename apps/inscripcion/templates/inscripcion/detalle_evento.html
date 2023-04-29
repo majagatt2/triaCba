@@ -1,0 +1,193 @@
+{% extends "base/index3.html" %}
+{% block content %}
+
+<form  method="POST" class="needs-validation" novalidate="" enctype="multipart/form-data">
+         
+{% csrf_token %}
+{% for n in eventos %}   
+
+{% comment %} <h4 class="mb-3 text-center">{{n}}</h4> {% endcomment %}
+
+   
+
+    <div class="col-lg-12">
+        <div class="card ">
+            <div class="card-header no-border">
+               <h3 class="text-center" style="color:#120C4B"><strong>{{n.tipo}} - {{n.lugar}} - {{n.nombreEvento}}</strong></h3>
+            </div>
+            <div class="card-body pt-3">
+                <div class="row">
+                    <div class="col-3">
+                        <div class="widget-49-title-wrapper">
+                            <div class="" style="color:#FF5900; bold" >
+                                <h4 class="widget-49-date-day text-center"><b>{{n.fechaEvento.day}}</b></h4>
+                                <h4 class="widget-49-date-month text-center"><b>{{n.fechaEvento|date:"M"}}</b></h4>
+                                <h4 class="widget-49-date-month text-center"><b>{{n.fechaEvento|date:"Y"}}</b></h4>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-9">
+                        <ol class="widget-49-meeting-points">
+                            <li class="widget-49-meeting-item"><span>Cupo: <b>{{n.cupo}}</b></span></li>
+                            <li class="widget-49-meeting-item">
+                                <span>Modalidades:
+                                    {% for modalidad in n.modalidad_disponible.all%}
+                                    <b>{{modalidad}} -</b> 
+                                    {% endfor %}
+                                </span>
+                            </li>
+                            
+                            <li class="widget-49-meeting-item"><span>Distancias:
+                                {% for distancia in n.distancia_disponible.all%}
+                                <b>{{distancia}} -</b>
+                                {% endfor %}
+                            </span></li>
+                        </ol>
+                    </div>   
+                </div>
+            </div>
+            </div>
+        </div>
+        
+        
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5 class="card-title text-center">Bases, Condiciones y Consideraciones:</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                       
+                        <div class="widget-49-meeting-info">
+                            <h4 class="pt-3"><strong>Leer Atentamente: </strong></h4>
+                            <span class="widget-49-pro-title">{{n.contenido|safe}}</span>
+                        </div>
+                    </div>
+                     <div class="d-flex justify-content-end">      
+                        {%  if user.is_authenticated %} 
+                            <a class="btn btn-secondary" href={% url 'eventos' %}>Volver</a>
+                             &nbsp;    
+                            <a class="btn btn-primary" href={% url 'inscribirme' n.id %}>Inscribirme</a>
+                        {% else %}
+                            <div class="form-control text-center  p-2 border-4 shadow-lg">
+                                <p style="font-size:14px">Si nunca te has inscripto o asociado en nuestra Asociación, <br>
+                                    presioná sobre "Inscribirme 1º vez"<br>
+                                    sino, presioná "Inscripción Registrado" para ingresar a tu cuenta"
+                                </p>
+                                <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-secondary" href={% url 'eventos_publico' %}>Volver</a>
+                                &nbsp;     
+                                <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-danger" href={% url 'inscripcion_publico' n.id  %}><i class="bi bi-door-open"></i> Inscribirme 1º vez</a>
+                                &nbsp;
+                                
+                                <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-primary" href={% url 'login' %}><i class="bi bi-key"></i>   Inscripción Registrado</a>
+                            </div>        
+                        {% endif %}
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        
+
+    
+    
+    {% comment %} <div class="col-lg-6">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5 class="card-title">Bases Y Condiciones</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                       
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">Leer Atentamente</span>
+                            <span class="widget-49-meeting-time">{{n.contenido|safe}}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="widget-49-meeting-action">
+                        <a href="#" class="btn btn-sm btn-flash-border-warning">View All</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+    {% comment %} <div class="col-lg-4">
+        <div class="card card-margin">
+            <div class="card-header no-border">
+                <h5 class="card-title">Dónde</h5>
+            </div>
+            <div class="card-body pt-0">
+                <div class="widget-49">
+                    <div class="widget-49-title-wrapper">
+                       
+                        <div class="widget-49-meeting-info">
+                            <span class="widget-49-pro-title">PRO-027865 Opera module</span>
+                            <span class="widget-49-meeting-time">12:00 to 13.30 Hrs</span>
+                        </div>
+                    </div>
+                    <ol class="widget-49-meeting-points">
+                        <li class="widget-49-meeting-item"><span>Scope is revised and updated</span></li>
+                        <li class="widget-49-meeting-item"><span>Time-line has been changed</span></li>
+                        <li class="widget-49-meeting-item"><span>Received approval to start wire-frame</span></li>
+                    </ol>
+                    <div class="widget-49-meeting-action">
+                        <a href="#" class="btn btn-sm btn-flash-border-success">View All</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div> {% endcomment %}
+</div>
+</div>
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            {% comment %} <div class="row">
+             
+                <h5 class="text-center">Fecha: {{n.fechaEvento}}</h5><br>
+                {{n.temporada}}<br>
+                {{n.tipo}}<br>
+                
+                Modalidad:
+                {% for x in  n.modalidad_disponible.all %}
+                <li>{{x}}</li> 
+                {% endfor %}
+                
+                <br>
+                Distancias:
+                {% for x in  n.distancia_disponible.all %}
+                <li>{{x}}</li> 
+                {% endfor %}
+                <br> 
+                {% for x in  n.categoria_disponible.all %}
+                {{x}},
+                {% endfor %}
+                <br>
+                
+                {{n.nombreEvento}}<br>
+                {{n.lugar}}<br>
+                Cupo: {{n.cupo}}<br>
+                {{n.contenido|safe}}<br>
+
+                
+            </div>        
+            
+             {% endcomment %}
+
+
+    {% endfor %}
+    </form>
+
+
+{% endblock  %}

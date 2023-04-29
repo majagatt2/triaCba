@@ -1,0 +1,85 @@
+{% extends "base/index2.html" %}
+{% block content %}
+{%  if user.is_authenticated %} 
+{% if request.user.is_staff or request.user.username == 'cmonasterolo' or request.user.username == 'mpolo'%}
+    <h4>LISTADO ESCUELA:  {{object_list|length}} asociados</h4>
+    
+    <div style="overflow-x:auto;">
+    <table class = "table table-borderless datatable">
+        <thead>
+            <tr class="table-info">
+                {% comment %} <th>Nº Socio</th> {% endcomment %}
+                <th>Nombre</th>
+                <th>Edad</th>
+                <th>Email</th>
+                <th>Estado</th>
+                <th>Asiste?</th>
+                <th>Tipo Asociado</th>
+                <th>Tutor</th>
+                <th>Emmac</th>
+               
+            </tr>
+        </thead>
+
+        <tbody>
+            
+            {% if object_list %}
+                {% for s in object_list %}
+
+
+                <tr>
+                   {% if s.estado %}
+                    {% comment %} <td>{{s.persona.cuil}}</td> {% endcomment %}
+                    
+                    <td>{{s.persona.first_name|title}} {{s.persona.last_name|title}}</td>
+                    <td>{{s.persona.get_edad}}</td>
+                    <td>{{s.persona.email}}</td>
+                    
+                    {% if s.get_estado%}
+                    <td>3.Activo</td>
+                    {% elif s.dias_vencer and s.get_sit_emmac == False %}
+                        <th style="color:red">2.Emmac vencido</td>
+                    {% elif s.dias_vencer == False and s.get_sit_emmac == False  %}
+                        <th style="color:red">1.Arreglar</td>
+                    {% endif %}
+                    
+                    {% if s.asiste %}        
+                    <td>SI</td>
+                    {% else %}
+                    <td style="color:red; background-color:#F9FABF;">NO</td>
+                    {% endif %}
+                    
+                    <td>{{s.tipoAsociado}}</td>
+
+                    
+                    {% if s.persona.get_edad >= 18 %}
+                        <td style="color:#5B2C6F" >Es Mayor</td>
+                    {% elif s.responsable_tutor == '' and s.persona.get_edad < 18 %}
+                        <td style="color:red"><p><b>Pedir Urgente</p></p></td>
+                    {% else %}
+                        <td>{{s.responsable_tutor}}</td>
+                    {% endif %}    
+                    
+                    
+                    <td><img src={{s.emmac_file.url}} width="15" height="15"></td> 
+                </tr>
+                  {% endif %}
+                {% endfor %}
+            {% else%}
+                <tr>
+                    <td><h2>No hay personas asociadas</h2></td>
+                </tr>
+                
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% endif %}
+{% endif %}
+
+   
+   
+            
+{% endblock  %}
+      

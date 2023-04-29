@@ -1,0 +1,119 @@
+{% extends "base/index2.html" %}
+
+
+{% block content %}
+{% load static %}
+{%  if user.is_authenticated %} 
+{% if request.user.is_staff %}
+
+
+    {% for evento in eventos %}
+
+
+        <form method='POST'>
+            {% csrf_token %}
+            <h3>Listado de Inscriptos evento: <h3 style="color:blue">{{evento}}</h3> </h3>
+            <div style="overflow-x:auto;">
+            <table class = 'table table-borderless datatable'>
+                <thead>
+                    <tr class="table-info">
+                        
+                        
+                        <th>Nombre</th>
+                        <th>Situac</th> 
+                        
+                        {% comment %} <th>Asociado</th> {% endcomment %}
+                        {% comment %} <th>Evento</th> {% endcomment %}
+                        <th>Modalidad</th>
+                        <th>Distancia</th>
+                        <th>Categoria</th>
+                        
+                        <th>Edad</th>
+                        <th>Equipo</th>               
+                        <th>Forma de pago</th>
+                        <th>Fecha de pago</th>
+                        <th>Monto abonado</th>
+                        <th>Monto correcto</th>
+                        <th>Dif</th>
+                        <th>Pago</th>
+                        <th>Certif</th>
+                        
+                    
+                    </tr>
+                </thead>
+
+                <tbody>
+      
+                    {% for inscripto in inscripcion_list %}
+                
+                        {% if inscripto.eventoRelacionado.id == evento.id %}
+                        <tr>
+                           
+                            <td>{{inscripto.persona.first_name|title}} {{inscripto.persona.last_name|title}}</td>
+                            
+                            {% if inscripto.confirm_pago == False %}
+                            <th style="color:red">Pend</td>
+                            {% else %}
+                            <td><img src={% static 'registro/tilde2.png' %}  width="30" height="30"></td>
+                            {% endif %}    
+                            
+                            
+                            {% comment %} <td>{{inscripto.siAsociado|yesno:"SI,NO"}}</td> {% endcomment %}
+                            {% comment %} <td>{{c.eventoRelacionado.nombreEvento}} / {{c.eventoRelacionado.fechaEvento}}</td> {% endcomment %}
+                            
+                            
+                            <td>{{inscripto.modalidad}}</td>
+                            <td>{{inscripto.distancia}}</td>
+                            <td>{{inscripto.categoria}}</td>
+                            
+                            <td>{{inscripto.get_edad}}</td>
+                            
+                            {% if inscripto.nombreEquipoPosta == None %}
+                            <td>----</td>
+                            {% else %}
+                            <td>{{inscripto.nombreEquipoPosta}}</td>
+                            {%  endif %}
+                            
+                            <td>{{inscripto.formaPago.formaPago}}</td>
+                            <td>{{inscripto.fechaPago|date:"d/m/Y"}}</td>
+                            <td>${{inscripto.montoAbonado|floatformat:"-3g"}}</td>
+                            <td>${{inscripto.montoDebeAbonar|floatformat:"-3g"}}</td>
+                            
+                            {% if inscripto.get_dif_inscripcion < 0 %}
+                            <td style="color:red">${{inscripto.get_dif_inscripcion|floatformat:"-3g"}}</td>
+                            {%  else %}
+                            <td><img src={% static 'registro/tilde2.png' %}  width="20" height="20"></td>
+                            {% endif %}
+                        
+                            
+                            <td><a href={{inscripto.comprobPago.url}}>
+                                <img src={{inscripto.comprobPago.url}} width="25" height="20">
+                            </a>
+                            </td>
+                            <td><a href={{inscripto.emmac_file.url}}>
+                                <img src={{inscripto.emmac_file.url}} width="25" height="20">
+                            </a>
+                            </td>
+
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% comment %} {% else%}
+                    
+                            <td><h3>No hay pagos registrados</h3></td>
+                        
+                        
+                    {% endif %} {% endcomment %}
+                </tbody>
+            </table>
+        </div>
+        </form>
+    {% endfor %}    
+ 
+    
+{% endif %}
+{% endif %}   
+            
+{% endblock  %}
+      

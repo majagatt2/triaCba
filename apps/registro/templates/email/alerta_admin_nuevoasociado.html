@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>alerta Asociado</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'general/assets/vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+
+    </head>
+    <body>
+        <h1>Un nuevo asociado requiere validación: <strong style="color:green">{{asociado}}</strong></h1>
+
+         Datos:
+         <ul>
+            <li>Fecha: <b>{{fecha}}</b></li>
+            <li>Tipo de Asociado: <b>{{tipoAsociado}}</b></li>
+            <li>Fecha Emisión Emmac: <b>{{fecha_emision_emmac}}</b></li>
+            <li>Entrenador: <b>{{entrenador}}</b></li>
+            <li>Responsable Tutor: <b>{{responsable_tutor}}</b></li>
+
+        </ul>
+
+        <h3>Por favor ir a : </h3> <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/admin"> <b style="color:green">Admin</b> </a></h3>
+
+
+        <script src="" async defer></script>
+        script>
+    </body>
+</html>

@@ -1,0 +1,16 @@
+{% extends "base/index3.html" %}
+       
+
+{% block content %}
+
+<form method = 'POST' action="base/index3.html">
+        {% csrf_token %}
+        <h1>Gracias  {{object.nombres}} {{object.apellido}}, tu pago ha sido registrado. 
+            Aparecerá en en lista una vez confirmada la transferencia.  </h1>
+        <button class="btn btn-danger" type="submit">Continuar</button>
+      
+       
+</form>
+
+       
+{% endblock %}

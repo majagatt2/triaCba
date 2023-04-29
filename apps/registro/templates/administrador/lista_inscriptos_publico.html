@@ -1,0 +1,79 @@
+{% extends "base/index2.html" %}
+{% block content %}
+{% load static %}
+
+
+{% comment %} {%  if user.is_authenticated %} 
+{% if request.user.is_staff %} {% endcomment %}
+
+{%  block nav%}
+{% endblock %}
+
+{% for evento in eventos %}
+
+
+    <form method='POST'>
+        {% csrf_token %}
+        <h3>Listado de Inscriptos en: <h3 style="color:red">{{evento}}</h3></h3>
+        <div style="overflow-x:auto;">
+        <table class = 'table table-borderless datatable'>
+            <thead>
+                <tr class="table-info">
+                    
+                    
+                    <th>Nombre</th>
+                    {% comment %} <th>Evento</th> {% endcomment %}
+                    <th>Modalidad</th>
+                    <th>Distancia</th>
+                    <th>Categoria</th>
+                    <th>Bici</th>               
+                    <th>Equipo</th>               
+                    
+                    
+                
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if inscripcion_list %}
+            
+                {% if evento.publicar  %}
+                    {% for c in inscripcion_list %}
+                    {% if evento.id == c.eventoRelacionado.id %}
+                        <tr>
+                            {% comment %} <td>{{forloop.counter}}</td> {% endcomment %}
+                            <td>{{c.persona.first_name|title}} {{c.persona.last_name|title}}</td>
+                            {% comment %} <td>{{c.eventoRelacionado}}</td> {% endcomment %}
+                            <td>{{c.modalidad}}</td>
+                            <td>{{c.distancia}}</td>
+                            <td>{{c.categoria}}</td>
+                            <td>{{c.bici}}</td>
+                            
+                            {% if c.nombreEquipoPosta == None %}
+                            <td>----</td>
+                            {% else %}
+                            <td>{{c.nombreEquipoPosta}}</td>
+                            {% endif %}
+                                                
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+               
+                
+                
+                {% else%}
+                
+                        <td><h3>No hay pagos registrados</h3></td>
+                    
+                    
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    </form>
+{% endfor %}
+    
+            
+{% endblock  %}
+      

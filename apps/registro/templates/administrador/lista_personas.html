@@ -1,0 +1,76 @@
+{% extends "base/index2.html" %}
+{% block content %}
+
+
+{% if user.is_authenticated %} 
+{% if request.user.is_staff %}
+
+ <h4>Total: {{object_list|length}} personas</h4>
+
+<style type="text/css">
+    td{color:DarkSlateGray;
+    }
+</style>
+
+<form method="GET">
+    <div style="overflow-x:auto;">
+    <table class="table table-borderless datatable" >
+        <thead>
+            <tr class="table-info">
+                <th scope="col">Foto</th>
+                <th scope="col">Cuil</th>
+                <th scope="col">Nombre</th>
+                {% comment %} <th>Username</th> {% endcomment %}
+                {% comment %} <th>Domicilio</th>
+                <th>Ciudad</th> {% endcomment %}
+                {% comment %} <th>situación</th> {% endcomment %}
+                <th scope="col">Email</th>
+                <th scope="col">Telefono</th>
+                <th scope="col">Fecha Nacimiento</th>
+                <th scope="col">Edad</th>
+                <th scope="col">Sexo</th>
+                
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if persona_list %}
+                {% for n in persona_list %}
+                    {% if n.username != "admin"  %}
+                        <tr>
+                            <td scope="row"><img  src={{n.fotoPerfil.url}} width="20" height="25"></td>
+                            <td scope="row">{{n.cuil}}</td>
+                            <td scope="row">{{n.last_name|title}} {{n.first_name|title}}</td>
+                            {% comment %} <td>{{n.username}}</td> {% endcomment %}
+                            {% comment %} <td>{{n.domicilio|title}}</td>
+                            <td>{{n.ciudad}}</td> {% endcomment %}
+                            {% comment %} <td>{{n.asociado.get_estado|yesno:"Activo,-"}}</td> {% endcomment %}
+                            <td scope="row">{{n.email}}</td>
+                            <td scope="row">{{n.telefono}}</td>
+                            <td scope="row">{{n.fechaNacimiento|date:"d/m/Y"}}</td>
+                            <td scope="row">{{n.get_edad}}</td>
+                            <td scope="row">{{n.sexo}}</td>
+                            
+                        
+                        </tr>
+                    {% endif %}
+                {% endfor %}
+            {% else%}
+                <tr>
+                    <td><h2>No hay personas registradas</h2></td>
+                </tr>
+                
+            {% endif %}
+         
+        </tbody>
+    </table>
+</div>
+</form>    
+
+   
+   
+          
+{% endif %}       
+{% endif %}
+{% endblock  %}
+      

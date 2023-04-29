@@ -1,0 +1,73 @@
+{% extends "base/index2.html" %}
+{% load static %}
+{% block content %}
+
+{%  block nav%}
+{% endblock %}
+
+<style>
+    
+    
+    body{
+        
+                background: url({% static 'registro/assets/img/nadador1.jpg' %});
+                background-position: center;
+                background-atachment: fixed;
+                background-repeat:no-repeat;
+                background-size: cover;
+                background-origin: content-box;
+                background-blend-mode: normal; 
+    }
+
+  </style>
+</head>
+
+
+                 
+
+
+
+    
+
+    <div style="overflow-x:auto;" class="form-control">
+        <h2 class="text-center"><strong>LISTADO DE PERSONAS ASOCIADAS ACTIVAS</strong></h2>
+    <table class = "table datatable table-light" >
+        <thead>
+            <tr class="table-info">
+
+                <th>Orden</th>
+                <th>Apellido y Nombre</th>
+                <th>Vencimiento</th>
+
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if object_list %}
+                {% for s in object_list %}
+
+                <tr >
+                    <td>{{forloop.counter}}</td>
+                    <td>{{s.persona.last_name|title}}, {{s.persona.first_name|title}} </td>
+                    <td>{{s.get_vencimiento}}</td>
+                </tr>
+
+                {% endfor %}
+            {% else%}
+                <tr>
+                    <td><h2>No hay personas asociadas</h2></td>
+                </tr>
+
+            {% endif %}
+        </tbody>
+        <br><br>
+    </table>
+    <div/>
+
+
+
+
+
+{% endblock  %}
+

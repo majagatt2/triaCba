@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% load static %}
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+  <head>
+      
+      <meta charset="utf-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <title> {% block title %} TriaCba{% endblock %}</title>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+         
+      <!-- Favicons -->
+      <link href="{% static 'registro/img/favicon2.png' %}" rel="icon">
+    
+    <style>
+      body{
+        background-position: center;
+        background-attachment: fixed;
+        background-repeat:no-repeat;
+        background-size: cover;
+        background-origin: content-box;
+        background-blend-mode: normal;
+
+      }
+                
+    </style>
+
+
+  </head>
+
+  <body style="background-image: url({% static 'registro/assets/img/corredor3.jpg' %}) ;">
+      
+    {% block content%}      
+      
+    {% endblock %}
+
+    {% if messages %}
+      {% for message in messages %}
+        
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+       <script>
+        var m = "{{message}}";
+        swal("Genial !", m, "success");</script>
+       
+      {% endfor %}
+    {% endif %}
+     
+
+    <footer id="footer" class="footer text-center  pb-3 bg-opacity-50 text-white-100 fixed-bottom ">
+        <div class="copyright">
+          &copy; <strong><span>Asociación de Triatlón, Duatlón y pruebas combinadas de la Provincia de Córdoba</span></strong>.
+        </div>
+        <div class="credits">
+        </div>
+    </footer><!-- End Footer -->
+
+
+
+
+            
+            
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    
+
+
+
+<script>
+  var index = 0;
+  var listaimg = [
+  "{% static 'registro/assets/img/acreditacion0.jpg' %}",
+  "{% static 'registro/assets/img/acreditacion1.jpg' %}",
+  "{% static 'registro/assets/img/nadador1.jpg' %}",
+  "{% static 'registro/assets/img/nadador.jpg' %}",
+  "{% static 'registro/assets/img/nadador0.jpg' %}",
+  "{% static 'registro/assets/img/transicion.jpg' %}",
+  "{% static 'registro/assets/img/corredor0.jpg' %}",
+  "{% static 'registro/assets/img/corredor2.jpg' %}",
+  "{% static 'registro/assets/img/corredor7.jpg' %}",
+  "{% static 'registro/assets/img/corredor6.jpg' %}",
+  "{% static 'registro/assets/img/trofeos.jpg' %}",
+  "{% static 'registro/assets/img/corredor3.jpg' %}",
+  
+  ];
+
+  $(function() {
+      setInterval(changeImage, 4000);
+  });
+
+  function changeImage() {
+   
+    $('body').css("background-image", 'url(' + listaimg[index] + ')');
+    index++;
+    if(index == 12)
+        index = 0;
+  }
+</script> 
+  </body>
+</html>

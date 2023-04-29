@@ -1,0 +1,108 @@
+{% extends "base/index3.html" %}
+{% block content %}
+
+{%  if user.is_authenticated%}  
+{% if object_list %}
+{% for c in object_list %}
+{% if c == request.user %}   
+
+
+<form  method="POST"  >
+{% csrf_token %}
+
+    <div class="card page p-4" >
+    <div class="row" >
+      <div class="col-md-2">
+          <img alt="" style="width:400px;" title="" class="img-circle img-thumbnail isTooltip" src="{{c.fotoPerfil.url}}" data-original-title="Usuario"> 
+          
+      </div>
+      
+      <div class="col-md-6 ">
+        <br>
+          <strong><h4>MIS DATOS:</h4></strong><br>
+          <div class="table-responsive">
+          <table class="table table-user-information ">
+              <tbody>
+                  <tr>        
+                      <td><strong>Asociado Nº</strong></td>                                                              
+                      <td class="text-border-success">{{c.cuil}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Atleta</strong></td>                                                              
+                      <td class="text-border-success">{{c.last_name|title}}, {{c.first_name|title}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Username</strong></td>                                                              
+                      <td class="text-border-success">{{c.username}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Domicilio</strong></td>                                                              
+                      <td class="text-border-successy">{{c.domicilio|title}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Ciudad</strong></td>                                                              
+                      <td class="text-border-success">{{c.ciudad|title}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Email</strong></td>                                                              
+                      <td class="text-border-success">{{c.email}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Telefono</strong></td>                                                              
+                      <td class="text-border-success">{{c.telefono}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Fecha Nacimiento</strong></td>                                                              
+                      <td class="text-border-success">{{c.fechaNacimiento}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Nacionalidad</strong></td>                                                              
+                      <td class="text-border-success">{{c.nacionalidad|title}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Edad</strong></td>                                                              
+                      <td class="text-border-success">{{c.get_edad}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Sexo</strong></td>                                                              
+                      <td class="text-border-success">{{c.sexo}}</td>
+                  </tr>
+                  <tr>        
+                      <td><strong>Foto dni</strong></td>                                                              
+                      <td> <a href={{c.fotoDni.url}} > <img src={{c.fotoDni.url}} width="60" height="40"></a></td>
+                  </tr>
+
+                                                      
+              </tbody>
+          </table>
+          <div class="d-flex justify-content-end">           
+            <a class='btn btn-primary btn-sm' href={% url 'editar_usuarios' request.user.cuil %}>Actualizar</a>
+          </div>
+        </div>
+      </div>
+  
+    </div>
+    </div>
+</form>
+<br><br><br>
+
+
+{% endif %}
+{% endfor %}
+{% endif %}
+{% endif %}
+
+{% endblock %}  
+    
+    
+    
+    
+
+
+
+
+
+
+      
+
+      

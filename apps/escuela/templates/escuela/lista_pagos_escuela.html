@@ -1,0 +1,70 @@
+{% extends "base/index3.html" %}
+{%  if user.is_authenticated %}
+
+{% block content %}
+{% load static %}
+
+ <h2 class="text-white bg-black bg-opacity-25"><strong>Mis pagos mensuales Escuela </strong></h2>
+
+<form method='POST' class=" form-control ">
+    {% csrf_token %}
+   
+          
+        
+        
+        
+        <div style="overflow-x:auto; ">
+            <table class = 'table'>
+                <thead>
+                    <tr class="table table-success">
+                        {% comment %} <th >Nº</th> {% endcomment %}
+                        <th >Estado</th>
+                        <th >Fecha Pago</th>
+                        <th >Nombre</th>
+                        <th >Concepto</th>
+                        <th >Monto Abonado</th>
+                        <th >Tipo socio</th>
+                        <th >Comprob Pago</th>
+                    </tr>
+                </thead>
+                {% if object_list %}  
+                    {% for c in object_list %}
+                    
+                        <tbody>
+                            {% if c.asociado.persona == request.user %}
+                                <tr>
+                                    {% comment %} <td>{{c.id}}</td> {% endcomment %}
+                                    {% if c.confirm_pago == False %}
+                                    <th style="color:red">A confirmar</td>
+                                        {% else %}
+                                        <td><img src={% static 'registro/tilde2.png' %}  width="30" height="30"></td>
+                                    {% endif %}    
+                                    <td>{{c.fechaPago|date:"d/m/Y"}}</td>
+                                    <td>{{c.asociado|title}} </td>
+                                    <td>{{c.formaPago}}</td>
+                                    <th>$ {{c.montoAbonado|floatformat:"-3g"}}</td>
+                                 
+                                    <td>{{c.tipoPago}}</td>
+                                   
+
+                                    <td><a href={{c.comprobPago.url}}><img src={{c.comprobPago.url}} width="20" height="20"></td></a>
+                                    <tr>               
+                           {% endif %}
+                        </tbody>
+                    {% endfor %}
+                {% else%}
+                    <br>
+                    <h4>Aún no tienes pagos registrados</h4>
+                {% endif %}    
+            </table>
+        </div> 
+            
+            <div class="d-flex justify-content-center">   
+                <a class="btn btn-success" href={% url 'pagos_escuela'   %}>Informar un Pago</a>
+            </div>
+
+    
+</form>   
+     
+{% endblock  %}
+{% endif %}   

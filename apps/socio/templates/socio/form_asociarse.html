@@ -1,0 +1,220 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load crispy_forms_tags %}
+ 
+
+    <div class="container">
+        <form  method="POST" class="needs-validation form-control text-white bg-black bg-opacity-75" enctype="multipart/form-data" onsubmit="send();">
+            {% csrf_token %}
+            {%  if user.is_authenticated%}
+                <br>
+                <h3 class="text-center">Registro para Asociarse de:</h3>
+                <h4 class="text-center" style="color:white">{{request.user.first_name}} {{request.user.last_name}}</h4>
+                <br>
+               
+                     <div class="row">
+                       {{form |crispy}}
+                    </div>
+                <br>
+
+               
+
+
+
+                <div class="form-check">
+                    <p><b> Al presionar 'Confirmar' declaro que:</b></p>
+                        
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Las imágenes que adjunto son copia fiel del original
+                    </label>
+                    <br>
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Los datos consignados en el presente formulario son verdaderos
+                    </label>
+                    <br>
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Entiendo y acepto el período de vigencia como persona asociada en relación a la fecha de alta y opción de pago  elegida
+                    </label>
+                    <br>
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                       Acepto recibir información de la Asociación Cordobesa de Triatlón a través del correo electrónico consignado
+                    </label>
+                </div>        
+
+
+
+
+
+
+
+                <div class="d-flex justify-content-end">
+                    <a type="reset" class="btn btn-secondary" href={% url 'carnet' %}>Cancelar</a>
+                    &nbsp;                 
+                    <input id="btn" type="submit" class="btn btn-sm btn-primary" value="Confirmar">
+                </div>
+            {% else %}
+                <p> No hay nadie logueado</p>
+            {% endif %} 
+        </form>
+        <br><br><br>
+
+    </div>    
+   
+            
+{% endblock  %}
+
+
+
+ {% comment %} <h7 style='color:Blue;'>Vinculos y entrenador</h7>
+         <br>
+         <br>
+         
+        
+
+            
+         
+                
+                <div class="col-3">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">Tipo Asociado</span>    
+                        <select  class="form-control" {{form.id_tipoAsociado}}  
+                            <div class="invalid-feedback">
+                                Valid Cuil is required.
+                            </div>
+                    </div>
+                </div>   
+                
+                
+                <div class="col">
+                    <div class="input-group has-validation">
+                        <label for="files" class="form-control">Selecione Emmac</label>
+                        {% comment %} <input class="form-control" id="files" style="display:None" type="file"  {{form2.emmac}} 
+                            <input  class="form-control" id='files' style ="display:None"   {{form.emmac_file}}
+                            <div class="invalid-feedback">
+                                Valid Cuil is required.
+                            </div>
+                    </div>
+                </div>
+
+                <div class="col">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">Fecha Emmac</span>    
+                        <input  class="form-control" {{form.fecha_emision_emmac}}  
+                            
+                    </div>
+                </div>   
+
+
+
+            </div>    
+           
+            <br>
+  
+            <div class="row g-3 ">
+                
+ 
+                <div class="col">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">Entrenador</span>   
+                        <input  class="form-control" placeholder="Nombre del entrenador"{{form.entrenador}}  
+                            
+                    </div>
+                </div>
+                
+
+                <div class="col">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">email</span>   
+                        <input  class="form-control" placeholder="email_del entrenador@ejemplo.com"{{form.email_entrenador}}  
+                           
+                    </div>
+                </div>
+                
+            
+                <div class="col">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">vinculo</span>   
+                        <input  class="form-control" placeholder="Vinculo con entrenador"{{form.vinculo_con_entrenador}}  
+                        
+                    </div>
+                </div>
+                
+            
+            </div>    
+        
+
+
+            <div class="row">
+            
+               
+                            
+
+                <div class="col">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">Responsable</span>   
+                        <input  class="form-control" placeholder="Nombre del Responsable - Tutor"{{form.responsable_tutor}}  
+                    </div>   
+                  </div>
+                </div>
+
+                <div class="col">
+                    <div class="input-group has-validation">
+                        <span class="input-group-text">Dni</span>   
+                        <input  class="form-control" placeholder="Dni del responsable-tutor"{{form.dni_responsable}}  
+                       
+                        </div>
+                    </div>
+                </div>
+                
+                <br>
+                <br>
+                
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Declaro haber leido las bases y condiciones generales respecto a mis obligaciones como Asociado
+                    </label>
+                    <div class="invalid-feedback">
+                            Debe estar de acuerdo para confirmar.
+                    </div>
+                    <br>
+                    <br>
+                </div>
+            
+            
+            
+            </div>    
+     
+            
+           
+                        
+            
+            
+            <div>  
+                
+                <br>
+                <h7 style='color:Tomato'><h7>Aca va forma de pago elegida</h7>
+                
+            </div>  
+
+           
+
+
+
+                <input class="w-10 btn btn-primary btn-lg " type="submit">
+
+                          
+        </form>
+
+   
+             
+               
+
+
+        </div> 
+    {% endcomment %}
+      

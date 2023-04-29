@@ -1,0 +1,334 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+
+
+    <div class="container">
+        <br>
+        <form  method="POST" class="needs-validation form-control bg-black bg-opacity-75 text-white" enctype="multipart/form-data">
+            {% csrf_token %}
+            {%  if user.is_authenticated%}
+             
+                <h3 class="text-center">Registro Inscripciones a Eventos:</h3>
+                <h4 class="text-center" style="color:#148F77">{{request.user.first_name}} {{request.user.last_name}}</h4>
+            
+            {% if asociado|length == 0 %}
+                <h5 class="text-center" style="color:skyblue">No asociado</h5>
+            {% else %}    
+                {% for a in asociado %}
+                {% if request.user == a.persona %}
+                {% if forloop.last %}    
+                {% if a.estado and a.get_vigente %}
+                        <h5 class="text-center" style="color:green">Asociado</h5>
+                    {% else %}
+                        <h5 class="text-center" style="color:skyblue">No asociado</h5>
+                    {% endif %}
+                {% endif %}
+                {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+                
+
+                <div>
+                    {#{form |crispy}#}
+                  
+                </div>    
+           
+                    
+             <div class="form-control-btn-group">     
+                <div class="row-item">{#evento relacionado#}
+                    <label> {{form.eventoRelacionado.label}}</label>
+                    <select name="eventoRelacionado" id="id_evento" class="form-control"  required>
+                        <option value='0'></option>
+                        {% for x in eventos %}
+                            <option value="{{x.id}}">{{x|safe}}</option>
+                        {% endfor %} 
+                    </select>
+                </div>
+                <br>
+                <div class="row-item">{#distancia#}
+                    <div> {{form.distancia.label}}</div>
+                        <select name="distancia" id="id_distancia" class="form-control"  required > 
+                            
+                            {% for x in eventos %}
+                            {% for e in x.distancia_disponible.all %}
+                                <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                
+                </div>
+               <br>
+                <div class="row-item"> {#modalidad#}
+                    <div> {{form.modalidad.label}}</div>
+                        <select name="modalidad" id="id_modalidad"  class="form-control" required> 
+                            <option value='0'></option>
+                            {% for x in eventos %}
+                            {% for e in x.modalidad_disponible.all %}
+                                <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                  
+                </div>
+                <br>
+                <div class="row-item">{#catgoria#}
+                    <div> {{form.categoria.label}}</div>
+                        <select name="categoria" id="id_categoria" class="form-control" required> 
+                            <option value='0'></option>
+                            {% for x in eventos %}
+                            {% for e in x.categoria_disponible.all %}
+                            <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                   
+                </div>
+                <br>
+                <div class="row-item"> {#bici#}
+                    <div> {{form.bici.label}}</div>
+                        <select name="bici" id="id_bici" class="form-control" required> 
+                            <option value='0'></option>
+                            {% for x in eventos %}
+                            {% for e in x.bici_disponible.all %}
+                            <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
+                            {% endfor %}
+                            {% endfor %}
+                        </select>
+                   
+                </div>
+                <br>
+                <div class="row-item"> {#nombre_equipo_posta#}
+                    <label> {{form.nombreEquipoPosta.label}}</label>
+                    <input class="form-control" placeholder="Cada integrante del equipo deberá inscribirse utilizando igual nombre de equipo"{{form.nombreEquipoPosta}} >
+                </div>
+               <br>
+                
+               <div class="row-item">
+                    <label> {{form.obra_social.label}}</label>
+                    <div>{{form.obra_social}}</div>
+                </div>
+                <br>
+                <div class="row-item">
+                    <label> {{form.emmac_file.label}}</label>
+                    <div>{{form.emmac_file}}</div>
+                </div>
+                <br>
+                
+               
+                <div class="row-item">
+                    <div> {{form.formaPago.label}}</div>
+                        <select name="formaPago" id="id_formaPago" class="form-control" required> 
+                            <option value='0'></option>
+                            
+                            {% if asociado|length == 0 %}
+                                {% for c in costos %}
+                                    {% with 2 as c.asociado %}
+                                        {% if c.asociado == '2' %}    
+                                            <option value="{{c}}">{{c.formaPago}}</option>
+                                        {% endif %}    
+                                    {% endwith %}
+                                {% endfor %}
+                            {% else %}
+                                {% for n in asociado %}                          
+                                    {% if request.user == n.persona %}
+                                        {% if forloop.last %}    
+                                            {% for a in asociado %}
+                                            {% for c in costos %}
+                                                {% if  a.estado and a.get_vigente %}
+                                                    {% if c.asociado == '2' and a.estado == False %}
+                                                        <option value="{{c}}">{{c}}</option>
+                                                    {% elif c.asociado == '1' and a.estado == True %}
+                                                        <option value="{{c}}">{{c}}</option>
+                                                    {% endif %}
+                                                {% else %}
+                                                    {% with 2 as c.asociado %}
+                                                        {% if c.asociado == '2' %}    
+                                                            <option value="{{c}}">{{c}}</option>
+                                                        {% endif %}    
+                                                    {% endwith %}
+                                                {% endif %}
+                                            {% endfor %}
+                                            {% endfor %}
+                                        {% endif %}    
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                </div>
+               <br>
+                <div class="row-item">
+                    <div> {{form.montoDebeAbonar.label}}</div>
+                        <select name="montoDebeAbonar" id="id_montoDebeAbonar" class="form-control" required> 
+                            <option value='0'> --------</option>
+                            
+                            {% if asociado|length == 0 %}
+                                {% for c in costos %}
+                                    {% with 2 as c.asociado %}
+                                        {% if c.asociado == '2' %}
+                                            <option value="{{c.precio}}" data-chained="{{c}}">{{c.precio}}</option>
+                                       {% endif %}
+                                    {% endwith %}        
+                                {% endfor %}
+                            {% else %}
+                                {% for a in asociado %}
+                                {% for c in costos %}
+                                {% if a.estado %}
+                                    {% if c.asociado == '2' and a.estado == False %}
+                                        <option value="{{c.precio}}" data-chained="{{c}}">{{c.precio}}</option>
+                                    {% elif c.asociado == '1' and a.estado %}
+                                        <option value="{{c.precio}}" data-chained="{{c}}">{{c.precio}}</option>
+                                    {% endif %}
+                                {% else %}
+                                    {% with 2 as c.asociado %}
+                                        {% if c.asociado == '2' %}    
+                                            <option value="{{c.precio}}" data-chained="{{c}}">{{c.precio}}</option>
+                                        {% endif %}    
+                                    {% endwith %}
+                                {% endif %}
+                                {% endfor %}
+                                {% endfor %}
+                            {% endif %}
+                        </select>
+                </div>
+                <br>
+                <div class="row-item">
+                    <label> {{form.montoAbonado.label}}</label>
+                    <div>{{form.montoAbonado}}</div>
+                </div>
+                <br>
+                <div class="row-item">
+                    <label> {{form.comentario.label}}</label>
+                    <div>{{form.comentario}}</div>
+                </div>
+                <br>
+                <div class="row-item">
+                    <label> {{form.fechaPago.label}}</label>
+                        <div> {{form.fechaPago}}</div>
+                </div>
+                <br>    
+                <div class="row-item">
+                    <label>{{form.comprobPago.label}}</label>
+                        <div>{{form.comprobPago}}</div>
+                </div>
+                
+                {% if  request.user.get_edad < 18%}
+                    <br>
+                    <hr>
+                    <br>
+                    <p style="color:blue"><b>Por favor completá la siguiente sección para menores de 18 años:</b></p>
+                    <div class="row-item">
+                        <label > {{form.responsable_tutor.label}}</label>
+                        <div>{{form.responsable_tutor}} </div>
+                    </div>
+                    <br>
+                    <div class="row-item">
+                        <label > {{form.relacion_legal.label}}</label>
+                        <div>{{form.relacion_legal}} </div>
+                    </div>
+                    <br>
+                    <div class="row-item">
+                        <label > {{form.dni_responsable.label}}</label>
+                        <div>{{form.dni_responsable}} </div>
+                    </div>
+                     <br>
+                        <div class="row-item">
+                            <label > {{form2.relacion.label}}</label>
+                            <div>{{form2.relacion}} </div>
+                        </div>
+                    <br>
+                    <div class="row-item">
+                        <label > {{form.mail_responsable.label}}</label>
+                        <div >{{form.mail_responsable}}</div> 
+                    </div>
+                    <br>
+                    <div class="row-item" >
+                        <label> {{form.telefono_responsable.label}}</label>
+                        <div>{{form.telefono_responsable}}</div> 
+                    </div>
+                    <br>
+                {% endif %}
+
+            </div>
+            <br><br>
+             <div class="form-control p-5"> <!--Declaracion-->
+                <b><div class="form-check ">
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label " for="invalidCheck">
+                        Declaro haber leído, entendido y aceptado las "bases, condiciones, reglamentos y protocolos" y "anexos". 
+                        <a  href="https://triatloncordoba.org/eventos/">triatloncordoba.org/eventos/ </a>
+                    </label>
+                </div>
+                <br>
+                <div class="form-check ">
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label " for="invalidCheck">
+                        Declaro que las imágenes que adjunto son copia fiel del original.. 
+                    </label>
+                </div>
+                <br>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Acepto recibir información de la Asociación Cordobesa de Triatlón a través del correo electrónico consignado
+                    </label>
+                </div></b>
+            </div>
+                <br>
+               <div class="d-flex justify-content-end">
+                    
+                <a class="btn btn-secondary" href={% url 'eventos' %}>Cancelar</a>
+                &nbsp;    
+                <input class="w-10 btn btn-primary" type="submit" value="Confirmar">
+                </div>
+
+
+
+            </div>
+            
+                <br>
+                
+                           
+               
+                <br>
+            {% endif %}
+        </form>
+     
+    </div>    
+        
+
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="{% static 'registro/js/jquery.chained.min.js' %}"></script>
+
+<script>
+  $(function(){
+      $("#id_evento").val("{{ form.eventoRelacionado.id }}").change();
+      $("#id_distancia").val("{{form.distancia.id}}").change();
+      $("#id_distancia").chained("#id_evento");
+      $("#id_modalidad").val("{{form.modalidad.id}}").change();
+      $("#id_modalidad").chained("#id_evento");
+      $("#id_categoria").val("{{form.categoria.id}}").change();
+      $("#id_categoria").chained("#id_evento");
+      $("#id_bici").val("{{form.bici.id}}").change();
+      $("#id_bici").chained("#id_evento");
+      
+  });
+  </script>
+
+
+  <script>
+  $(function(){
+      $("#id_formaPago").val("{{ form.formaPago.id }}").change();
+      $("#id_montoDebeAbonar").chained("#id_formaPago");
+      $("#id_montoDebeAbonar").val("{{ form.montoDebeAbonar.id }}").change();
+  });
+  </script>
+
+
+{% endblock %}        
+

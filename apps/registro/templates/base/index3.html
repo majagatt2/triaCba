@@ -1,0 +1,483 @@
+{% load static %}
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+
+  <title>TriaCba</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+  <!-- Favicons -->
+  <link href="{% static 'registro/img/favicon2.png' %}" rel="icon">
+  {% comment %} <link href="{% static 'registro/img/favicon.png' %}" rel="icon"> {% endcomment %}
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Nunito:300,300i,400,400i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+
+  <!-- Vendor CSS Files -->
+  <link href="{% static 'registro/assets/vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/quill/quill.snow.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/quill/quill.bubble.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/remixicon/remixicon.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/assets/vendor/simple-datatables/style.css' %}" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="{% static 'registro/assets/css/style.css' %}" rel="stylesheet">
+
+  <!-- =======================================================
+  * Template Name: NiceAdmin - v2.4.1
+  * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
+  * Author: BootstrapMade.com
+  * License: https://bootstrapmade.com/license/
+  ======================================================== -->
+
+  <style>
+    main{
+      opacity: 0.8;
+    }
+
+
+  </style>
+</head>
+
+<body class="text-black" style= "
+                background: url({% static 'registro/assets/img/corredor3.jpg' %});
+                background-position: center;
+                background-atachment: fixed;
+                background-repeat:no-repeat;
+                background-size: cover;
+                background-origin: content-box;
+                background-blend-mode: normal; 
+                 ">
+  
+
+  <!-- ======= Header ======= -->
+  {% block header %}
+  <header id="header" class="header fixed-top d-flex align-items-center">
+
+    <div class="d-flex align-items-center justify-content-between">
+      <a href="#" class="logo d-flex align-items-center">
+        <img src="{% static "registro/logo_triatloncba.png"%}" alt="">
+        <span class="d-none d-lg-block"></span>
+      </a>
+      <i class="bi bi-list toggle-sidebar-btn"></i>
+    </div><!-- End Logo -->
+
+    {% comment %} <div class="search-bar">
+      <form class="search-form d-flex align-items-center" method="POST" action="#">
+        <input type="text" name="query" placeholder="Search" title="Enter search keyword">
+        <button type="submit" title="Search"><i class="bi bi-search"></i></button>
+      </form>
+    </div><!-- End Search Bar --> {% endcomment %}
+    {% block nav %}
+    {%  if user.is_authenticated %}
+    <nav class="header-nav ms-auto" >
+      <ul class="d-flex align-items-center">
+
+        {% comment %} <li class="nav-item d-block d-lg-none">
+          <a class="nav-link nav-icon search-bar-toggle " href="#">
+            <i class="bi bi-search"></i>
+          </a>
+        </li><!-- End Search Icon--> {% endcomment %}
+
+        {% comment %} <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-bell"></i>
+            <span class="badge bg-primary badge-number">4</span>
+          </a><!-- End Notification Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow notifications">
+            <li class="dropdown-header">
+              You have 4 new notifications
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-exclamation-circle text-warning"></i>
+              <div>
+                <h4>Lorem Ipsum</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>30 min. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-x-circle text-danger"></i>
+              <div>
+                <h4>Atque rerum nesciunt</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>1 hr. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-check-circle text-success"></i>
+              <div>
+                <h4>Sit rerum fuga</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>2 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="notification-item">
+              <i class="bi bi-info-circle text-primary"></i>
+              <div>
+                <h4>Dicta reprehenderit</h4>
+                <p>Quae dolorem earum veritatis oditseno</p>
+                <p>4 hrs. ago</p>
+              </div>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+            <li class="dropdown-footer">
+              <a href="#">Show all notifications</a>
+            </li>
+
+          </ul><!-- End Notification Dropdown Items -->
+
+        </li><!-- End Notification Nav -->
+
+        <li class="nav-item dropdown">
+
+          <a class="nav-link nav-icon" href="#" data-bs-toggle="dropdown">
+            <i class="bi bi-chat-left-text"></i>
+            <span class="badge bg-success badge-number">3</span>
+          </a><!-- End Messages Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow messages">
+            <li class="dropdown-header">
+              You have 3 new messages
+              <a href="#"><span class="badge rounded-pill bg-primary p-2 ms-2">View all</span></a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Maria Hudson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>4 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>Anna Nelson</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>6 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="message-item">
+              <a href="#">
+                <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
+                <div>
+                  <h4>David Muldon</h4>
+                  <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
+                  <p>8 hrs. ago</p>
+                </div>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li class="dropdown-footer">
+              <a href="#">Show all messages</a>
+            </li>
+
+          </ul><!-- End Messages Dropdown Items -->
+
+        </li><!-- End Messages Nav --> {% endcomment %}
+
+        <li class="nav-item dropdown pe-3">
+
+          <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
+            <img src="{{ request.user.fotoPerfil.url }}" alt="Foto Perfil" class="rounded-circle">
+            <span class="d-none d-md-block dropdown-toggle ps-2">{{request.user.first_name}}  {{request.user.last_name}}</span>
+          </a><!-- End Profile Iamge Icon -->
+
+          <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
+            <li class="dropdown-header">
+              <h6>{{request.user.first_name}}  {{request.user.last_name}}</h6>
+              <span>Triatleta</span>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'datos_usuarios' %}">
+                <i class="bi bi-person"></i>
+                <span>Mis Datos</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            {% comment %} <li>
+              <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                <i class="bi bi-gear"></i>
+                <span>Account Settings</span>
+              </a>
+            </li>
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
+                <i class="bi bi-question-circle"></i>
+                <span>Need Help?</span>
+              </a>
+            </li> {% endcomment %}
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item d-flex align-items-center" href="{% url 'logout' %}">
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Salir</span>
+              </a>
+            </li>
+
+          </ul><!-- End Profile Dropdown Items -->
+        </li><!-- End Profile Nav -->
+
+      </ul>
+    </nav><!-- End Icons Navigation -->
+    {% else %}
+     <nav class="header-nav ms-auto" >
+      <ul class="d-flex align-items-center">
+        <li class="nav-item dropdown">
+          <a class=" nav-icon" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/" >
+            <i class=""><span class="badge bg-primary-light ">Login</span></i>
+          </a><!-- End Notification Icon -->
+        </li><!-- End Notification Nav -->
+
+        <li class="nav-item dropdown">
+          <a class="nav-link nav-icon" href="https://triatloncordoba.org" >
+            <i class=""><span class="badge bg-warning-light ">HOME</span></i>
+          </a><!-- End Messages Icon -->
+        </li><!-- End Messages Nav --> 
+      </ul>
+    </nav><!-- End Icons Navigation -->
+
+
+    {% endif %}
+    {% endblock %}
+
+  </header><!-- End Header -->
+  {% endblock %}
+  {%  if user.is_authenticated %}
+  <!-- ======= Sidebar ======= -->
+  {% block aside %}
+    <aside id="sidebar" class="sidebar" style="opacity:.8">
+        <ul class="sidebar-nav" id="sidebar-nav" >
+          <li class="nav-item">
+            <a class="nav-link collapsed " href="{% url 'datos_usuarios' %}">
+              <i class="bi bi-person"></i>
+              <span style="color:red;">Mis Datos</span>
+            </a>
+          </li><!-- End Profile Page Nav -->
+
+          <li class="nav-item" >
+            <a class="nav-link collapsed" href="{% url 'carnet' %}">
+              <i class="bi bi-postcard"></i>
+              <span style="color:red;">Mi Carnet</span>
+            </a>
+          </li><!-- End F.A.Q Page Nav -->
+          <br>
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'lista_pagos_socio' %}">
+              <i class="bi bi-coin"></i>
+              <span style="color:blue;">Mi Pago Anual Asociación</span>
+            </a>
+          </li><!-- End Contact Page Nav -->
+
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'lista_pagos_escuela' %}">
+              <i class="bi bi-coin"></i>
+              <span style="color:blue;">Mi Pagos Mensual Escuela</span>
+            </a>
+          </li><!-- End Contact Page Nav -->
+          <br>
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'eventos' %}">
+              <i class="bi bi-calendar3"></i>
+              <span style="color:#F36808;">Próximos Eventos</span>
+            </a>
+          </li><!-- End Register Page Nav -->
+
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'mis_inscripciones' %}">
+              <i class="bi bi-trophy"></i>
+              <span style="color:#F36808;">Mis Inscripciones</span>
+            </a>
+          </li><!-- End Login Page Nav -->
+          <br>
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'index' %}">
+              <i class="bi bi-house"></i>
+              <span>Inicio</span>
+            </a>
+          </li><!-- End Error 404 Page Nav -->
+
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'logout' %}">
+              <i class="bi bi-box-arrow-in-right"></i>
+              <span>Salir</span>
+            </a>
+          </li><!-- End Blank Page Nav -->
+
+
+
+          {% if user.is_staff %}
+          <li class="nav-heading">Opciones Staff:</li>
+
+          <li class="nav-item">
+            <a class="nav-link " href="{% url 'adminWeb' %}">
+              <i class="bi bi-grid"></i>
+              <span>Administración</span>
+            </a>
+          </li><!-- End Dashboard Nav -->
+          {% endif %}
+
+          {% if request.user.username == 'cmonasterolo' or request.user.username == 'mpolo' %}
+        <br>
+        <li class="nav-heading">Opciones Escuela:</li>
+
+        <li class="nav-item">
+          <a class="nav-link " href="{% url 'lista_escuela' %}">
+            <i class="bi bi-grid"></i>
+            <span>ESCUELA</span>
+          </a>
+        </li><!-- End Dashboard Nav -->
+         {% endif %}
+
+          
+          
+        </ul>
+      
+    </aside><!-- End Sidebar-->
+  {% endblock %}  
+  {% endif %}
+
+  <main id="main" class="main">
+    {% block content %}
+      {% for m in mensaje %} 
+      <div class="card page p-4" style="opacity:1">
+        {{m|safe}}
+      {% endfor %}
+      </div>
+    {% endblock %}  
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer" class="footer">
+    <div class="copyright">
+      &copy; <strong><span>Asociación de Triatlón, Duatlón y pruebas combinadas de la Provincia de Córdoba</span></strong>.
+    </div>
+    <div class="credits">
+      <!-- All the links in the footer should remain intact. -->
+      <!-- You can delete the links only if you purchased the pro version. -->
+      <!-- Licensing information: https://bootstrapmade.com/license/ -->
+      <!-- Purchase the pro version with working PHP/AJAX contact form: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/ -->
+      {% comment %} Designed by <a href="https://bootstrapmade.com/">BootstrapMade</a> {% endcomment %}
+    </div>
+  </footer><!-- End Footer -->
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+  <!-- Vendor JS Files -->
+  <script src="{% static 'registro/assets/vendor/apexcharts/apexcharts.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/chart.js/chart.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/echarts/echarts.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/quill/quill.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/simple-datatables/simple-datatables.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/tinymce/tinymce.min.js' %}"></script>
+  <script src="{% static 'registro/assets/vendor/php-email-form/validate.js' %}"></script>
+  
+
+  <!-- Template Main JS File -->
+  <script src="{% static 'registro/assets/js/main.js' %}"></script>
+  
+
+  <script>
+  function send(){
+  var btn = document.getElementById('btn');
+  btn.setAttribute('disabled','');
+  alert('En proceso');
+  }
+  </script>
+
+        
+  {% if messages %}
+  {% for message in messages %}
+      <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+      <script>
+        var m = "{{message}}";
+        swal("Genial !", m, "success");</script>
+  {% endfor %}
+  {% endif %}
+
+       
+    <script>
+    $(function() {
+    // Sidebar toggle behavior
+    $('#sidebarCollapse').on('click', 
+    function() {
+    $('#sidebar, #content').toggleClass('active');
+    });
+    });>
+    </script> 
+
+
+
+        
+   
+
+</body>
+</html>
+

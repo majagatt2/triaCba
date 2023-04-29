@@ -1,0 +1,145 @@
+{% extends "base/index3.html" %}
+
+
+{% block content %}
+{% load static %}
+
+
+{% csrf_token %}
+{% comment %} <form method='POST' class="form-control bg-black bg-opacity-50"> {% endcomment %}
+   
+        <h2 class="text-white pt-3 bg-black bg-opacity-25"><strong>Próximos eventos: </strong></h2><br>
+    
+    {% comment %} {% for eventos in eventos_list %}
+        <ul class= "list-group list-group-flush">
+            <li class="list-group-item"> <a href={% url 'eventos_detalles' eventos.id %} > {{eventos}} </li><br>
+        </ul>
+    {% endfor %} {% endcomment %}
+
+    
+        {% comment %} <ul class="list-group">
+            <a href={% url 'eventos_detalles' eventos.id %} class="list-group-item list-group-item-action"> {{eventos}} </a><br>
+        </ul> {% endcomment %}
+        
+    
+    
+    
+ 
+ 
+
+<section class="justify-content-center"  >
+
+            <div class="row justify-content-center" style="padding-top:">
+                {% for eventos in eventos_list %}
+                <div class="justify-content-center p-1 h-120 shadow-lg " style="width: 22rem; margin: 0.3rem; background-color:red; border-radius: 15px; ">
+                     
+                    <div class=" justify-content-center text-center card p-1 h-100" style="width: 100%; margin: 0rem; border-radius: 10px; " >
+                        
+                        <div class="card-title text-center ui-shadow-sm h-100 " >
+                            {% if eventos.inscribirse %} 
+                            <h4 class=""  href="{% url 'eventos_detalles' eventos.id %}">
+                                        <a style="color:#F26B1E" href={% url 'eventos_detalles' eventos.id %}><b>{{eventos.nombreEvento}}</b></a></h4>
+                            {%  else %}
+                            <h4 class=""  >
+                                        <a style="color:#F26B1E" ><b>{{eventos.nombreEvento}}</b></a></h4>
+                            {%  endif%}
+                         
+                               
+                       
+                            <p class="text-black  card-body text-opacity-75"><span class="text-black text-opacity-50"> Lugar: </span>{{eventos.lugar}}</p>
+                            
+                                <div class="small text-black"><span class="text-black text-opacity-50"> Fecha:</span> <b>{{eventos.fechaEvento}}</b>
+                                   
+                                    <br>
+                                </div>
+                        
+                        </div>
+                         <div class="card-body text-center ui-shadow-sm h-100 " >
+                            {% if eventos.inscribirse %} 
+                                <a href={% url 'eventos_detalles' eventos.id %} class="link-danger text-decoration-none pb-1 "><b><i class="bi bi-info-circle-fill"></i> Inscribirme </b><i class="bi bi-pencil-square"></i></a>
+                            {%  else %}
+                                <p class="link-warning "><i class="bi bi-x-circle">Inscripción inactiva</i></p>
+                            {% endif %}
+                         </div>
+
+                       
+                                {% if eventos.publicar %} 
+                                
+                                <a href={% url 'lista_inscriptos' eventos.id %} class="link-info text-end pb-1 "><b><i class="bi bi-eye"></i>Listado Inscriptos</b></a>
+                                {%  else %}
+                                <a href="#" class=" text-end pb-1 text-black-50 "><i class="bi bi-eye-slash-fill"></i>Listado Inscriptos</a>
+                                {% endif %}
+                            
+                       
+                        
+                    </div>
+                </div>
+
+               
+
+
+                {% endfor %}
+
+
+            </div>
+
+        {% comment %} </div> {% endcomment %}
+
+
+</section>
+
+    {% comment %} <section class="features ">
+	<div class="card p-3 shadow  mb-2 bg-white rounded-3" >
+		<div class="row-6 ">
+			<div class="col-lg-12">
+				<div class="feature-block " >
+					
+                    <div class="feature-item mb-2 mb-lg-0" >
+						<div class="feature-icon mb-1">
+							<i class="icofont-surgeon-alt"></i>
+						</div>
+						<h4 class="mb-2 text-center"><a href={% url 'eventos_detalles' eventos.id %} class="list-group-item list-group-item-action" style="color:#F36808"> <b>{{eventos}}</b> </a></h4><hr>
+                        <span class="text-center"><b>Cuando: </b>{{eventos.fechaEvento}}</span>
+						
+						<p class="mb-4"><b>Cupo:</b> {{eventos.cupo}} , <b>Modalidades:</b> 
+                            {% for x in eventos.modalidad_disponible.all %}
+                            {{x}}-
+                            {% endfor %}
+                            
+                            <b>distancias:</b> 
+                            {% for x in eventos.distancia_disponible.all %}
+                            {{x}}-
+                            {% endfor %}
+                            </p>
+                           
+                         <div class="d-flex justify-content-center">       
+                            {% if eventos.inscribirse %} 
+                            
+                                <a href="{% url 'eventos_detalles' eventos.id %}" class="btn btn-warning"><b>Inscribite acá</b></a>
+                                {% else %}
+                                <p>Inscripción inactiva</p>
+                            {% endif %}
+                            &nbsp;  
+                            {% if eventos.publicar %}    
+                                <a href="{% url 'lista_inscriptos' eventos.id %}" class="btn btn-success ">Ver listado Inscriptos</a>
+                            {% endif %}
+                        </div>
+					</div>
+				
+					
+				</div>
+			</div>
+		</div>
+	</div>
+    </section> {% endcomment %}
+
+ 
+  
+  
+
+    
+{% comment %} </form>    {% endcomment %}
+            
+{% endblock  %}
+
+
