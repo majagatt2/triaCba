@@ -4,17 +4,54 @@
  
 
     <div class="container">
-        <form  method="POST" class="needs-validation form-control text-white bg-black bg-opacity-50" enctype="multipart/form-data" >
+        <form  method="POST" class="needs-validation form-control text-white bg-black bg-opacity-75" enctype="multipart/form-data" >
             {% csrf_token %}
             {%  if user.is_authenticated%}
                 <br>
                 <h3 class="text-center">Modificar tus datos de Asociado:</h3>
                 <h4 class="text-center" style="color:white">{{request.user.first_name}} {{request.user.last_name}}</h4>
                 <br>
-                <br>
-                <br>
+                
                    
-                        {{form| crispy}}
+                <b><p> ! Si quieres cambiar de entrenador debes solicitarlo vía email a tesoreriatriatloncba@gmail.com</p>
+                <p> ! Si subes tu nuevo emmac, debes informarnos vía email a tesoreriatriatloncba@gmail.com para que cambiemos la fecha de emisión. Gracias</p></b>
+                        
+                        {{form.con_entrenador.label}}
+                        {{form.con_entrenador}}
+
+                     <br>
+                     
+                        {{form.emmac_file.label}}
+                        {{form.emmac_file}}
+                        <br><br>
+
+                        {{form.numero_emmac.label}}                        
+                        {{form.numero_emmac}}
+
+                        {{form.obra_social.label}}                        
+                        {{form.obra_social}}
+
+                        <br>
+                       
+                        
+                            {{form.responsable_tutor.label}}
+                            {{form.responsable_tutor}}
+                        
+                            {{form.relacion_legal.label}}
+                            {{form.relacion_legal}} 
+                 
+                            {{form.dni_responsable.label}}
+                            {{form.dni_responsable}}
+                            
+                            {{form.mail_responsable.label}}
+                            {{form.mail_responsable}}
+
+                            {{form.telefono_responsable.label}}
+                            {{form.telefono_responsable}}
+
+                       
+                        <br>
+
                      
 
                 <br>

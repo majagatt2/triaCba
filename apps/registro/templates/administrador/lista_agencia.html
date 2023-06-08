@@ -3,7 +3,7 @@
 
 {% block bottom %}
 <i class="bi bi-list toggle-sidebar-btn"></i>
-<h3 class="text-align-center m-4">Lista Autorizados Kempes</h3>
+<h3 class="text-align-center m-4">{{object_list|length}} Autorizados Kempes</h3>
 {% endblock %}
 
 
@@ -16,15 +16,13 @@
 {% endblock %}
 
 
-        <h4 class="text-black"><strong>Lista asociados que ingresan al Kempes</strong></h4>
+        <h4 class="text-black"><strong>Lista {{object_list|length}} asociados que ingresan al Kempes</strong></h4>
       
     <div style="overflow-x:auto;" class="form-control">
     <table class = "table  datatable table-light" >
         <thead>
             <tr class="table-info">
                
-                
-                
                 <th>Nombre</th>
                 <th>Fecha Nacimiento</th>
                 <th>Dni</th>

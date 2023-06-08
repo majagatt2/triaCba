@@ -1,0 +1,214 @@
+{% extends "base/index3.html" %}
+{% load static %}
+{% block content %}
+{% load crispy_forms_tags %}
+
+<system.webServer>
+    <security>
+      <requestFiltering>
+        <requestLimits maxAllowedContentLength="2164440" />
+      </requestFiltering>
+    </security>
+</system.webServer>
+
+    <div class="container">
+        <form  method="POST" class="needs-validation form-control text-white bg-black bg-opacity-75" enctype="multipart/form-data" onsubmit="send();move();">
+            {% csrf_token %}
+            {%  if user.is_authenticated%}
+                <br>
+                <h3 class="text-center">Registro para Asociarse de:</h3>
+                <h4 class="text-center" style="color:white">{{request.user.first_name}} {{request.user.last_name}}</h4>
+               
+                
+                <br>
+               
+                     <div class="row">
+                       {#{form |crispy}#}
+                    </div>
+                <br>
+                        
+                      
+                        {{form.con_entrenador.label}}
+                        {{form.con_entrenador}}
+
+                        {{form.entrenador.label}}
+                        {{form.entrenador}}
+                        <br>
+
+                        {{form.fecha_emision_emmac.label}}
+                        {{form.fecha_emision_emmac}}
+                        
+                        {{form.emmac_file.label}}
+                        {{form.emmac_file}}
+                        
+                        {{form.numero_emmac.label}}                        
+                        {{form.numero_emmac}}
+                        <br>
+                        {{form.obra_social.label}}                        
+                        {{form.obra_social}}
+
+                        <br>
+                        {% if request.user.get_edad < 18 %}
+                        <p> Tienes {{request.user.get_edad}} años de edad, debes completar la siguiente información:</p>
+                        
+                            {{form.responsable_tutor.label}}
+                            {{form.responsable_tutor}}
+                        
+                            {{form.relacion_legal.label}}
+                            {{form.relacion_legal}} 
+                 
+                            {{form.dni_responsable.label}}
+                            {{form.dni_responsable}}
+                            
+                            {{form.mail_responsable.label}}
+                            {{form.mail_responsable}}
+
+                            {{form.telefono_responsable.label}}
+                            {{form.telefono_responsable}}
+
+                        {% endif %}
+                        <br>
+
+                            <div class="form-control-btn-group">     
+                                <div class="row-item">
+                                    <label> {{form2.opcionElegida.label}}</label>
+                                    <select name="opcionElegida" id="id_opcionelegida" class="form-control" required>
+                                        <option value='0'>Elija una opción</option>
+                                        {% for x in costos %}
+                                        
+                                        <option value="{{x.id}}" >{{x}}</option>
+                                       
+                                        {% endfor %}
+                                            
+                                    </select>
+                                </div>
+                                <br>
+                               
+                                <div class="row-item">
+                                    <div> {{form2.tipoAsociadoPago.label}}</div>
+                                        <select style="color:red; font-weight: bold;" name="tipoAsociadoPago" id="id_tipoasociadopago" class="form-control" required> 
+                                        <option value='0'> --------</option>
+                                        {% for x in costos %}
+                                       
+                                            <option  value="{{x.tipoSocio}}" data-chained="{{x.id}}"><b>{{x.tipoSocio}}</b></option>
+                                       
+                                        {% endfor %}
+                                        </select>
+                                </div>
+                                
+                                <div class="row-item">
+                                    <div> {{form2.formaPago.label}}</div>
+                                        <select style="color:red; font-weight: bold;" name="formaPago" id="id_formapago" class="form-control" required> 
+                                            <option value='0'> --------</option>
+                                            {% for x in costos %}
+                                            
+                                            <option value="{{x.formaPago}}" data-chained="{{x.id}}">{{x.formaPago}}</option>
+                                            
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                                
+                                <div class="row-item">
+                                    <div> {{form2.montoDebeAbonar.label}}</div>
+                                        <select style="color:red; font-weight: bold;" name="montoDebeAbonar" id="id_precio"  class="form-control" required> 
+                                            <option value='0'> --------</option>
+                                            {% for x in costos %}
+                                           
+                                            <option value="{{x.precio}}" data-chained="{{x.id}}">$ {{x.precio}}</option>
+                                            
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                            
+                                <br>
+                                <div class="row-item">
+                                    <label> {{form2.montoAbonado.label}}</label>
+                                    <div>{{form2.montoAbonado}}</div>
+                                </div>
+                                <br>
+                                <div class="row-item">
+                                    <label> {{form2.comentario.label}}</label>
+                                    <div>{{form2.comentario}}</div>
+                                </div>
+                                <br>
+                                <div class="row-item">
+                                    <label> {{form2.fechaPago.label}}</label>
+                                        <div> {{form2.fechaPago}}</div>
+                                </div>
+                                <br>    
+                                <div class="row-item">
+                                    <label>{{form2.comprobPago.label}}</label>
+                                        <div>{{form2.comprobPago}}</div>
+                                </div>
+                 
+                  
+                                <br>
+
+                <div class="form-check">
+                    <p><b> Al presionar 'Confirmar' declaro que:</b></p>
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Las imágenes que adjunto son copia fiel del original
+                    </label>
+                    <br>
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Los datos consignados en el presente formulario son verdaderos
+                    </label>
+                    <br>
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                        Entiendo y acepto el período de vigencia como persona asociada en relación a la fecha de alta y opción de pago  elegida
+                    </label>
+                    <br>
+                    <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
+                    <label class="form-check-label" for="invalidCheck">
+                       Acepto recibir información de la Asociación Cordobesa de Triatlón a través del correo electrónico consignado
+                    </label>
+                </div>        
+
+
+
+
+
+
+
+                <div class="d-flex justify-content-end">
+                    <a type="reset" class="btn btn-secondary" href={% url 'carnet' %}>Cancelar</a>
+                    &nbsp;                 
+                    <input id="btn" type="submit" class="btn btn-sm btn-primary" value="Confirmar">
+                </div>
+            {% else %}
+                <p> No hay nadie logueado</p>
+            {% endif %} 
+        </form>
+        <br><br><br>
+
+    </div>    
+   
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script src="{% static 'registro/js/jquery.chained.min.js' %}"></script>
+
+    
+   <script>
+     $(function(){
+        $("#id_opcionelegida").val("{{ form2.opcionElegida.id }}").change();
+       
+        $("#id_tipoasociadopago").val("{{form2.tipoAsociadoPago.id}}").change();
+        $("#id_tipoasociadopago").chained("#id_opcionelegida");
+        $("#id_formapago").val("{{form2.formaPago.id}}").change();
+        $("#id_formapago").chained("#id_opcionelegida");
+        $("#id_precio").val("{{form2.precio.id}}").change();
+        $("#id_precio").chained("#id_opcionelegida");
+        
+        
+        });
+    </script>
+    
+            
+{% endblock  %}
+
+
+
+ 

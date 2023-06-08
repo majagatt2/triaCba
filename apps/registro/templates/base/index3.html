@@ -42,13 +42,14 @@
     main{
       opacity: 0.8;
     }
+    
 
 
   </style>
 </head>
 
 <body class="text-black" style= "
-                background: url({% static 'registro/assets/img/corredor3.jpg' %});
+                background: url({% static 'registro/assets/img/trofeos.jpg' %});
                 background-position: center;
                 background-atachment: fixed;
                 background-repeat:no-repeat;
@@ -312,9 +313,9 @@
   {%  if user.is_authenticated %}
   <!-- ======= Sidebar ======= -->
   {% block aside %}
-    <aside id="sidebar" class="sidebar" style="opacity:.8">
+    <aside id="sidebar" class="sidebar" style="opacity:1; background-color:#deddddb5" >
         <ul class="sidebar-nav" id="sidebar-nav" >
-          <li class="nav-item">
+          <li class="nav-item a"  >
             <a class="nav-link collapsed " href="{% url 'datos_usuarios' %}">
               <i class="bi bi-person"></i>
               <span style="color:red;">Mis Datos</span>
@@ -324,7 +325,7 @@
           <li class="nav-item" >
             <a class="nav-link collapsed" href="{% url 'carnet' %}">
               <i class="bi bi-postcard"></i>
-              <span style="color:red;">Mi Carnet</span>
+              <span style="color:red;">Certificado Federado</span>
             </a>
           </li><!-- End F.A.Q Page Nav -->
           <br>
@@ -448,10 +449,26 @@
   function send(){
   var btn = document.getElementById('btn');
   btn.setAttribute('disabled','');
-  alert('En proceso');
   }
-  </script>
+   </script>
 
+   <script>
+  function move() {
+    var elem = document.getElementById("btn");
+    var width = 1;
+    var id = setInterval(frame, 10);
+    function frame() {
+        if (width >= 100) {
+        clearInterval(id);
+        } else {
+        width++;
+        elem.style.width = width + '%';
+        elem.innerHTML = width * 1  + '%';
+        }
+    }   
+    }
+  </script>
+  {#alert('En proceso');#}
         
   {% if messages %}
   {% for message in messages %}

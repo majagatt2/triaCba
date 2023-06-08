@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+{% load static %}
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Alerta Pago Cuota Asociado</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="{% static 'general/assets/vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+
+    </head>
+    <body>
+        <h1>Un nuevo Pago Asociado requiere validación: <br>
+            <strong style="color:green">{{persona}}</strong> - 
+            <strong style="color:#F36808">{{cuota}}</strong></h1>
+
+        <strong style="font-size:20px;">Datos:</strong>
+        <ul>
+           
+            <li>Fecha Pago: <b>{{fechaPago}}</b></li>
+            <li>Monto Abonado: <b>{{montoAbonado}}</b></li>
+            <li>Comentarios ingresados: <b>{{comentario|default:"No declara"}}</b></li>
+        </ul>
+        
+
+        <h3>Por favor ir a : </h3> <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/admin"> <b style="color:green">Admin</b> </a></h3>
+
+
+        <script src="" async defer></script>
+        
+    </body>
+</html>

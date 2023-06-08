@@ -7,6 +7,7 @@ from ckeditor.fields import RichTextField
 from apps.usuarios.models import Persona
 
 
+
 # Create your models here.
 class AsociadoTipo(models.Model):
     tipoAsociado = models.CharField(max_length=40)
@@ -35,11 +36,7 @@ class AsociadoCosto(models.Model):
 
     def __str__(self):
         return f"{self.tipoSocio} - {self.formaPago} - $ {self.precio}"
-    # def get_tipoSocios(self):
-    #     return ",".join([str(p) for p in self.tipoSocio.all()])
-
-    # def get_formaPago(self):
-    #     return ",".join([str(p) for p in self.formaPago.all()])
+   
 
 
 class EntrenamientoTurno(models.Model):
@@ -96,20 +93,22 @@ class AsociadoRequisitos(models.Model)    :
 
 class Asociado(models.Model):
     persona = models.ForeignKey(Persona, null=True, blank=True, on_delete=models.CASCADE)
-    fecha = models.DateField(default=date.today, null=False, blank=False)
+    fecha = models.DateField(auto_now_add=True)
     tipoAsociado = models.ForeignKey(
         AsociadoTipo, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Tipo asociado')
-    fecha_emision_emmac = models.DateField(
-        default=date.today, null=False, blank=False)
+    fecha_emision_emmac = models.DateField(auto_now=False,
+                                           blank=True, default=date(2000, 1, 1))
     emmac_file = models.ImageField(
-        upload_to='media/emmac', null=True, blank=True)
+        upload_to='media/emmac', null=True, blank=True, default="media/emmac/Sin_emmac.png")
+    numero_emmac = models.CharField(
+        ("numero Emmac"), max_length=10, default='s/d', blank=True)
     obra_social = models.CharField(max_length=60, null=False, blank=False)
     con_entrenador = models.CharField(
         max_length=2, choices=[('1', 'SI'), ('2', 'NO')], default=2)
     entrenador = models.ForeignKey(EntrenadoresKempe, on_delete=models.CASCADE, null=False,blank=False, default=12, verbose_name='Entrenador Kempes')
     responsable_tutor = models.CharField(max_length=40, null=True, blank=True,default='', help_text="campos obligatorios en caso de ser menor de 18 años")
     relacion_legal = models.CharField(
-        max_length=2, choices=[('1', '---------'), ('2', 'Madre'), ('3', 'Padre'), ('4', 'Tutor Legal')], default='', help_text="campo obligatorios en caso de ser menor de 18 años")
+        max_length=2, choices=[('1', 'Madre'), ('2', 'Padre'), ('3', 'Tutor Legal')], default='1', help_text="campo obligatorios en caso de ser menor de 18 años", blank=True)
     dni_responsable = models.IntegerField(
         null=True, blank=True, help_text="campo obligatorios en caso de ser menor de 18 años")
     mail_responsable = models.EmailField(
@@ -130,6 +129,12 @@ class Asociado(models.Model):
     def get_vencimiento_emmac(self):
         vencimiento = self.fecha_emision_emmac + timedelta(days=365)
         return vencimiento
+    
+    @property
+    def get_emmac_no_presentado(self):
+        if self.fecha_emision_emmac == date(2000,1,1):
+            return True
+    
 
     @property
     def get_sit_emmac(self):
@@ -161,7 +166,7 @@ class Asociado(models.Model):
     
     @property
     def dias_vencer(self):
-        if self.get_vencimiento > date.today():
+        if self.get_vencimiento >= date.today():
             self.estado=True
         else:
             self.estado=False

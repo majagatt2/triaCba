@@ -332,13 +332,13 @@ class SeguroListInscriptos(ListView):
 
 class KempesList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True)
+    queryset = Asociado.objects.filter(estado=True,).exclude(entrenador=12)
     template_name = 'administrador/lista_kempes.html'
     ordering = ['persona', ]
     
 class AgenciaList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True)
+    queryset = Asociado.objects.filter(estado=True).exclude(entrenador=12)
     template_name = 'administrador/lista_agencia.html'
     ordering = ['persona', ]
    

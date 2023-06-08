@@ -1,21 +1,72 @@
 {% extends "base/index3.html" %}
 {% block content %}
 {% load crispy_forms_tags %}
- 
+
+<system.webServer>
+    <security>
+      <requestFiltering>
+        <requestLimits maxAllowedContentLength="2164440" />
+      </requestFiltering>
+    </security>
+</system.webServer>
 
     <div class="container">
-        <form  method="POST" class="needs-validation form-control text-white bg-black bg-opacity-75" enctype="multipart/form-data" onsubmit="send();">
+        <form  method="POST" class="needs-validation form-control text-white bg-black bg-opacity-75" enctype="multipart/form-data" onsubmit="send();move();">
             {% csrf_token %}
             {%  if user.is_authenticated%}
                 <br>
                 <h3 class="text-center">Registro para Asociarse de:</h3>
                 <h4 class="text-center" style="color:white">{{request.user.first_name}} {{request.user.last_name}}</h4>
+               
                 <br>
                
                      <div class="row">
-                       {{form |crispy}}
+                       {#{form |crispy}#}
                     </div>
                 <br>
+                        {{form.tipoAsociado.label}}
+                        {{form.tipoAsociado}}
+                        
+                        {{form.con_entrenador.label}}
+                        {{form.con_entrenador}}
+
+                        {{form.entrenador.label}}
+                        {{form.entrenador}}
+                        
+
+                        {{form.fecha_emision_emmac.label}}
+                        {{form.fecha_emision_emmac}}
+
+                        {{form.emmac_file.label}}
+                        {{form.emmac_file}}
+
+                        {{form.numero_emmac.label}}                        
+                        {{form.numero_emmac}}
+
+                        {{form.obra_social.label}}                        
+                        {{form.obra_social}}
+
+                        <br>
+                        {% if request.user.get_edad < 18 %}
+                        <p> Tienes {{request.user.get_edad}} años de edad, debes completar la siguiente información:</p>
+                        
+                            {{form.responsable_tutor.label}}
+                            {{form.responsable_tutor}}
+                        
+                            {{form.relacion_legal.label}}
+                            {{form.relacion_legal}} 
+                 
+                            {{form.dni_responsable.label}}
+                            {{form.dni_responsable}}
+                            
+                            {{form.mail_responsable.label}}
+                            {{form.mail_responsable}}
+
+                            {{form.telefono_responsable.label}}
+                            {{form.telefono_responsable}}
+
+                        {% endif %}
+                        <br>
 
                
 
@@ -54,7 +105,7 @@
                 <div class="d-flex justify-content-end">
                     <a type="reset" class="btn btn-secondary" href={% url 'carnet' %}>Cancelar</a>
                     &nbsp;                 
-                    <input id="btn" type="submit" class="btn btn-sm btn-primary" value="Confirmar">
+                    <input id="btn" type="submit" class="btn btn-sm btn-primary" value="Confirmar" >
                 </div>
             {% else %}
                 <p> No hay nadie logueado</p>
@@ -62,7 +113,9 @@
         </form>
         <br><br><br>
 
-    </div>    
+    </div>
+    
+    
    
             
 {% endblock  %}

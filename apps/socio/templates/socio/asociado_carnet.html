@@ -2,6 +2,19 @@
 {% block content %}
 {% load static %}
 
+<style>
+    .special {
+text-align:center;
+color: #fff;
+background: #eee;
+font-family: impact;
+font-size: 20px;
+letter-spacing: 0;
+text-shadow: -2px -2px 2px #0000DF, -2px 2px 2px red, -2px 2px 2px #0000DF, 2px 2px 2px #0000DF;
+}
+
+
+</style>
 
 
 <form method="POST"  enctype="multipart">
@@ -30,15 +43,15 @@
                                             <br>
                                     <div class="row text-center ">
                                                 <br>
-                                        <p>Fecha carnet:
+                                        <p style="font-size:11px;">Fecha Certificado:
                                             <b> 
                                             {% now "j F Y H:i" %}
-                                        
-                                            {% comment %} <script>
-                                            date = new Date().toLocaleDateString();
-                                            document.write(date);
-                                            </script> {% endcomment %}
                                             </b>
+                                        </p>
+
+                                            <br>
+                                        <p class="special">
+                                            CERTIFICADO DEPORTISTA FEDERADO<br> TRIATLÓN CÓRDOBA
                                         </p>
                                         <br>
                                         {% if s.estado %}
@@ -47,43 +60,49 @@
                                         <h2  style="color:red">{{s.estado|yesno:'Activo,Pendiente de Activación'}}</h2>
                                         {%  endif %}
                                         <br>
-                                        <h4>{{s.tipoAsociado}}</h4>
+                                       
                                     </div>
                                         
                                     <div class="row people">
                                         <div class="col-12 col-md-6 offset-md-3">
-                                            <div class="flex-box" ><img class="rounded mx-auto d-block"  src={{request.user.fotoPerfil.url}} width="70" height="80">
-                                                <h3 class="name text-center">{{s.persona.first_name}} {{s.persona.last_name}}</h3>
+                                            <div class="flex-box" ><img class="rounded mx-auto d-block pb-3"  src={{request.user.fotoPerfil.url}} width="70" height="80">
+                                                <h3 class="name text-center"><b>{{s.persona.first_name}} {{s.persona.last_name}}</b></h3>
+                                                
+                                                 <h4 class="name text-center">{{s.tipoAsociado}}</h4>
                                                 <br>    
-                                                <extends class="title text-center">Nº de Socio:</extendes>
+                                                <extends class="title text-center opacity-100">Nº de Federado:</extendes>
                                                 <h5 class="name text-center">{{s.persona.cuil}}</h5>
                                                 
-                                                <extends class="title text-center">Vencimiento Carnet:</extends>
+                                                <extends class="title text-center ">Vencimiento Certificado:</extends>
                                                 
                                                 {% if now > s.get_vencimiento %}
-                                                    <h4 class="name text-center" style="color:red">{{s.get_vencimiento|date:" d/mm/Y"}}</h4>
+                                                    <h4 class="name text-center" style="color:red"><b>{{s.get_vencimiento|date:" d/mm/Y"}}</b></h4>
                                                     {% else %}
-                                                    <h4 class="name text-center">{{s.get_vencimiento}}</h4>
+                                                    <h4 class="name text-center"><b>{{s.get_vencimiento}}</b></h4>
                                                 {% endif %}
                                                 
                                                 
-                                                <extends class="title text-center">Entrenador Polo Kempes:</extends>
+                                                <extends class="text-center ">Entrenador Polo Kempes:</extends>
                                                 <h5 class="name text-center">{{s.entrenador}}</h5>
-                                                <br>
-
                                                 
-                                                <extends class="title text-center">Emmac : 
-                                                    <div class="border border-secondary border-opacity-25 ">
+                                                <extends class="title text-center p=5">Emmac : 
+                                                    <div class="border border-secondary border-opacity-50 p-2">
                                                     {% if s.get_sit_emmac %}
                                                         <div>
-                                                        <p style="color:green">Vigente</p>
+                                                        <p style="color:green">Nº {{s.numero_emmac}} Vigente</p>
                                                         <p>Vencimiento: {{s.get_vencimiento_emmac}}</p>
                                                         </div>            
-                                                    {%else %}
+                                                    {% elif s.get_sit_emmac == False and s.get_emmac_no_presentado == False  %}
                                                         <div>
-                                                        <h5 style="color:red"><b>Vencido</b></h5>
+                                                        <h5 style="color:red"><b>Nº {{s.numero_emmac}} Vencido</b></h5>
                                                         Venció el: {{s.get_vencimiento_emmac}}       
-                                                        </div>            
+                                                        </div>
+                                                    {% elif s.get_emmac_no_presentado %}
+                                                        <div>
+                                                        <h5 style="color:red"><b>Nº </b>- No declara</h5>
+                                                        Venció el: No declara       
+                                                        </div>
+                                                        
                                                     {% endif %}
                                                         <div > 
                                                         <a href={{s.emmac_file.url}}>Ver Emmac:
@@ -96,7 +115,7 @@
                                                 
                                                 
                                                 <br>
-                                                <strong><p class="description text-center">El presente carnet es válido para <br>constatar su situación Actual. </p></strong>
+                                                <strong><p class="description text-center">El presente certificado es válido para <br>constatar su situación Actual. </p></strong>
                                                         
                                             </div>
                                         </div>

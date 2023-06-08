@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'apps.socio',
     'apps.inscripcion',
     'apps.usuarios',
+    'apps.entrenadores',
     'crispy_forms',
     'import_export',
     'ckeditor',

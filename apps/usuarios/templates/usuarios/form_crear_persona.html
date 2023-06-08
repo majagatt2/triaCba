@@ -17,14 +17,14 @@
     
 
     <div class="form-control bg-white bg-opacity-25">
-        <form  method="POST" class="needs-validation form-control text-black"  novalidate="" enctype="multipart/form-data">
+        <form  method="POST" class="needs-validation form-control text-black"  novalidate="" enctype="multipart/form-data" onsubmit="send();move();">
         {% csrf_token %}
             
                 <br>
                  <b>{{form |crispy}}</b>
                           
             <div class="d-flex justify-content-end">       
-                 <input type="submit" class="btn btn-primary d-flex justify-content-end">
+                 <input id="btn" type="submit" class="btn btn-primary d-flex justify-content-end">
             </div>
                    
         </form>

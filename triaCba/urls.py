@@ -30,6 +30,8 @@ urlpatterns = [
     path('asociado/', include('apps.socio.urls')),
     path('inscripcion/', include('apps.inscripcion.urls')),
     path('', include('apps.usuarios.urls')),
+    path('entrenadores/', include('apps.entrenadores.urls')),
+    
     # path('', LoginView.as_view(template_name='accounts/login.html'), name = 'login')
     
     

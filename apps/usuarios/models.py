@@ -9,6 +9,7 @@ from django.db.models.signals import post_save
 from django.core.validators import MinLengthValidator
 
 
+
 # Create your models here.
 
 
@@ -28,6 +29,9 @@ class Persona(AbstractUser):
     fotoDni = models.ImageField(
         upload_to='media/fotoDni', default='foto Dni')  # default='foto Dni'
     
+    def __str__(self):
+        return f"{self.last_name} {self.first_name}"
+
     
     class Meta:
         verbose_name= 'Persona'
@@ -37,13 +41,8 @@ class Persona(AbstractUser):
     def natural_key(self):
         return self.cuil
         
-                
-    
-    def __str__(self):
-        return f"{self.last_name} {self.first_name}"    
-    
     
     @property
     def get_edad(self):
-        return date.today().year - self.fechaNacimiento.year 
+        return date.today().year - self.fechaNacimiento.year
    

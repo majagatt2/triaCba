@@ -35,7 +35,7 @@ class UsuariosUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Persona
     form_class = UpdatePersonaForm
     template_name = "usuarios/editar_persona.html"
-    success_url = reverse_lazy('login')
+    success_url = reverse_lazy('datos_usuarios')
     success_message = "Los datos se actualizaron con éxito"
     
     def form_valid(self, form, **kwargs):

@@ -15,12 +15,26 @@
         <h1>Un nuevo asociado requiere validación: <strong style="color:green">{{asociado}}</strong></h1>
 
          Datos:
-         <ul>
-            <li>Fecha: <b>{{fecha}}</b></li>
-            <li>Tipo de Asociado: <b>{{tipoAsociado}}</b></li>
-            <li>Fecha Emisión Emmac: <b>{{fecha_emision_emmac}}</b></li>
-            <li>Entrenador: <b>{{entrenador}}</b></li>
-            <li>Responsable Tutor: <b>{{responsable_tutor}}</b></li>
+          <ul>
+            <strong style="color:blue;">Sobre condición de Asociado:</strong>
+                <li>Fecha: <b>{{fecha}}</b></li>
+                <li>Tipo de Asociado elegido: <b>{{tipoAsociado}}</b></li>
+                
+                {% if fecha_emision_emmac == "01/01/2000" %}
+                    <li>Fecha Emisión Emmac: <b>No informa</b></li>
+                {% else %}
+                    <li>Fecha Emisión Emmac: <b>{{fecha_emision_emmac}}</b></li>
+                {% endif %}
+
+                <li>Numero Emmac: <b>{{numero_emmac|default:"No informa"}}</b></li>
+                <li>Entrenador: <b>{{entrenador}}</b></li>
+                <li>Responsable Tutor: <b>{{responsable_tutor|default:"No declara"}}</b></li>
+
+                <strong style="color:blue;">Sobre su pago de Asociado:</strong>
+                <li>Monto que debió abonar: <b>{{montoDebeAbonar}}</b></li>
+                <li>Monto abonado: <b>{{montoAbonado}}</b></li>
+                <li>Fecha de Pago: <b>{{fechaPago}}</b></li>
+                <li>Comentarios ingresados: <b>{{comentario|default:"No declara"}}</b></li>
 
         </ul>
 
@@ -28,6 +42,6 @@
 
 
         <script src="" async defer></script>
-        script>
+        
     </body>
 </html>

@@ -16,16 +16,32 @@
                      
                     <div class="">
                         <h1> Gracias <strong style="color:green">{{persona}}</strong> por ser parte del triatlón de Córdoba y Argentina</h1>
-                        <h3>Recuerda que tu trámite asociativo estará activo una vez que se procesen el pago de tu cuota anual asociativa.</h3>
+                         <h2>Tu pago ha sido registrado. Puedes consultar el estado de tus pagos ingresando a tu cuenta en la sección "Mi Pago Anual Asociación".</h2>
+                        <h3>Recuerda que tu trámite asociativo estará activo una vez que se procese el pago de tu cuota anual asociativa.</h3>
 
                         <p>  La vigencia como persona asociada es de un año calendario a partir de la fecha de pago (contado o primer cuota, según opción elegida)</p>
                         <p>  Tus Datos Informados:</p>
                             <ul>
+                                <strong style="color:blue;">Sobre condición de Asociado:</strong>
                                 <li>Fecha: <b>{{fecha}}</b></li>
-                                <li>Tipo de Asociado: <b>{{tipoAsociado}}</b></li>
-                                <li>Fecha Emisión Emmac: <b>{{fecha_emision_emmac}}</b></li>
+                                <li>Tipo de Asociado elegido: <b>{{tipoAsociado}}</b></li>
+                                
+                                {% if fecha_emision_emmac == "01 Ene 2000" %}
+                                    <li>Fecha Emisión Emmac: <b>No informa</b></li>
+                                {% else %}
+                                    <li>Fecha Emisión Emmac: <b>{{fecha_emision_emmac}}</b></li>
+                                {% endif %}
+
+                                <li>Numero Emmac: <b>{{numero_emmac|default:"No informa"}}</b></li>
                                 <li>Entrenador: <b>{{entrenador}}</b></li>
-                                <li>Responsable Tutor: <b>{{responsable_tutor}}</b></li>
+                                <li>Responsable Tutor: <b>{{responsable_tutor|default:"No declara"}}</b></li>
+                                <br>
+                                <strong style="color:blue;">Sobre su pago de Asociado:</strong>
+                                <li>Monto que debió abonar: <b>{{montoDebeAbonar}}</b></li>
+                                <li>Monto abonado: <b>{{montoAbonado}}</b></li>
+                                <li>Fecha de Pago: <b>{{fechaPago}}</b></li>
+                                <li>Comentarios ingresados: <b>{{comentario|default:"No declara"}}</b></li>
+
 
                             </ul>
 
@@ -33,11 +49,12 @@
 
                         <p>Una vez que ingreses a tu cuenta te diriges a las distintas pestañas disponibles y sigues las indicaciones:</p>
                         <ul>
-                            <li><b>“Mis Datos”</b> para que puedas actualizar y subir tu foto de perfil y Foto dni</li>
-                            <li><b>“Mi Carnet”</b> para que puedas ver tu situación actual, vencimientos, actualizar, emmac, etc</li>
-                            <li><b>“Pagos Asociado”</b> para que puedas subir cada pago que hayas realizado y puedas ver el historial de tus pagos</li>
+                             <li><b>“Mis Datos”</b> para que puedas actualizar y subir tu foto de perfil y Foto dni</li>
+                            <li><b>“Certificado Federado”</b> para que puedas ver tu situación actual, vencimientos, actualizar, emmac, etc</li>
+                            <li><b>“Mi Pago Anual Asociacón”</b> para que puedas subir e informar el pago de tus cuotas asociativas (en caso de haber elegido pagar en cuotas)  y puedas ver el historial de todos tus pagos</li>
+                            <li><b>“Mi pago Mensual Escuela”</b> también te puedes subir e informar tus Bonos mensuales Escuela</li>
                             <li><b>“Próximos eventos”</b> también te puedes inscribir por aquí</li>
-                            <li><b>“Mis Eventos”</b> para ver el historial de los eventos en los que te has inscripto.</li>
+                            <li><b>“Mis Inscripciones”</b> para ver el historial de los eventos en los que te has inscripto.</li>
                         </ul>
                     </div>
                     <div class="container justify-content-center">

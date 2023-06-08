@@ -3,6 +3,8 @@ from django.forms.fields import DateField, ImageField
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from apps.usuarios.models import Persona
+from django.core.exceptions import ValidationError
+
 
 
 class RegistroForm(UserCreationForm):
@@ -18,14 +20,34 @@ class RegistroForm(UserCreationForm):
     email = forms.EmailField(widget=forms.EmailInput(
         attrs={'class': 'form-control', }), required=True)
 
-    fotoDni = ImageField(
-        widget=forms.FileInput(
-            attrs={'class': 'form-control'}), label="Adjuntar foto de su DNI (Sólo jpg o png)")
+    
+
+    # fotoDni = ImageField(
+    #     widget=forms.FileInput(
+    #         attrs={'class': 'form-control'}), label="Adjuntar foto de su DNI (Sólo jpg o png)")
 
     fotoPerfil = ImageField(
         widget=forms.FileInput(
             attrs={'class': 'form-control'}), label="Adjuntar foto de Perfil (Sólo jpg o png)")
     
+    # def clean_image(self):
+    #     dni = self.cleaned_data.get('fotoDni', False)
+       
+    #     if dni:
+    #         if dni._size > 2*1024*1024:
+    #             raise ValidationError("Image file too large ( > 2mb )")
+    #         return dni
+    #     else:
+    #         raise ValidationError("Couldn't read uploaded image")
+    
+    # def clean_image(self):
+    #     perfil = self.cleaned_data.get('fotoPerfil', False)
+    #     if perfil:
+    #         if perfil._size > 2*1024*1024:
+    #             raise ValidationError("Image file too large ( > 2mb )")
+    #         return perfil
+    #     else:
+    #         raise ValidationError("Couldn't read uploaded image")
     
     class Meta:
         model = Persona
@@ -41,7 +63,9 @@ class RegistroForm(UserCreationForm):
                   
         ]
         
-        labels = {'fechaNacimiento':'Fecha de Nacimiento',}
+        labels = {'fechaNacimiento':'Fecha de Nacimiento',
+                  'fotoDni': 'Adjuntar foto de su DNI (Sólo jpg o png)',
+                  }
         
         widgets = {
             #'cuil': forms.TextInput(attrs={'class': 'form-control'}),
@@ -54,6 +78,7 @@ class RegistroForm(UserCreationForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'nacionalidad': forms.TextInput(attrs={'class': 'form-control'}),
             'sexo': forms.Select(attrs={'class': 'form-control'}),
+            'fotoDni': forms.FileInput(attrs={'class': 'form-control'}),
             
             
 

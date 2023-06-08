@@ -48,7 +48,8 @@
                     <td>{{s.get_vencimiento}}</td>
                     <td>{{s.tipoAsociado}}</td>
                     <td>{{s.entrenador}}</td>
-                    <td><img src={{s.emmac_file.url}} width="15" height="15"></td>
+
+                    {% comment %} <td><img src={{s.emmac_file.url}} width="15" height="15"></td> {% endcomment %}
                 </tr>
                 
                 {% endfor %}

@@ -39,7 +39,7 @@
                                 <br>
                                 <div class="row-item">
                                     <div> {{form.tipoAsociadoPago.label}}</div>
-                                        <select name="tipoAsociadoPago" id="id_tipoasociadopago" class="form-control" required> 
+                                        <select style="color:red; font-weight: bold;" name="tipoAsociadoPago" id="id_tipoasociadopago" class="form-control" required> 
                                         <option value='0'> --------</option>
                                         {% for x in costos %}
                                         {% if x.tipoSocio.id ==  s.tipoAsociado.id %}
@@ -48,10 +48,10 @@
                                         {% endfor %}
                                         </select>
                                 </div>
-                                <br>
+                                
                                 <div class="row-item">
                                     <div> {{form.formaPago.label}}</div>
-                                        <select name="formaPago" id="id_formapago" class="form-control" required> 
+                                        <select style="color:red; font-weight: bold;" name="formaPago" id="id_formapago" class="form-control" required> 
                                             <option value='0'> --------</option>
                                             {% for x in costos %}
                                             {% if x.tipoSocio.id ==  s.tipoAsociado.id %}
@@ -60,10 +60,10 @@
                                             {% endfor %}
                                         </select>
                                 </div>
-                                <br>
+                                
                                 <div class="row-item">
                                     <div> {{form.montoDebeAbonar.label}}</div>
-                                        <select name="montoDebeAbonar" id="id_precio"  class="form-control" required> 
+                                        <select style="color:red; font-weight: bold;" name="montoDebeAbonar" id="id_precio"  class="form-control" required> 
                                             <option value='0'> --------</option>
                                             {% for x in costos %}
                                             {% if x.tipoSocio.id ==  s.tipoAsociado.id %}

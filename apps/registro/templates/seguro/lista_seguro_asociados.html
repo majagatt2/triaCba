@@ -12,30 +12,39 @@
        
     <div style="overflow-x:auto;">
     <table class = "table datatable table-light" >
-        <thead>
+       <thead>
             <tr class="table-info">
-               
+
                 <th>Nº</th>
-                
+
                 <th>Nombre</th>
                 <th>Dni</th>
                 <th>Fecha Nacimiento</th>
                 <th>Nacionalidad</th>
+                <th>Desde</th>
+                <th>Entrenador</th>
             </tr>
         </thead>
 
-        <tbody>
+         <tbody>
             {% if object_list %}
                 {% for s in object_list %}
-                
+
                 {% if  s.entrenador.nombre != 'Sin Entrenador'%}
                 <tr >
                     <td>{{forloop.counter}}</td>
-                
+
                     <td>{{s.persona|title}}</td>
                     <td>{{s.persona.dni}}</td>
                     <td>{{s.persona.fechaNacimiento|date:"d/m/Y"}}</td>
                     <td>{{s.persona.nacionalidad}}</td>
+                    <td>{{s.fecha|date:"Y/m/d"}}</td>
+                    {% if s.entrenador.nombre == "Escuela" %}
+                    <td style="color:blue;">Póliza Escuela</td>
+                    {% else %}
+                    <td>Póliza Asociados</td>
+                    {% endif %}
+
                 </tr>
                 {% endif %}
                 {% endfor %}

@@ -7,7 +7,7 @@
 
     <div class="container">
         <br>
-        <form  method="POST" class="needs-validation form-control bg-black bg-opacity-75 text-white" enctype="multipart/form-data">
+        <form  method="POST" class="needs-validation form-control bg-black bg-opacity-75 text-white" enctype="multipart/form-data" onsubmit="send();move();">
             {% csrf_token %}
             {%  if user.is_authenticated%}
              
@@ -282,7 +282,7 @@
                     
                 <a class="btn btn-secondary" href={% url 'eventos' %}>Cancelar</a>
                 &nbsp;    
-                <input class="w-10 btn btn-primary" type="submit" value="Confirmar">
+                <input id="btn" class="w-10 btn btn-primary" type="submit" value="Confirmar">
                 </div>
 
 
