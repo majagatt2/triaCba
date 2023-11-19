@@ -31,6 +31,10 @@ urlpatterns = [
     path('inscripcion/', include('apps.inscripcion.urls')),
     path('', include('apps.usuarios.urls')),
     path('entrenadores/', include('apps.entrenadores.urls')),
+    path('emails/', include('apps.emails.urls')),
+    path('ckeditor', include('ckeditor_uploader.urls')),
+
+    
     
     # path('', LoginView.as_view(template_name='accounts/login.html'), name = 'login')
     
@@ -45,3 +49,4 @@ handler404 = "apps.socio.views.error_404_view"
 handler404 = "apps.usuarios.views.error_404_view"
 handler404 = "apps.inscripcion.views.error_404_view"
 handler404 = "apps.registro.views.error_404_view"
+handler404 = "apps.emails.views.error_404_view"

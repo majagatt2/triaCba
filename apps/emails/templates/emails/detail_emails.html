@@ -1,0 +1,166 @@
+{% extends "base/index2.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+{%  if user.is_authenticated %}
+{% if request.user.is_staff %}
+
+{% comment %} {% block header %}
+{% endblock %}
+
+{% block content %}
+{% endblock %} {% endcomment %}
+
+
+
+
+{% block content %}
+
+
+
+
+
+<div class="pt-5" >
+<div class="justify-content-center pt-5" >
+    
+    <form method="POST" enctype="multipart/form-data"> 
+        {% csrf_token %}    
+       
+        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- Memberships -->
+            <div class="col-xl-10 ">
+                <div class="card shadow-lg">
+                    <div class="card-body pt-2">
+                    <!-- Bordered Tabs -->
+                        <div class="tab-content pt-2 ">
+                            <!-- MEMBERSHIPS -->
+                            <div class="tab-pane fade show active profile-overview " id="profile-overview">
+                                <h4 class="card-title" style="color:green"> 
+                                    <img  src="{% static 'general/assets/img/logo_nuevo-removebg.png' %}" alt="smail" width="90" height="90">
+                                    Enviar email </h4>
+                               <div class="d-flex justify-content-end">
+                                <a class="btn btn-success"  href={% url 'create_email' %}><b>Crear email</b></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+            
+        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- About Me -->
+            <div class="col-xl-2">
+                <div class="card shadow-lg">
+                    <div class="card-body pt-2">
+                        <!-- Bordered Tabs -->
+                        <div class="tab-content pt-2">
+                            <!-- ABOUT ME -->
+                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
+                                <h5 class="card-title text-center pt-1">List</h5>
+                                <p class="small fst-italic"></p>
+                                <div class="d-flex justify-content-end "style="padding-right:3rem"> <!-- LOGO OR BOTTON -->
+                                   
+                                    
+                                </div>
+
+                            <div class="container justify-content-center" style="width:75%">    
+                                <div class="row border-bottom" >
+                                    
+                                    <div class="col-lg-8 col-md-6" style="font-weight:bold; color: green"><a href=''>Enviado</a></div>
+                                </div>
+
+                                <div class="row border-bottom">
+                                    
+                                    <a href=''><div class="col-lg-8 col-md-8" style="font-weight:bold; color: red">Borrador</div></a>
+                                </div>
+
+                               
+                            </div>
+                            <br>
+                           
+
+                            </div>
+                        </div>
+                        <!-- End Bordered Tabs -->
+                    </div>
+                </div>
+            </div>
+       
+        <br>
+            
+                <div class="col-xl-8"><!-- mails enviados -->
+                    
+                   
+                        <div class="card shadow-lg ">
+                            <div class="card-body pt-2">
+                                <div class="tab-content pt-2 col-12">    
+                            <h5 class="card-title text-center pt-1">Detalles email <i><sub></sub></i></h5>
+                                    
+                            <div class=" justify-content-center ">
+                                
+                                <div style="overflow-x:auto;">
+                                    <br>
+                                    <table class = 'table'>
+                                        <thead class="text-center">
+                                            <tr>
+                                                <td>Name</td> 
+                                                <td>Subject</td>
+                                                <td>Emails</td>
+                                                <td>Date Created</td>
+                                                <td>Status</td>
+                                                <td>Action</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="">
+                                         {% for newsletter in newsletters%}
+                                            <tr>
+                                                <td>{{newsletter.name}}</td>
+                                                <td>{{newsletter.subject}}</td>
+                                                <td>{{newsletter.email}}</td>
+                                                <td>{{newsletter.created}}</td>
+                                                <td>{{newsletter.status}}</td>
+
+                                            
+
+                                                <td>
+                                                    <a class="badge bg-primary"  href=''><b>Update</b></a>
+                                                    &nbsp;   
+                                                    <a class="badge bg-danger"  href=''><b>Delete</b></a>
+                                                </td>
+                                            </tr>
+                                            
+                                           {% endfor %}
+                                           
+                                            
+                                        </tbody>
+                                    </table>
+
+
+                                </div>    
+                            </div>
+                            </div>
+                            </div>
+                            <br>
+                            
+
+                        </div>
+                   
+                    
+                </div>
+                
+          
+        
+        </div>
+        <br><br>
+    
+           
+      
+    </form>
+    
+</div>
+</div>
+
+
+
+{% endblock  %}
+{% endif %}
+{% endif %}

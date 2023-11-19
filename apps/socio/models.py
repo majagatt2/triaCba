@@ -93,11 +93,11 @@ class AsociadoRequisitos(models.Model)    :
 
 class Asociado(models.Model):
     persona = models.ForeignKey(Persona, null=True, blank=True, on_delete=models.CASCADE)
-    fecha = models.DateField(auto_now_add=True)
+    fecha = models.DateField(auto_now=True, blank=True)
     tipoAsociado = models.ForeignKey(
         AsociadoTipo, null=False, blank=False, on_delete=models.CASCADE, verbose_name='Tipo asociado')
-    fecha_emision_emmac = models.DateField(auto_now=False,
-                                           blank=True, default=date(2000, 1, 1))
+    fecha_emision_emmac = models.DateField(auto_now=False, null = True ,
+                                           blank=True )  # default=date(2000, 1, 1)
     emmac_file = models.ImageField(
         upload_to='media/emmac', null=True, blank=True, default="media/emmac/Sin_emmac.png")
     numero_emmac = models.CharField(

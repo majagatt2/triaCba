@@ -9,7 +9,7 @@
 {% comment %} <form method='POST' class="form-control bg-black bg-opacity-50"> {% endcomment %}
     {%  if user.is_authenticated %}
    
-        <h2 class="text-white pt-3 bg-black bg-opacity-25"><strong>Próximos eventos: </strong></h2><br>
+        <h2 class="text-white bg-black bg-opacity-50"><strong>Próximos eventos: </strong></h2><br>
     
     {% comment %} {% for eventos in eventos_list %}
         <ul class= "list-group list-group-flush">
@@ -31,20 +31,17 @@
                         <div class="card-title text-center ui-shadow-sm h-100 " >
                             {% if eventos.inscribirse %} 
                             <h4 class=""  href="{% url 'eventos_detalles' eventos.id %}">
-                                        <a style="color:#F26B1E" href={% url 'eventos_detalles' eventos.id %}><b>{{eventos.nombreEvento}}</b></a></h4>
+                                        <a style="color:#F26B1E" href={% url 'eventos_detalles' eventos.id %}><b>{{eventos.nombreEvento}}<br>{{eventos.tipo}}</b></a></h4>
                             {%  else %}
                             <h4 class=""  >
-                                        <a style="color:#F26B1E" ><b>{{eventos.nombreEvento}}</b></a></h4>
+                                        <a style="color:#F26B1E" ><b>{{eventos.nombreEvento}}<br>{{eventos.tipo}}</b></a></h4>
                             {%  endif%}
-                         
-                               
-                       
                             <p class="text-black  card-body text-opacity-75"><span class="text-black text-opacity-50"> Lugar: </span>{{eventos.lugar}}</p>
                             
-                                <div class="small text-black"><span class="text-black text-opacity-50"> Fecha:</span> <b>{{eventos.fechaEvento}}</b>
+                                <p class="small text-black"><span class="text-black text-opacity-50"> 
+                                    Fecha:</span> <b>{{eventos.fechaEvento}}</b>
                                    
-                                    <br>
-                                </div>
+                                </p>
                         
                         </div>
                          <div class="card-body text-center ui-shadow-sm h-100 " >

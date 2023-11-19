@@ -13,11 +13,12 @@
         <thead>
             <tr class="table-info">
                 <th>Nº</th>
-                <th>Evento</th>
+                <th>Apellido</th>
                 <th>Nombre</th>
                 <th>Dni</th>
                 <th>Fecha Nacimiento</th>
                 <th>Nacionalidad</th>
+                <th>Evento</th>
             </tr>
         </thead>
 
@@ -31,10 +32,13 @@
                 <tr >
                     <td>{{forloop.counter}}</td>
                     <td>{{s.eventoRelacionado}}</td>
-                    <td>{{s.persona|title}}</td>
+                    <td>{{s.persona.last_name|title}}</td>
+                    <td>{{s.persona.first_name|title}}</td>
+                    
                     <td>{{s.persona.dni}}</td>
                     <td>{{s.persona.fechaNacimiento|date:"d/m/Y"}}</td>
                     <td>{{s.persona.nacionalidad}}</td>
+                   
                 </tr>
 
                 {% endif %}

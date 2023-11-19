@@ -80,15 +80,21 @@ INSTALLED_APPS = [
     'apps.inscripcion',
     'apps.usuarios',
     'apps.entrenadores',
+    'apps.emails',
     'crispy_forms',
     'import_export',
     'ckeditor',
+    'ckeditor_uploader',
     
     
     
    
     
     ]
+
+
+CKEDITOR_UPLOAD_PATH = "uploads/"
+
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 X_FRAME_OPTIONS ='SAMEORIGIN'
@@ -171,7 +177,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.0/topics/i18n/
 
-LANGUAGE_CODE = 'es-eu'
+LANGUAGE_CODE = 'es'
 
 TIME_ZONE = 'UTC'
 

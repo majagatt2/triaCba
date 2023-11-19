@@ -1,0 +1,60 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load static %}
+
+
+<form method='POST' class=" form-control bg-opacity-25">
+    {% csrf_token %}
+    {%  if user.is_authenticated %}
+   
+        <h2 class="text-white p-2 bg-black bg-opacity-50"><strong>RESULTADOS</strong></h2>
+    
+     
+        {% if object_list %}
+
+            <div style="overflow-x:auto;">
+                <table class ="table" id="mis_tablas">
+                    <thead >
+                        <tr class="table-info">
+                           
+                            <th>Evento</th>
+                            
+                            <th>Persona</th>
+                            <th>Tiempo1</th>
+                            <th>Tiempo2</th>
+                            <th>Tiempo3</th>
+                            <th>Tiempo Finished</th>
+                            <th>Posicion Gral</th>
+                         
+                            
+                        </tr>
+                    </thead>
+                    
+                        {% for c in resultados_list %}
+                            
+                            <tbody>
+                                    <td><p><b>{{c.inscripcion.eventoRelacionado}}</p></td>
+                                    <td><p><b>{{c.inscripcion.persona}}</p></td>
+                                    <td>{{c.tiempo_1|time:"G:i:s"}}</td>
+                                    <td>{{c.tiempo_2|time:"G:i:s"}}</td>
+                                    <td>{{c.tiempo_3|time:"G:i:s"}}</td>
+                                    
+                                    <td>{{c.tiempo_finished|time:"G:i:s.u"}}</td>
+                                   
+                                    <th>{{c.posicion_general}}</td>
+                                   
+                                
+                              
+                            
+                            </tbody>       
+                        {% endfor %} 
+                
+                </table>
+            </div>
+        
+        {% endif %}    
+    {% endif %} 
+    
+</form>   
+            
+{% endblock  %}

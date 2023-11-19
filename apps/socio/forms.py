@@ -16,7 +16,7 @@ class SocioForm(forms.ModelForm):
     entrenador = forms.ModelChoiceField(widget=forms.Select(attrs={'class': 'form-control'}), required=True, queryset=EntrenadoresKempe.objects.filter(
         habilitado=True), label="Selecciona tu entrenador en Kempes*. Si no tienes, selecciona 'Sin Entrenador'", initial=12)
     
-    #fecha_emision_emmac = DateField(widget=forms.widgets.DateInput(attrs={'type': 'date', 'class': 'form-control'}), required=False)
+    fecha_emision_emmac = DateField(widget=forms.widgets.DateInput(attrs={'type': 'date', 'class': 'form-control'}), required=False )
     
     #fechaPago = DateField(widget=forms.widgets.DateInput(attrs={'type': 'date', 'class': 'form-control'}), label='Fecha de Pago del Comprobante*:')
     
@@ -36,7 +36,7 @@ class SocioForm(forms.ModelForm):
         labels = {
                 #'fecha':'Fecha: se toma como referecia fecha pago contado o primera cuota',
                 #'tipoAsociado': 'Tipo de Asociado*',
-                'fecha_emision_emmac': 'Fecha emisión Emmac*',
+                'fecha_emision_emmac': 'Fecha emisión Emmac',
                 #'emmac_file': 'Adjuntar foto de emmac. Sólo formato jpg o png hasta 2Mb',
                 'obra_social':'Obra Social*',
                 'con_entrenador':'Tenes entrenador en el Kempes?:*',
@@ -52,7 +52,7 @@ class SocioForm(forms.ModelForm):
             'tipoAsociado': forms.Select(attrs={'class': 'form-control'}),
             'con_entrenador': forms.Select(attrs={'class': 'form-control'}),
             'entrenador': forms.Select(attrs={'class': 'form-control'}),
-            'fecha_emision_emmac': forms.DateInput(attrs={'class': 'form-control'}),
+            #'fecha_emision_emmac': forms.DateInput(attrs={'class': 'form-control'}),
             'numero_emmac': forms.TextInput(attrs={'class': 'form-control'}),
             'obra_social': forms.TextInput(attrs={'class': 'form-control'}),
             'responsable_tutor': forms.TextInput(attrs={'class': 'form-control'}),

@@ -2,7 +2,7 @@
 from apps.registro.models import Bienvenida
 from apps.usuarios.forms import RegistroForm
 from apps.usuarios.models import  Persona
-from apps.inscripcion.models import EventoCategoria, Eventos
+from apps.inscripcion.models import EventoCategoria, Eventos, EventoBici, EventoModalidade, EventoDistancia, EventoFormasPago
 from apps.inscripcion.models import Inscripcion
 from apps.socio.models import Asociado, AsociadoPagos, AsociadoTipo, EntrenadoresKempe
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView
@@ -271,30 +271,155 @@ class InscriptosList(ListView):
     model = Inscripcion
     #queryset = Inscripcion.objects.filter(confirm_pago=True)
     template_name = 'administrador/lista_inscriptos.html'
+    ordering = ['persona']
     
     def get_context_data(self, **kwargs):
         context = super(InscriptosList, self).get_context_data(**kwargs)
+        filtro = self.kwargs.get('pk', None)
         
-        cant_inscriptos = 0
-        for x in Eventos.objects.filter(estado = True):
-            cant_inscriptos += Inscripcion.objects.filter(eventoRelacionado=x.id).count()
-                 
+        cant_inscriptos_total = 0
+        cant_inscriptos_f = 0
+        cant_inscriptos_m = 0
+        
+        cant_inscriptos_distancia = {}
+        cant_inscriptos_modalidad = {}
+        cant_inscriptos_categoria = {}
+        
+        contador = 0
+        contador_f = 0
+        contador_m = 0
+        
+        distancias=[]
+        
+        for x in Inscripcion.objects.filter(eventoRelacionado=filtro):
+            cant_inscriptos_total += 1
+            if x.persona.sexo == "F":
+                cant_inscriptos_f += 1
+            if x.persona.sexo == "M":
+                cant_inscriptos_m += 1
+            distancias.append(x.distancia)
+        
+        distancia = set(distancias)
+            
+            
+        
+        for d in EventoDistancia.objects.all():
+            for x in Inscripcion.objects.filter(eventoRelacionado=filtro):
+                if str(x.distancia) == str(d):
+                    contador += 1
+                if str(x.distancia) == str(d) and x.persona.sexo == "F":
+                    contador_f += 1
+                if str(x.distancia) == str(d) and x.persona.sexo == "M":
+                    contador_m += 1
+                if contador > 0 and contador_f > 0 and contador_m > 0:
+                    cant_inscriptos_distancia.update({d: [contador, contador_f, contador_m]})
+                elif contador > 0 and contador_f == 0 and contador_m > 0:
+                    cant_inscriptos_distancia.update({d: [contador, "-", contador_m]})
+                elif contador > 0 and contador_f > 0 and contador_m == 0:
+                    cant_inscriptos_distancia.update({d: [contador, contador_f, "-"]})
+            contador = 0
+            contador_f = 0
+            contador_m = 0
+        
+            for m in EventoModalidade.objects.all():
+                for x in Inscripcion.objects.filter(eventoRelacionado=filtro):
+                    if str(x.modalidad) == str(m) and str(x.distancia) == str(d):
+                        contador += 1
+                    if str(x.modalidad) == str(m) and str(x.distancia) == str(d) and x.persona.sexo == "F":
+                        contador_f += 1
+                    if str(x.modalidad) == str(m) and str(x.distancia) == str(d) and x.persona.sexo == "M":
+                        contador_m += 1
+                    if contador > 0 and contador_f > 0 and contador_m > 0:
+                        cant_inscriptos_distancia[d].append({m:[contador, contador_f, contador_m]})
+                    elif contador > 0 and contador_f == 0 and contador_m > 0:
+                        cant_inscriptos_distancia[d].append({m:[contador, "-", contador_m]})
+                    elif contador > 0 and contador_f > 0 and contador_m == 0:
+                        cant_inscriptos_distancia[d].append({m:[contador, contador_f, "-"]})
                 
-        context['cantidad_inscriptos']= cant_inscriptos    
+                contador = 0
+                contador_f = 0
+                contador_m = 0
+            
+            for c in EventoCategoria.objects.all():
+                for x in Inscripcion.objects.filter(eventoRelacionado=filtro):
+                    if str(x.categoria) == str(c) and str(x.distancia) == str(d):
+                        contador += 1
+                    if str(x.categoria) == str(c) and str(x.distancia) == str(d) and x.persona.sexo == "F":
+                        contador_f += 1
+                    if str(x.categoria) == str(c) and str(x.distancia) == str(d) and x.persona.sexo == "M":
+                        contador_m += 1
+                    if contador > 0 and contador_f > 0 and contador_m > 0:
+                        cant_inscriptos_distancia[d].append({c:[contador, contador_f, contador_m]})
+                    elif contador > 0 and contador_f == 0 and contador_m > 0:
+                        cant_inscriptos_distancia[d].append({c:[contador, "-", contador_m]})
+                    elif contador > 0 and contador_f > 0 and contador_m == 0:
+                        cant_inscriptos_distancia[d].append({c: [contador, contador_f, "-"]})
+                   
+                contador = 0
+                contador_f = 0
+                contador_m = 0
+
+        '''{distancia:[
+             [Total, F, M],
+             {modalidad:[Total, F, M]},
+             {categoria:[[Total, F, M]]}
+             
+             
+             ]'''  
+
+        formas = EventoFormasPago.objects.all()
+            
+        total = {'Total General':[cant_inscriptos_total,cant_inscriptos_f,cant_inscriptos_m]}
+        
+        modalidades = {}
+        for key, value in cant_inscriptos_modalidad.items():
+            modalidades.update({key:value})
+        
+        categorias = {}
+        for key, value in cant_inscriptos_categoria.items():
+            categorias.update({key:value})
+            
+        distancias = {}
+        for key, value in cant_inscriptos_distancia.items():
+            distancias.update({key:value})
+        
+           
+        context['cant_inscriptos_total'] = cant_inscriptos_total    
+        context['titulos']= total
+        context['modalidades'] = modalidades
+        context['categorias'] = categorias
+        context['distancias'] = distancias
+        context['distancia'] = distancia
         
         
-        context['eventos'] = Eventos.objects.filter(estado=True)
+        context['formas'] = formas
+        context['eventos'] = Eventos.objects.filter(id=filtro)
         return context
     
 
 class InscriptosPublicoList(ListView):
     model = Inscripcion
-    queryset = Inscripcion.objects.filter(confirm_pago=True)
+    queryset = Inscripcion.objects.filter(confirm_pago=True, acreditacion=True)
     template_name = 'administrador/lista_inscriptos_publico.html'
 
     def get_context_data(self, **kwargs):
         context = super(InscriptosPublicoList, self).get_context_data(**kwargs)
-        context['eventos'] = Eventos.objects.filter(publicar=True)
+        
+       
+        context['eventos'] = Eventos.objects.filter(publicar=True, seguro = True)
+        
+        cant_inscriptos = 0
+        inscriptos = {}
+        for e in Eventos.objects.filter(publicar=True, seguro=True):
+            for i in Inscripcion.objects.filter(eventoRelacionado=e, confirm_pago=True, acreditacion=True):
+                cant_inscriptos = 0
+                cant_inscriptos += Inscripcion.objects.filter(
+                    eventoRelacionado=e, confirm_pago=True, acreditacion=True).count()
+            inscriptos.update({e: cant_inscriptos})
+            cant_inscriptos = 0
+        context['inscriptos'] = inscriptos
+                   
+        
         return context
 
     
@@ -302,7 +427,27 @@ class EventosList(ListView):
     model = Eventos
     template_name = 'administrador/lista_eventos.html'    
     ordering = ['-fechaEvento']
-   
+    inscriptos = 0
+    inscriptos_confirmados = 0
+    def get_context_data(self, **kwargs):
+        context = super(EventosList, self).get_context_data(**kwargs)
+        evento = {}
+        for e in Eventos.objects.all():
+            for i in Inscripcion.objects.filter(eventoRelacionado=e):
+                inscriptos = 0
+                inscriptos_confirmados = 0
+                inscriptos += Inscripcion.objects.filter(
+                    eventoRelacionado=e).count()
+                inscriptos_confirmados += Inscripcion.objects.filter(
+                    eventoRelacionado=e, confirm_pago=True).count()
+                inscriptos_pendientes =inscriptos - inscriptos_confirmados
+                evento.update(
+                    {e: [inscriptos,inscriptos_confirmados, inscriptos_pendientes ]})
+            inscriptos_pendientes = 0
+            inscriptos = 0
+            inscriptos_confirmados = 0
+        context['inscriptos'] = evento
+        return context    
    
 class SeguroListAsociados(ListView):
     model = Asociado

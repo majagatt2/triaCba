@@ -6,9 +6,10 @@ from django.utils.html import format_html
 
 
 class AsociadoAdmin(admin.ModelAdmin):
-    list_display = ('persona', 'fecha', 'tipoAsociado', 'entrenador', 'estado', 'asiste','fecha_emision_emmac', 'emmac_foto', 'get_vencimiento')
+    list_display = ('id','persona', 'fecha', 'tipoAsociado', 'entrenador', 'estado', 'asiste','fecha_emision_emmac', 'emmac_foto', 'get_vencimiento')
     list_editable = ['entrenador', 'fecha_emision_emmac', 'estado','asiste']
     list_filter = ('tipoAsociado',  'con_entrenador',  'entrenador', 'estado','persona',)
+    list_display_links = ('persona',)
     #search_fields = ('persona',)
     
     list_per_page= 10

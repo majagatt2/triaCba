@@ -31,10 +31,10 @@ urlpatterns = [
     
     path('lista_eventos/', login_required(EventosList.as_view()), name='lista_eventos'),
     
-    path('lista_inscriptos/', login_required(InscriptosList.as_view()), name='lista_inscriptos'),
+    path('lista_inscriptos_admin/<pk>', login_required(InscriptosList.as_view()), name='lista_inscriptos_admin'),
     
     path('lista_inscriptos_publico/', InscriptosPublicoList.as_view(),
-         name='lista_inscriptos_publico'),
+          name='lista_inscriptos_publico'),
     
     path('lista_asociados_publico/', AsociadosPublicoList.as_view(),
          name='lista_asociados_publico'),

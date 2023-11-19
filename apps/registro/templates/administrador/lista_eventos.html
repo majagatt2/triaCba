@@ -4,39 +4,39 @@
 {% block content %}
 {% load static %}
 {%  if user.is_authenticated %} 
-{% if request.user.is_staff %}
+{% if request.user.is_staff or request.user.groups.all.0.name == 'Inscripciones'%}
 
+{% csrf_token %}
 <form method='POST'>
-    {% csrf_token %}
     <h3>Listado de Eventos </h3>
     <div style="overflow-x:auto;">
-    <table class = "table table-borderless datatable" >
+    <table class = "table datatable" >
         <thead>
             <tr class="table-info">
-                <th>Nº</th>
-               
-                <th>año</th>
+            
                 <th>Fecha Evento</th> 
                 <th>Temporada</th>
                 <th>Tipo</th>
                 <th>Nombre</th>
                 <th>Lugar</th>
                 <th>Cupo</th>
+                <th>Total Inscriptos</th>
+                <th>confirmados</th>
+                <th>Pendientes</th>
+                <th>Ver Inscriptos</th>
                 <th>Estado</th>
-                <th>Modalidad</th>
+                {% comment %} <th>Modalidad</th>
                 <th>Distancias</th>
-                <th>Categorias</th>
+                <th>Categorias</th> {% endcomment %}
                
             </tr>
         </thead>
 
         <tbody>
             {% if eventos_list %}
-                {% for c in eventos_list %}
+                {% for c, value in inscriptos.items %}
                 <tr>
-                    <td>{{forloop.counter}}</td>
                    
-                    <td>{{c.año}}</td>
                     <td>{{c.fechaEvento|date:"d/m/Y"}}</td>
                     <td>{{c.temporada}}</td>
                     <td>{{c.tipo}}</td>
@@ -44,13 +44,34 @@
                     <td>{{c.nombreEvento}}</td>
                     <td>{{c.lugar}}</td>
                     <td>{{c.cupo}}</td>
+                    
+                 
+                    
+                    <td class="text-center fw-bold">{{value.0}}</td>
+                    <td class="text-center">{{value.1}}</td>
+                  
+                   
+                   
+                    
+                  
+                    <td class="text-center" style="color:red">{{value.2}}</td>
+                   
+
+
+                    <td>
+                        <a href={% url 'lista_inscriptos_admin' c.id %} class="badge bg-info"><b>Ver</b></a>
+
+                    </td>
+                    
+                    
+                    
                     {% if c.estado is not True %}
-                        <td  style="color:red">{{c.estado|yesno:'Activo,Terminado'}}</h1>
+                        <td  style="color:red">{{c.estado|yesno:'Activo,Inactivo'}}</h1>
                     {%  else %}
-                        <td>{{c.estado|yesno:"Activo,Terminado"}}</td>
+                        <td>{{c.estado|yesno:"Activo,Inactivo"}}</td>
                     {% endif %}
                     
-                    <td>
+                    {% comment %} <td>
                     {% if c.modalidad_disponible.all %}
                     {% for m in c.modalidad_disponible.all %}
                     {{m}}
@@ -68,7 +89,7 @@
                     {% else %}
                     <td>----</td>
                     {% endif %}
-                    </td>
+                    </td> 
 
                     <td>
                     {% if c.categoria_disponible.all %}
@@ -79,7 +100,7 @@
                     {% else %}
                     <td>----</td>
                     {% endif %}
-                    </td>
+                    </td> {% endcomment %}
 
 
                     

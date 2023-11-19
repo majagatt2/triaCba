@@ -13,7 +13,15 @@
 {% load crispy_forms_tags %}
 
     <div class="vh-120 " >
-        <h3 class="text-center text-white bg-black bg-opacity-25 p-2"><b>Registro Inscripciones a Eventos:</b></h3>
+        <h3 class="text-center text-white bg-black bg-opacity-50 p-2" ><b>Registro Inscripciones a Eventos:</b></h3>
+        <h3 class="text-center">Registro Inscripcion al Evento:<br>
+                    {% for e in eventos %}
+                    {% if forloop.last %}
+                    {{e}}
+                    {% endif %}
+                    {% endfor %}
+
+                </h3>
         <br>
         {% if form.errors %}
             {% for field in form %}
@@ -92,45 +100,45 @@
                             <br>            
                             <div class="form-control-btn-group">     
                                 <div class="row-item">{#evento relacionado#}
-                                    <label> {{form2.eventoRelacionado.label}}</label>
-                                    <select name="eventoRelacionado" id="id_evento" class="form-control"  required>
-                                        <option value='0'></option>
-                                        {% for x in eventos %}
-                                            <option value="{{x.id}}">{{x|safe}}</option>
+                                    <label> Seleccioná tu competencia</label>
+                                    <select name="eventoRelacionado" id="id_evento" class="select form-select"  required>
+                                        <option value='0'>Seleccionar</option>
+                                        {% for x in modalidad_evento %}
+                                            <option value="{{x.id}}"><b>{{x.modalidad}}</b> - {{x.evento|safe}}</option>
                                         {% endfor %} 
                                     </select>
                                 </div>
                                 <br>
-                                <div class="row-item">{#distancia#}
-                                    <div> {{form2.distancia.label}}</div>
-                                        <select name="distancia" id="id_distancia" class="form-control"  required > 
-                                            {% for x in eventos %}
-                                            {% for e in x.distancia_disponible.all %}
-                                                <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
-                                            {% endfor %}
-                                            {% endfor %}
-                                        </select>
-                                </div>
-                                <br>
                                 <div class="row-item"> {#modalidad#}
                                     <div> {{form2.modalidad.label}}</div>
-                                        <select name="modalidad" id="id_modalidad"  class="form-control" required> 
-                                            <option value='0'></option>
-                                            {% for x in eventos %}
-                                            {% for e in x.modalidad_disponible.all %}
-                                                <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
-                                            {% endfor %}
-                                            {% endfor %}
+                                        <select style="color:green;" name="modalidad" id="id_modalidad"  class="form-control" required> 
+                                            <option value='0'selected>Seleccionar</option>
+                                        {% for x in modalidad_evento %}
+                                            <option value="{{x.modalidad}}" data-chained="{{x.id}}">{{x.modalidad|safe}}</option>
+                                        {% endfor %} 
                                         </select>
                                 </div>
                                 <br>
                                 <div class="row-item">{#catgoria#}
                                     <div> {{form2.categoria.label}}</div>
-                                        <select name="categoria" id="id_categoria" class="form-control" required> 
-                                            <option value='0'></option>
-                                            {% for x in eventos %}
+                                        <select style="color:red; font-weight: bold;" name="categoria" id="id_categoria" class="form-select" required> 
+                                            <option value='----'selected >Seleccionar</option>
+                                            {% for x in modalidad_evento %}
+                                            
                                             {% for e in x.categoria_disponible.all %}
-                                            <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
+                                            <option value="{{e.categoria}}" data-chained="{{x.id}}">{{e}}</option>
+                                            {% endfor %}
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                                <br>
+                                <div class="row-item">{#distancia#}
+                                    <div> {{form2.distancia.label}}</div>
+                                        <select style="color:red; font-weight: bold;" name="distancia" id="id_distancia" class="form-select"  required > 
+                                            <option value='----'selected >Seleccionar</option>
+                                            {% for x in modalidad_evento %}
+                                            {% for e in x.distancia_disponible.all %}
+                                                <option value="{{e.distancia}}" data-chained="{{x.id}}">{{e}}</option>
                                             {% endfor %}
                                             {% endfor %}
                                         </select>
@@ -138,11 +146,11 @@
                                 <br>
                                 <div class="row-item"> {#bici#}
                                     <div> {{form2.bici.label}}</div>
-                                        <select name="bici" id="id_bici" class="form-control" required> 
-                                            <option value='0'></option>
-                                            {% for x in eventos %}
+                                        <select style="color:red; font-weight: bold;" name="bici" id="id_bici" class="form-select" required> 
+                                            <option value='----' selected >Seleccionar</option>
+                                            {% for x in modalidad_evento %}
                                             {% for e in x.bici_disponible.all %}
-                                            <option value="{{e.id}}" data-chained="{{x.id}}">{{e}}</option>
+                                            <option value="{{e.bici}}" data-chained="{{x.id}}">{{e}}</option>
                                             {% endfor %}
                                             {% endfor %}
                                         </select>
@@ -213,8 +221,8 @@
                                 <h4 class="text-center text-white card-title"><b>Sobre el pago:</b></h4>
                                 <hr>
                                 <div class="row-item"> {{form2.formaPago.label}}</div>
-                                    <select name="formaPago" id="id_formaPago" class="form-control" required> 
-                                        <option value='0'></option>
+                                    <select name="formaPago" id="id_formaPago" class="form-select" required> 
+                                        <option value='0'>Seleccionar</option>
                                         
                                         {% if asociado|length == 0 %}
                                             {% for c in costos %}
@@ -287,7 +295,12 @@
                                 <br>
                                 <div class="row-item">
                                     <label> {{form2.montoAbonado.label}}</label>
-                                    <div min='0.0'>{{form2.montoAbonado}}</div>
+                                    <div >{{form2.montoAbonado}}</div>
+                                </div>
+                                <br>
+                                <div class="row-item">
+                                    <label> {{form2.grupo.label}}</label>
+                                    <div>{{form2.grupo}}</div>
                                 </div>
                                 <br>
                                 <div class="row-item">
@@ -315,7 +328,7 @@
                 <b><div class="form-check ">
                     <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
                     <label class="form-check-label " for="invalidCheck">
-                        Declaro haber leído, entendido y aceptado las "bases, condiciones, reglamentos y protocolos" y "anexos". 
+                        Declaro haber leído, entendido y aceptado las "bases, condiciones y reglamentos". 
                         <a  href="https://triatloncordoba.org/eventos/">triatloncordoba.org/eventos/ </a>
                     </label>
                 </div>

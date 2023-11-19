@@ -4,22 +4,164 @@
 {% block content %}
 {% load static %}
 {%  if user.is_authenticated %} 
-{% if request.user.is_staff %}
+{% if request.user.is_staff or request.user.groups.all.0.name == 'Inscripciones' %}
+{% for key, values in distancias.items %}
+    {{key}}: {{values}}
+{% endfor %}
+<hr>
+{% for key, values in distancias.items %}
+    {% for val in values %}
+        {% for k,val in val.items %}
+        {{k}}:{{val}}
+        {% endfor %}
+    {% endfor %}
+{% endfor %}
+                    //{{distancia}}
+    {% for evento in eventos %}
+    <h3><b>{{cant_inscriptos_total}}</b> Inscriptos para el evento:<br> <h3 style="color:blue">{{evento}}</h3> </h3>
+    {% endfor%}
 
+    <div style="overflow-x:auto;">
+            <table class = 'table'>
+                <thead>
+                    <tr class="table-danger ">
+                        <th colapsan="1" class="text-center">Resumen</th>
+                        <th colapsan="1" class="text-center">Total Gral</th>
+                        <th colapsan="2" class="text-center">Total</th>
+                        <th colapsan="2"  class="text-center">Mujeres</th>
+                        <th colapsan="2"  class="text-center">Varones</th>
+                        <th colapsan="2"  class="text-center">Total</th>
+                        
+                    </tr>
+
+                </thead>
+                <tbody class"secondheader">
+                    
+                     <th class="text-center">Resumen</th>
+                     <th class="text-center"></th>
+                    
+                    <th>   
+                    {% for key, values in distancias.items %}
+                    {{key}}-
+                    {% endfor %}
+                    </th>
+                    
+                     <th>   
+                    {% for key, values in distancias.items %}
+                    {{key}}-
+                    {% endfor %}
+                    </th>
+
+                   <th>   
+                    {% for key, values in distancias.items %}
+                    {{key}}
+                    {% endfor %}
+                    </th>
+
+
+                </tbody>
+                 
+                <tbody style="vertical-align: 50%;">
+                        <tr >
+                            <td>
+                                {% for key, value in titulos.items %}
+                                <b style="color:black; ">{{key}}</b><hr>
+                                {% endfor %}
+                               
+                                {% for key, values in distancias.items %}
+                                    {% for val in values %}
+                                        {% for k,val in val.items %}
+                                        {{k}}<br>
+                                        {% endfor %}
+                                    {% endfor %}
+                                {% endfor %}
+
+                                
+                                
+                      
+                                {% for key, val in categorias.items %}
+                                <b style="color:green">{{key}}</b><hr>
+                                {% endfor %}
+
+                                {% for key, val in distancias.items %}
+                                <b style="color:#E119A1">{{key}}</b><hr>
+                                {% endfor %}
+                            </td>
+                            
+                            <td class="text-center">
+                                {% for key, value in titulos.items %}
+                                <b style="color:black">{{value.0}}</b><hr>
+                                {% endfor %}
+                              
+                                {% for key, val in modalidades.items %}
+                                {% for n in val.items %}
+                                <b style="color:blue">{{n.1.1}}</b><hr>
+                                {% endfor %}
+                                {% endfor %}
+                           
+                                {% for key, val in categorias.items %}
+                                <b style="color:green">{{val.0}}</b><hr>
+                                {% endfor %}
+
+                                {% for key, val in distancias.items %}
+                                <b style="color:#E119A1">{{val.0}}</b><hr>
+                                {% endfor %}
+                            </td>
+
+                            <td class="text-center">
+                                {% for key, value in titulos.items %}
+                                <b style="color:black">{{value.1}}</b><hr>
+                                {% endfor %}
+                            
+                                {% for key, val in modalidades.items %}
+                                <b style="color:blue">{{val.1}}</b><hr>
+                                {% endfor %}
+                            
+                                {% for key, val in categorias.items %}
+                                <b style="color:green">{{val.1}}</b><hr>
+                                {% endfor %}
+
+                                {% for key, val in distancias.items %}
+                                <b style="color:#E119A1">{{val.1}}</b><hr>
+                                {% endfor %}
+                            </td>
+
+                            <td class="text-center">
+                                {% for key, value in titulos.items %}
+                                <b style="color:black">{{value.2}}</b><hr>
+                                {% endfor %}
+                            
+                                {% for key, val in modalidades.items %}
+                                <b style="color:blue">{{val.2}}</b><hr>
+                                {% endfor %}
+                              
+                                {% for key, val in categorias.items %}
+                                <b style="color:green">{{val.2}}</b><hr>
+                                {% endfor %}
+
+                                {% for key, val in distancias.items %}
+                                <b style="color:#E119A1">{{val.2}}</b><hr>
+                                {% endfor %}
+                            </td>
+                        </tr>
+                </tbody>
+            </table>
+        </div>
 
     {% for evento in eventos %}
-
+    
 
         <form method='POST'>
             {% csrf_token %}
-            <h3>Listado de Inscriptos evento: <h3 style="color:blue">{{evento}}</h3> </h3>
+            
             <div style="overflow-x:auto;">
-            <table class = 'table table-borderless datatable'>
+            <table class = 'table  datatable'>
                 <thead>
                     <tr class="table-info">
                         
                         
                         <th>Nombre</th>
+                        <th>Email</th>
                         <th>Situac</th> 
                         
                         {% comment %} <th>Asociado</th> {% endcomment %}
@@ -29,8 +171,10 @@
                         <th>Categoria</th>
                         
                         <th>Edad</th>
+                        <th>Edad 31/12</th>
                         <th>Equipo</th>               
                         <th>Forma de pago</th>
+                        <th>Cod Grupo</th>
                         <th>Fecha de pago</th>
                         <th>Monto abonado</th>
                         <th>Monto correcto</th>
@@ -42,14 +186,16 @@
                     </tr>
                 </thead>
 
-                <tbody>
+                <tbody style="vertical-align: 50%;">
       
                     {% for inscripto in inscripcion_list %}
                 
                         {% if inscripto.eventoRelacionado.id == evento.id %}
-                        <tr>
+                        <tr >
                            
-                            <td>{{inscripto.persona.first_name|title}} {{inscripto.persona.last_name|title}}</td>
+                             
+                            <td style="vertical-align: middle;">{{inscripto.persona.last_name|title}} {{inscripto.persona.first_name|title}} </td>
+                            <td>{{inscripto.persona.email}}</td>
                             
                             {% if inscripto.confirm_pago == False %}
                             <th style="color:red">Pend</td>
@@ -66,7 +212,9 @@
                             <td>{{inscripto.distancia}}</td>
                             <td>{{inscripto.categoria}}</td>
                             
+                           
                             <td>{{inscripto.get_edad}}</td>
+                            <td>{{inscripto.edad_31_Dic}}</td>
                             
                             {% if inscripto.nombreEquipoPosta == None %}
                             <td>----</td>
@@ -74,7 +222,20 @@
                             <td>{{inscripto.nombreEquipoPosta}}</td>
                             {%  endif %}
                             
-                            <td>{{inscripto.formaPago.formaPago}}</td>
+                            {% for f in formas %}
+                            {% if f.id == inscripto.formaPago %}
+                            <td>{{f.formaPago}}</td>
+                            {% endif %}
+                            {% endfor %}
+
+
+                            {% if inscripto.grupo == None %}
+                            <td>----</td>
+                            {% else %}
+                            <td>{{inscripto.grupo}}</td>
+                            {% endif %}
+                            
+                            
                             <td>{{inscripto.fechaPago|date:"d/m/Y"}}</td>
                             <td>${{inscripto.montoAbonado|floatformat:"-3g"}}</td>
                             <td>${{inscripto.montoDebeAbonar|floatformat:"-3g"}}</td>
@@ -108,6 +269,10 @@
                 </tbody>
             </table>
         </div>
+
+        <div class="d-flex justify-content-center">
+    <a class="btn btn-secondary" href={% url 'lista_eventos' %}>Volver</a>
+    </div>
         </form>
     {% endfor %}    
  

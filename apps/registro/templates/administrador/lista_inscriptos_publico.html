@@ -6,28 +6,50 @@
 {% comment %} {%  if user.is_authenticated %} 
 {% if request.user.is_staff %} {% endcomment %}
 
-{%  block nav%}
+{%  block nav %}
 {% endblock %}
+
 
 {% for evento in eventos %}
 
 
+
     <form method='POST'>
         {% csrf_token %}
-        <h3>Listado de Inscriptos en: <h3 style="color:red">{{evento}}</h3></h3>
+        <h3>Listado de acreditados:
+            {% for key, value in inscriptos.items %}
+            {% if key == evento  %}
+            {% if value == 1 %}
+            <b>{{value}}</b> atleta acreditado
+            {% else %}
+            <b>{{value}}</b> atletas acreditados
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+        </h3>
+          
+        <h3 style="color:red">{{evento}}</h3>
+            
         <div style="overflow-x:auto;">
         <table class = 'table table-borderless datatable'>
             <thead>
                 <tr class="table-info">
                     
-                    
+                    <th>Id</th>
+                    <th>Numero Corredor</th>
+                    <th>Apellido</th>
                     <th>Nombre</th>
-                    {% comment %} <th>Evento</th> {% endcomment %}
+                    <th>Dni</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Edad 31/12</th>
+                    <th>Sexo</th>
+                    <th>Ciudad</th>
                     <th>Modalidad</th>
+                    <th>Equipo</th>  
                     <th>Distancia</th>
                     <th>Categoria</th>
                     <th>Bici</th>               
-                    <th>Equipo</th>               
+                                 
                     
                     
                 
@@ -42,19 +64,27 @@
                     {% if evento.id == c.eventoRelacionado.id %}
                         <tr>
                             {% comment %} <td>{{forloop.counter}}</td> {% endcomment %}
-                            <td>{{c.persona.first_name|title}} {{c.persona.last_name|title}}</td>
+                            <td>{{c.id}}</td>
+                            <td>{{c.numero|title}}</td>
+                            <td>{{c.persona.last_name|title}}</td>
+                            <td>{{c.persona.first_name|title}}</td>
+                            <td>{{c.persona.dni}}</td>
+                            <td>{{c.persona.fechaNacimiento|date:"d/m/Y"}}</td>
+                            <td>{{c.edad_31_Dic}}</td>
+                            <td>{{c.persona.sexo}}</td>
+                            <td>{{c.persona.ciudad|title}}</td>
                             {% comment %} <td>{{c.eventoRelacionado}}</td> {% endcomment %}
                             <td>{{c.modalidad}}</td>
-                            <td>{{c.distancia}}</td>
-                            <td>{{c.categoria}}</td>
-                            <td>{{c.bici}}</td>
                             
                             {% if c.nombreEquipoPosta == None %}
                             <td>----</td>
                             {% else %}
                             <td>{{c.nombreEquipoPosta}}</td>
                             {% endif %}
-                                                
+                         
+                            <td>{{c.distancia}}</td>
+                            <td>{{c.categoria}}</td>
+                            <td>{{c.bici}}</td>
                         </tr>
                     {% endif %}
                     {% endfor %}
@@ -64,7 +94,7 @@
                 
                 {% else%}
                 
-                        <td><h3>No hay pagos registrados</h3></td>
+                        <td><h3>No hay atletas acreditados</h3></td>
                     
                     
                 {% endif %}
@@ -73,6 +103,7 @@
     </div>
     </form>
 {% endfor %}
+
     
             
 {% endblock  %}

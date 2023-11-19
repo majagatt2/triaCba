@@ -31,16 +31,26 @@
                             <li class="widget-49-meeting-item"><span>Cupo: <b>{{n.cupo}}</b></span></li>
                             <li class="widget-49-meeting-item">
                                 <span>Modalidades:
-                                    {% for modalidad in n.modalidad_disponible.all%}
-                                    <b>{{modalidad}} -</b> 
+                                   
+                                    {% for modalidad in modalidad %}
+                                    {% if modalidad|length == 1 %}
+                                    <b>{{modalidad}}</b> 
+                                    {% else %}
+                                    <b>{{modalidad}} - </b> 
+                                    {% endif %}
                                     {% endfor %}
                                 </span>
                             </li>
                             
                             <li class="widget-49-meeting-item"><span>Distancias:
-                                {% for distancia in n.distancia_disponible.all%}
-                                <b>{{distancia}} -</b>
+                                {% for distancia in distancias %}
+                                 {% if distancia|length == 1 %}
+                                <b>{{distancia}}</b>
+                                {% else %}
+                                <b>{{distancia}} - </b> 
+                                {% endif %}
                                 {% endfor %}
+
                             </span></li>
                         </ol>
                     </div>   
@@ -50,7 +60,7 @@
         </div>
         
         
-        <div class="card card-margin">
+        <div class="card card-margin ">
             <div class="card-header no-border">
                 <h5 class="card-title text-center">Bases, Condiciones y Consideraciones:</h5>
             </div>
@@ -63,23 +73,42 @@
                             <span class="widget-49-pro-title">{{n.contenido|safe}}</span>
                         </div>
                     </div>
-                     <div class="d-flex justify-content-end">      
+
+                    <div class="d-flex justify-content-end">      
                         {%  if user.is_authenticated %} 
                             <a class="btn btn-secondary" href={% url 'eventos' %}>Volver</a>
                              &nbsp;    
                             <a class="btn btn-primary" href={% url 'inscribirme' n.id %}>Inscribirme</a>
                         {% else %}
-                            <div class="form-control text-center  p-2 border-4 shadow-lg">
-                                <p style="font-size:14px">Si nunca te has inscripto o asociado en nuestra Asociación, <br>
-                                    presioná sobre "Inscribirme 1º vez"<br>
-                                    sino, presioná "Inscripción Registrado" para ingresar a tu cuenta"
+                            <div class="form-control   p-2 border-4 shadow-lg">
+
+                                {% comment %} <div>
+                                    <form method="POST">
+                                    Consulte su cuenta: 
+                                    <div class="row-item">
+                                        <input id='persona.id'></input>
+                                        
+                                    </div>
+                                    
+                                    
+
+                                     <a  class="btn btn-secondary" href=''>consultar</a>
+
+                                    </form> 
+                                </div> {% endcomment %}
+                                <div class="text-center">
+                                
+                                <p style="font-size:18px">Si ya tenes cuenta, ingresá por 'Inscribirme'<br>
+                                    sino, presioná "Inscribirme 1º vez""
                                 </p>
+                                
                                 <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-secondary" href={% url 'eventos_publico' %}>Volver</a>
                                 &nbsp;     
                                 <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-danger" href={% url 'inscripcion_publico' n.id  %}><i class="bi bi-door-open"></i> Inscribirme 1º vez</a>
                                 &nbsp;
                                 
-                                <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-primary" href={% url 'login' %}><i class="bi bi-key"></i>   Inscripción Registrado</a>
+                                <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-primary" href={% url 'inscribirme' n.id %}><i class="bi bi-key"></i>   Inscribirme</a>
+                            </div>
                             </div>        
                         {% endif %}
                         </div>

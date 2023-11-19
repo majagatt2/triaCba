@@ -37,19 +37,16 @@
   * Author: BootstrapMade.com
   * License: https://bootstrapmade.com/license/
   ======================================================== -->
-
   <style>
     main{
       opacity: 0.8;
     }
-    
-
 
   </style>
 </head>
 
 <body class="text-black" style= "
-                background: url({% static 'registro/assets/img/trofeos.jpg' %});
+                {% comment %} background: url({% static 'registro/assets/img/trofeos.jpg' %}); {% endcomment %}
                 background-position: center;
                 background-atachment: fixed;
                 background-repeat:no-repeat;
@@ -292,13 +289,13 @@
       <ul class="d-flex align-items-center">
         <li class="nav-item dropdown">
           <a class=" nav-icon" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/" >
-            <i class=""><span class="badge bg-primary-light ">Login</span></i>
+            <i class=""><span class="badge bg-primary-light ">Ingresar</span></i>
           </a><!-- End Notification Icon -->
         </li><!-- End Notification Nav -->
 
         <li class="nav-item dropdown">
           <a class="nav-link nav-icon" href="https://triatloncordoba.org" >
-            <i class=""><span class="badge bg-warning-light ">HOME</span></i>
+            <i class=""><span class="badge bg-warning-light ">Inicio</span></i>
           </a><!-- End Messages Icon -->
         </li><!-- End Messages Nav --> 
       </ul>
@@ -313,7 +310,7 @@
   {%  if user.is_authenticated %}
   <!-- ======= Sidebar ======= -->
   {% block aside %}
-    <aside id="sidebar" class="sidebar" style="opacity:1; background-color:#deddddb5" >
+    <aside id="sidebar" class="sidebar" style="opacity:1; background-color:" >
         <ul class="sidebar-nav" id="sidebar-nav" >
           <li class="nav-item a"  >
             <a class="nav-link collapsed " href="{% url 'datos_usuarios' %}">
@@ -373,7 +370,7 @@
 
 
 
-          {% if user.is_staff %}
+          {% if user.is_staff or request.user.groups.all.0.name == 'Inscripciones' %}
           <li class="nav-heading">Opciones Staff:</li>
 
           <li class="nav-item">
@@ -488,7 +485,9 @@
     $('#sidebar, #content').toggleClass('active');
     });
     });>
-    </script> 
+    </script>
+  
+    
 
 
 

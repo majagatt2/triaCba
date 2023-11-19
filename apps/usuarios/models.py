@@ -16,7 +16,7 @@ from django.core.validators import MinLengthValidator
 class Persona(AbstractUser):
    
     cuil = models.CharField(("cuil"), max_length=11, help_text="sin guiones", primary_key=True, validators=[MinLengthValidator(11)])
-    dni = models.IntegerField()
+    dni = models.CharField(max_length=8)
     domicilio = models.CharField(max_length=80)
     ciudad = models.CharField(max_length=60)
     telefono = models.CharField(max_length=40)
@@ -30,7 +30,7 @@ class Persona(AbstractUser):
         upload_to='media/fotoDni', default='foto Dni')  # default='foto Dni'
     
     def __str__(self):
-        return f"{self.last_name} {self.first_name}"
+        return f"{self.last_name.title()} {self.first_name.title()}"
 
     
     class Meta:
@@ -44,5 +44,10 @@ class Persona(AbstractUser):
     
     @property
     def get_edad(self):
-        return date.today().year - self.fechaNacimiento.year
+        today = date.today()
+        edad = today.year - self.fechaNacimiento.year - ((today.month, today.day) <
+             (self.fechaNacimiento.month, self.fechaNacimiento.day))
+        return edad
+    
+    
    

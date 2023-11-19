@@ -47,7 +47,7 @@
                                                 {% endif %}    
                                                     
                                                     
-                                                <td><p><b>{{c.persona|title}}</p></td>
+                                                <td><p><b>{{c.persona.last_name|title}} {{c.persona.first_name|title}} </p></td>
                                                 <td>{{c.distancia}}</td>
                                                 <td>{{c.categoria}}</td>
                                                 <td>{{c.modalidad}}</td>
@@ -62,7 +62,7 @@
                                             {% if c.eventoRelacionado == evento %}
                                                 <tr style="color:#BE0D42">
                                                     {% if c.confirm_pago == False %}
-                                                        <th style="color:red">Pendiente</td>
+                                                        <th>Pendiente Admin</td>
                                                     {% endif %}    
                                                     
                                                     <td><p><b>{{c.persona|title}}</p></td>
@@ -101,6 +101,10 @@
         {% endif %}    
     
     {%  endfor %}
+    <div class="d-flex justify-content-center">
+    <a class="btn btn-secondary" href={% url 'eventos_publico' %}>Volver</a>
+    </div>
 </form>   
+
             
 {% endblock  %}

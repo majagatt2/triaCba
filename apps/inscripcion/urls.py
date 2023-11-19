@@ -3,7 +3,7 @@ from django import views
 from django.conf import settings
 from django.conf.urls.static import static
 #from apps.inscripcion.views import *
-from apps.inscripcion.views import EventosListDetalles, EventosList, EventosPublicoList, InscripcionEventoUsuarioList, InscripcionEventoCreate, InscripcionEventoList,InscripcionEventoListPublico, listPruebas, InscripcionPublicoEventoCreate
+from apps.inscripcion.views import EventosListDetalles, EventosList, EventosPublicoList, InscripcionEventoUsuarioList, InscripcionEventoCreate, InscripcionEventoList,InscripcionEventoListPublico, listPruebas, InscripcionPublicoEventoCreate, consulta_cuil, Resultados
 from django.contrib.auth.decorators import login_required
 
 
@@ -25,6 +25,10 @@ urlpatterns = [
     
     path('mis_inscripciones/', login_required(InscripcionEventoList.as_view()), name='mis_inscripciones'),
     path('eventos_detalles/<parametro>', EventosListDetalles.as_view(), name='eventos_detalles'),
+    
+    path('consulta_cuil/<cuil>',consulta_cuil, name='consulta_cuil'),
+    
+    path('resultados/',Resultados.as_view(), name='resultados'),
     
 ]
 

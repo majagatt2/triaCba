@@ -11,9 +11,11 @@
     <ul class="sidebar-nav" id="sidebar-nav">
       {%  if user.is_authenticated %}
        
-        {% if request.user.is_staff %}
+        {% if request.user.groups.all.0.name == 'Admin' %}
           <li class="nav-item">
               <a class="nav-link collapsed"   href={% url 'resumen' %}>Estadisticas</a></li>
+          <li class="nav-item">
+              <a class="nav-link collapsed"   href={% url 'create_email' %}> Emails</a></li>
           <li class="nav-item">
               <a  class="nav-link collapsed" href={% url 'lista_personas' %}>Personas</a></li>
           <li class="nav-item">
@@ -22,10 +24,12 @@
               <a  class="nav-link collapsed" href={% url 'lista_entrenadores' %}>Entrenadores</a></li>  
           <li class="nav-item">
               <a  class="nav-link collapsed" href={% url 'lista_pagos_socios' %}>Pagos Socios</a></li>
+         
           <li class="nav-item">
               <a  class="nav-link collapsed" href={% url 'lista_eventos' %}>Eventos</a></li>
-          <li class="nav-item">
-              <a  class="nav-link collapsed" href={% url 'lista_inscriptos' %}>Inscriptos Eventos</a></li>
+          
+          {% comment %} <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_inscriptos' %}>Inscriptos Eventos</a></li> {% endcomment %}
 
           <li class="nav-heading">PARA TERCEROS:</li>    
         
@@ -67,7 +71,7 @@
             <li class="nav-item">
               <a class="nav-link collapsed" href="{% url 'lista_inscriptos_publico' %}">
               <i class="bi bi-globe"></i>
-              <span>Inscriptos Publico</span>
+              <span>Inscriptos Andres</span>
               </a>
             </li>
             <li class="nav-item">
@@ -79,25 +83,23 @@
           <br>
         {% endif %}
 
-        {% if  request.user.username == 'cmonasterolo' or request.user.username == 'mpolo' or request.user.is_staff %}
+        {% if  request.user.username == 'cmonasterolo' or request.user.username == 'mpolo' or request.user.groups.all.0.name == 'Admin' %}
           <li class="nav-item">
               <a  class="nav-link collapsed" href={% url 'lista_escuela' %}>Escuela</a></li>
           <li class="nav-item">
               <a  class="nav-link collapsed" href={% url 'lista_pagos_escuelaAdmin' %}>Escuela Pagos</a></li> 
           <li class="nav-item">
              <a  class="nav-link collapsed" href={% url 'estad_escuela' %}>Escuela Estadisticas</a></li>
-          <li class="nav-item">
+         <li class="nav-item">
               <a  class="nav-link collapsed" href={% url 'lista_pagos_escuelaAdmin_mensual' %}>Pagos por Mes</a></li>
-
-
-
-          <li class="nav-item">
               <a  class="nav-link collapsed" href={% url 'asistencia' %}>Asistencia</a></li>    
 
-
-
-
-
+        {% endif %}
+        
+        
+        {% if request.user.groups.all.0.name == 'Inscripciones' %}
+          <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_eventos' %}>Eventos</a></li>
         {% endif %}
           
         <br>

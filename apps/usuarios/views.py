@@ -25,6 +25,13 @@ class UsuariosCreate(SuccessMessageMixin,CreateView):
     success_message = "Gracias por Registrarte! Ya podes acceder desde la página principal"
     
     #ordering = ['nombre']
+    def form_valid(self, form):
+        cuil = form.instance.cuil
+        dni = cuil[2:-1]
+        form.instance.dni = dni
+        return super().form_valid(form)
+    
+    
 
 class DatosList(ListView):
     model = Persona

@@ -118,6 +118,10 @@ class AsociadoCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         
         if form.is_valid() and form2.is_valid():
             form.instance.persona = self.request.user
+            fecha_ingresada = form.instance.fecha_emision_emmac
+            print(fecha_ingresada)
+            if fecha_ingresada == None:
+                form.instance.fecha_emision_emmac = '2000-01-01' 
             persona = form.instance.persona
             nuevo = form.save(commit=False)
             

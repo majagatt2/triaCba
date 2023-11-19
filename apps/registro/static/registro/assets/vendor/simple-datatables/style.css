@@ -101,24 +101,24 @@
 .dataTable-table > tfoot > tr > th,
 .dataTable-table > thead > tr > td,
 .dataTable-table > thead > tr > th {
-	vertical-align: top;
+	vertical-align: middle;
 	padding: 8px 10px;
 }
 
 .dataTable-table > thead > tr > th {
-	vertical-align: bottom;
+	vertical-align: middle;
 	text-align: left;
 	border-bottom: 1px solid #d9d9d9;
 }
 
 .dataTable-table > tfoot > tr > th {
-	vertical-align: bottom;
+	vertical-align: middle;
 	text-align: left;
 	border-top: 1px solid #d9d9d9;
 }
 
 .dataTable-table th {
-	vertical-align: bottom;
+	vertical-align: middle;
 	text-align: left;
 }
 

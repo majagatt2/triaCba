@@ -28,7 +28,10 @@ class RegistroForm(UserCreationForm):
 
     fotoPerfil = ImageField(
         widget=forms.FileInput(
-            attrs={'class': 'form-control'}), label="Adjuntar foto de Perfil (Sólo jpg o png)")
+            attrs={'class': 'form-control'}), label="Adjuntar foto de Perfil (Sólo jpg o png)", required=False)
+    
+    fotoDni = ImageField(widget=forms.FileInput(attrs={
+        'class': 'form-control'}), label="Foto Dni (Sólo jpg o png hasta 2Mb)", required=True)
     
     # def clean_image(self):
     #     dni = self.cleaned_data.get('fotoDni', False)
@@ -54,7 +57,7 @@ class RegistroForm(UserCreationForm):
         fields = [
             
             'cuil',
-            'dni',
+            #'dni',
             'first_name',
             'last_name',
             'username',
@@ -69,7 +72,7 @@ class RegistroForm(UserCreationForm):
         
         widgets = {
             #'cuil': forms.TextInput(attrs={'class': 'form-control'}),
-            'dni': forms.NumberInput(attrs={'class': 'form-control'}),
+            #'dni': forms.NumberInput(attrs={'class': 'form-control'}),
             #'first_name': forms.TextInput(attrs={'class': 'form-control'}, required=True),
             #'last_name': forms.TextInput(attrs={'class': 'form-control'}),
             #'email': forms.EmailInput(attrs={'class': 'form-control'}),
@@ -78,7 +81,7 @@ class RegistroForm(UserCreationForm):
             'telefono': forms.TextInput(attrs={'class': 'form-control'}),
             'nacionalidad': forms.TextInput(attrs={'class': 'form-control'}),
             'sexo': forms.Select(attrs={'class': 'form-control'}),
-            'fotoDni': forms.FileInput(attrs={'class': 'form-control'}),
+            #'fotoDni': forms.FileInput(attrs={'class': 'form-control'}),
             
             
 

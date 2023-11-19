@@ -1,7 +1,7 @@
 from django.urls import reverse_lazy
 from django.http import HttpResponse, HttpResponseRedirect
 
-from apps.inscripcion.models import EventoCosto, Inscripcion
+from apps.inscripcion.models import EventoCosto, Inscripcion, ModalidadEventos, Resultados
 from apps.inscripcion.forms import InscripcionForm, PersonaForm
 from apps.inscripcion.models import Eventos, EventoDistancia, EventoModalidade, EventoCategoria
 from apps.usuarios.models import Persona
@@ -34,6 +34,11 @@ def listPruebas(request):
     return render(request, 'inscripcion/list_pruebas.html', {'eventos': eventos})
 
 
+def consulta_cuil(request, cuil):
+    persona = Persona.objects,all()
+    return render(request, 'inscripcion/detalle_evento.html',{'persona': persona})
+
+
 
 class InscripcionEventoList(ListView):
     model = Inscripcion
@@ -46,6 +51,7 @@ class InscripcionEventoList(ListView):
     
 class InscripcionEventoListPublico(ListView):
     model = Inscripcion
+   
     template_name = 'inscripcion/lista_inscriptos_publico.html'
     ordering = ['persona', ]
     
@@ -73,9 +79,13 @@ class InscripcionEventoCreate(LoginRequiredMixin, SuccessMessageMixin,CreateView
     def get_context_data(self, **kwargs):
         context = super(InscripcionEventoCreate, self).get_context_data(**kwargs)
         filtro = self.kwargs.get('pk', None)
+       
         context['eventos'] = Eventos.objects.filter(id=filtro)
         context['costos'] = EventoCosto.objects.filter(evento=filtro)
+        context['modalidad_evento'] = ModalidadEventos.objects.filter(
+            evento=filtro)
         asociados = Asociado.objects.filter(persona=self.request.user)
+
         lista = []
         for asociado in asociados:
             lista.append(asociado)
@@ -88,6 +98,12 @@ class InscripcionEventoCreate(LoginRequiredMixin, SuccessMessageMixin,CreateView
     def form_valid(self, form, **kwargs):
         form.instance.persona = self.request.user
         persona = form.instance.persona
+        filtro = self.kwargs.get('pk', None)
+        eventos = []
+        for e in Eventos.objects.filter(id=filtro):
+            eventos.append(e)
+        form.instance.eventoRelacionado = eventos[0]
+         
         nuevo = form.save(commit=False)
         nuevo.save()
         
@@ -148,22 +164,6 @@ class InscripcionEventoCreate(LoginRequiredMixin, SuccessMessageMixin,CreateView
         msg2.fail_silently = False
         msg2.send()
         
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
         return super().form_valid(form)
     
    
@@ -184,6 +184,8 @@ class InscripcionPublicoEventoCreate(SuccessMessageMixin, CreateView):
         filtro = self.kwargs.get('pk', None)
         context['eventos'] = Eventos.objects.filter(id=filtro)
         context['costos'] = EventoCosto.objects.filter(evento=filtro)
+        context['modalidad_evento'] = ModalidadEventos.objects.filter(
+            evento=filtro)
         if 'form' not in context:
             context['form'] = self.form_class(self.request.GET)
         if 'form2' not in context:
@@ -201,8 +203,22 @@ class InscripcionPublicoEventoCreate(SuccessMessageMixin, CreateView):
             nuevo = form2.save(commit=False)
             persona.password = make_password('sin password')
             persona.username = uuid.uuid4().hex[:9]
+            cuil = persona.cuil
+            dni = cuil[2:-1]
+            persona.dni = dni
             persona.save()
             nuevo.persona = persona
+            print(nuevo.montoAbonado)
+            
+            if nuevo.montoAbonado == None:
+                nuevo.montoAbonado = 0
+            
+            filtro = self.kwargs.get('pk', None)
+            eventos = []
+            for e in Eventos.objects.filter(id=filtro):
+                eventos.append(e)
+            nuevo.eventoRelacionado = eventos[0]
+        
             nuevo.save()
             
             # template = render_to_string(
@@ -283,7 +299,7 @@ class InscripcionEventoUsuarioList(ListView):
     
 class EventosList(ListView):
     model = Eventos
-    queryset = Eventos.objects.filter(estado=True)
+    queryset = Eventos.objects.filter(estado=True).order_by("fechaEvento")
     template_name = 'inscripcion/eventos.html'
 
     def form_valid(self, form):
@@ -293,7 +309,7 @@ class EventosList(ListView):
 
 class EventosPublicoList(ListView):
     model = Eventos
-    queryset = Eventos.objects.filter(estado=True)
+    queryset = Eventos.objects.filter(estado=True).order_by("fechaEvento")
     template_name = 'inscripcion/eventos_publico.html'
     
     
@@ -306,6 +322,23 @@ class EventosListDetalles(ListView):
         context = super(EventosListDetalles, self).get_context_data(**kwargs)
         parametro = self.kwargs.get('parametro', None)
         context['eventos'] = Eventos.objects.filter(id=parametro)
+        
+        modalidad = []
+        for e in ModalidadEventos.objects.filter(evento=parametro):
+            modalidad.append(e.modalidad)
+            
+        distancias = []
+        for e in ModalidadEventos.objects.filter(evento=parametro):
+            for d in e.distancia_disponible.all():
+                if d not in distancias:
+                    distancias.append(d)
+        
+        persona = Persona.objects.all()    
+            
+        context['modalidad'] = modalidad
+        context['distancias'] = distancias
+        context['persona'] = persona
+        
         return context
 
     def form_valid(self, form):
@@ -313,3 +346,6 @@ class EventosListDetalles(ListView):
         return super().form_valid(form)
     
     
+class Resultados(ListView):
+    model = Resultados
+    template_name = 'inscripcion/resultados.html'
