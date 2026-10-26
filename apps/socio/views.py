@@ -14,7 +14,7 @@ from datetime import date
 
 
 def error_404_view(request, exception):
-    return render(request, 'base/pages-error-404.html')
+    return render(request, 'base/pages-error-404.html', status=404)
 
 
 class AsociadosList(ListView):
@@ -271,5 +271,5 @@ class AsociadoPagosList(ListView):
 
 
 def mensaje(request):
-    return render(request,'mensaje')
+    return render(request, 'socio/mensaje_pago.html')
 

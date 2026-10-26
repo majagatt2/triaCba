@@ -7,7 +7,7 @@ from apps.usuarios.forms import RegistroForm, UpdatePersonaForm
 from django.contrib.messages.views import SuccessMessageMixin  # for create and update
 from django.views.generic import CreateView, ListView, UpdateView, DeleteView
 from django.urls import reverse_lazy
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 #from apps.registro.models import Bienvenida
 
 from django.contrib.auth.views import  PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
@@ -18,6 +18,8 @@ from django.template.loader import render_to_string
 from django.urls import reverse
 from django.core.mail import send_mail
 from django.conf import settings
+from django.contrib.auth import login
+from django.utils.http import url_has_allowed_host_and_scheme
 
 
 
@@ -107,14 +109,24 @@ class UsuariosCreate(SuccessMessageMixin,CreateView):
     template_name = "usuarios/form_crear_persona.html"
     form_class = RegistroForm
     success_url = reverse_lazy("login")
-    success_message = "Gracias por Registrarte! Ya podes acceder desde la página principal"
+    success_message = "¡Bienvenido/a! Tu cuenta ya está creada y estás adentro."
 
     #ordering = ['nombre']
     def form_valid(self, form):
         cuil = form.instance.cuil
         dni = cuil[2:-1]
         form.instance.dni = dni
-        return super().form_valid(form)
+        respuesta = super().form_valid(form)
+        # Entra directo a su cuenta (antes lo mandaba al login a escribir todo de nuevo)
+        login(self.request, self.object, backend='apps.usuarios.backends.UsuarioEmailOCuilBackend')
+        return respuesta
+
+    def get_success_url(self):
+        siguiente = self.request.POST.get('next') or self.request.GET.get('next')
+        if siguiente and url_has_allowed_host_and_scheme(siguiente, allowed_hosts={self.request.get_host()},
+                                                         require_https=self.request.is_secure()):
+            return siguiente
+        return reverse('index')
 
 
 
@@ -130,10 +142,12 @@ class UsuariosUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy('datos_usuarios')
     success_message = "Los datos se actualizaron con éxito"
 
-    def form_valid(self, form, **kwargs):
-        form.instance.password = self.request.user.password
-        form.save()
-        return super().form_valid(form)
+    def get_queryset(self):
+        # Cada persona solo puede editar sus propios datos (el staff, los de cualquiera).
+        # Antes cualquier usuario podia abrir /editar_usuarios/<cuil de otro>/ y cambiarlos.
+        if self.request.user.is_staff:
+            return Persona.objects.all()
+        return Persona.objects.filter(pk=self.request.user.pk)
 
 
 
@@ -146,10 +160,14 @@ class UsuariosList(ListView):
     template_name = 'administrador/lista_personas.html'
 
 
-class UsuariosEliminar(DeleteView):
+class UsuariosEliminar(UserPassesTestMixin, DeleteView):
+    # Solo el staff puede eliminar personas (antes alcanzaba con estar logueado)
     model = Persona
+
+    def test_func(self):
+        return self.request.user.is_staff
     template_name = 'administrador/eliminar_persona.html'
-    success_url = reverse_lazy('lista_usuarios')
+    success_url = reverse_lazy('lista_personas')
 
 
 

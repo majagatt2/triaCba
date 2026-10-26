@@ -74,6 +74,9 @@ class RegistroForm(UserCreationForm):
             return cuil
 
 class UpdatePersonaForm(forms.ModelForm):
+    # El CUIL es la clave de la persona: si se cambia, Django crea OTRA persona en vez de editarla
+    cuil = forms.CharField(disabled=True, required=False, label='CUIL',
+                           help_text='Para corregir el CUIL escribí a la asociación.')
     fechaNacimiento = DateField(
         widget=forms.widgets.DateInput(attrs={'type': 'date', }), label="Fecha de Nacimiento")
 

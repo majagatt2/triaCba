@@ -27,55 +27,56 @@ class DashboardHomeView(TemplateView):
 
 class NewsletterCreateView(SuccessMessageMixin,CreateView):
     model = Newsletter
-    tournaments = []
-    email_members = []
-    email_members_con_acceso = []
-    email_escuela = []
-    email_people_all = []
     template_name = "emails/form_email.html"
     form_class = NewsletterCreationForm
     success_url = reverse_lazy("create_email")
     success_message = "El email se envió con éxito !"
 
-    for m in Asociado.objects.filter():
-        if m.get_estado == True:
-            if m.persona.email in email_members:
+    def cargar_listas(self):
+        # Se calcula en cada pedido. Antes estaba en el cuerpo de la clase y se
+        # calculaba una sola vez al arrancar el servidor (listas desactualizadas).
+        self.tournaments = list(Eventos.objects.values_list('id', flat=True))
+        self.email_members = []
+        self.email_members_con_acceso = []
+        self.email_escuela = []
+        self.email_people_all = ['triatloncba@gmail.com']
+
+        for m in Asociado.objects.filter():
+            if m.get_estado == True:
+                if m.persona.email in self.email_members:
+                    pass
+                else:
+                    self.email_members.append(m.persona.email)
+
+        for m in Asociado.objects.filter(tipoAsociado = 1):
+            if m.get_estado == True:
+                if m.persona.email in self.email_members_con_acceso:
+                    pass
+                else:
+                    self.email_members_con_acceso.append(m.persona.email)
+
+        for m in Asociado.objects.filter(tipoAsociado = 5):
+            if m.get_estado == True and m.asiste == True:
+                if m.persona.email in self.email_escuela:
+                    pass
+                else:
+                    self.email_escuela.append(m.persona.email)
+
+        for p in Persona.objects.all():
+            if p.email in self.email_people_all or p.email == "" :
                 pass
             else:
-                email_members.append(m.persona.email)
+                self.email_people_all.append(p.email)
 
-    for m in Asociado.objects.filter(tipoAsociado = 1):
-        if m.get_estado == True:
-            if m.persona.email in email_members_con_acceso:
-                pass
-            else:
-                email_members_con_acceso.append(m.persona.email)
-
-    for m in Asociado.objects.filter(tipoAsociado = 5):
-        if m.get_estado == True and m.asiste == True:
-            if m.persona.email in email_escuela:
-                pass
-            else:
-                email_escuela.append(m.persona.email)
-
-    for p in Persona.objects.all():
-        if p.email in email_people_all or p.email == "" :
-            pass
-        else:
-            email_people_all.append(p.email)
-
-    for t in Eventos.objects.all():
-        tournaments.append(t.id)
 
 
     def get_context_data(self, **kwargs):
         context = super(NewsletterCreateView,
                         self).get_context_data(**kwargs)
+        self.cargar_listas()
 
         groups = []
 
-        for n in range(1):
-            self.email_people_all.insert(0,'triatloncba@gmail.com')
         for n in range(1):
             groups.insert(1,'Asociados')
         for n in range(1):
@@ -99,6 +100,7 @@ class NewsletterCreateView(SuccessMessageMixin,CreateView):
         return context
 
     def form_valid(self, form, **kwargs):
+        self.cargar_listas()
         instance = form.save()
 
         if instance.status == "Publicar":

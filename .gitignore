@@ -8,3 +8,6 @@ __pycache__/
 *.sqlite3
 venv/
 .vscode/
+*.tgz
+PENDIENTES.md
+*.code-workspace

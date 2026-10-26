@@ -6,6 +6,7 @@
 
 <div class="container">
 
+{% include "inscripcion/_errores_formulario.html" with form_a=form titulo="Todavía NO se guardó" %}
 <form  method="POST" class="needs-validation form-control bg-black bg-opacity-50 text-white" enctype="multipart/form-data" onsubmit="send();move();" >
     {% csrf_token %}
     {%  if user.is_authenticated %}

@@ -7,7 +7,7 @@
         {% csrf_token %}
         <h1>Desea eliminar el registro de  {{object.nombres}} {{object.apellido}}  ?</h1>
         <button class="btn btn-danger" type="submit">Eliminar</button>
-        <a class="btn btn-default" href={% url 'listado' %}>Cancelar</a>
+        <a class="btn btn-default" href={% url 'lista_personas' %}>Cancelar</a>
        
 </form>
 

@@ -38,7 +38,3 @@ if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = "apps.socio.views.error_404_view"
-handler404 = "apps.usuarios.views.error_404_view"
-handler404 = "apps.inscripcion.views.error_404_view"
-handler404 = "apps.registro.views.error_404_view"
-handler404 = "apps.emails.views.error_404_view"

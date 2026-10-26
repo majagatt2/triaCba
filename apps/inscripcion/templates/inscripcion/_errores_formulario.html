@@ -1,0 +1,28 @@
+{% comment %}
+Cuadro de errores arriba del formulario. Recibe hasta dos formularios: form_a y form_b, y opcionalmente el titulo del cuadro.
+Cada error es un link que lleva al campo. Si hubo errores, los archivos elegidos se
+pierden (el navegador no los conserva), asi que se avisa que hay que volver a elegirlos.
+{% endcomment %}
+{% if form_a.errors or form_b.errors %}
+<div id="errores-formulario" class="alert alert-danger shadow mx-auto my-3" role="alert" tabindex="-1" style="max-width: 760px; border: 3px solid #b00020; scroll-margin-top: 90px;">
+    <h4 class="alert-heading fw-bold">{{ titulo|default:"Tu inscripción todavía NO se registró" }}</h4>
+    <p class="mb-2">Corregí estos datos y volvé a tocar <b>Confirmar</b>:</p>
+    <ul class="mb-2">
+        {% for f in form_a %}{% for error in f.errors %}
+            <li><a class="alert-link" href="#{{ f.id_for_label }}">{{ f.label|cut:"*" }}</a>: {{ error }}</li>
+        {% endfor %}{% endfor %}
+        {% for error in form_a.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+        {% for f in form_b %}{% for error in f.errors %}
+            <li><a class="alert-link" href="#{{ f.id_for_label }}">{{ f.label|cut:"*" }}</a>: {{ error }}</li>
+        {% endfor %}{% endfor %}
+        {% for error in form_b.non_field_errors %}<li>{{ error }}</li>{% endfor %}
+    </ul>
+    <p class="mb-0"><b>Importante:</b> por seguridad el navegador borra los archivos adjuntos. Volvé a elegir las fotos y el comprobante antes de confirmar.</p>
+</div>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    var caja = document.getElementById('errores-formulario');
+    if (caja) { caja.scrollIntoView({behavior: 'smooth', block: 'start'}); caja.focus({preventScroll: true}); }
+  });
+</script>
+{% endif %}

@@ -5,31 +5,33 @@
 
     <div class="container">
         <br>
-        <form  method="POST" class="needs-validation form-control bg-black bg-opacity-75 text-white" enctype="multipart/form-data" onsubmit="send();move();">
+        {% include "inscripcion/_aviso_archivos.html" %}
+        {% include "inscripcion/_errores_formulario.html" with form_a=form %}
+        <form  method="POST" class="needs-validation form-inscripcion" enctype="multipart/form-data" data-inscripcion>
             {% csrf_token %}
             {%  if user.is_authenticated%}
 
 
-               <h3 class="text-center">Registro Inscripcion al Evento:</h3>
-       <h3 class="text-center ">
+               <h3 class="titulo-inscripcion">Inscripción al evento</h3>
+       <h3 class="subtitulo-inscripcion">
                     {% for e in eventos %}
                     {% if forloop.last %}
                     <b>{{e}}</b>
                     {% endif %}
                     {% endfor %}
                 </h3>
-                <h4 class="text-center" style="color:#148F77">{{request.user.first_name}} {{request.user.last_name}}</h4>
+                <div class="atleta-inscripcion"><span class="atleta-nombre">{{request.user.first_name}} {{request.user.last_name}}</span>
 
             {% if asociado|length == 0 %}
-                <h5 class="text-center" style="color:skyblue">No Federado</h5>
+                <span class="estado-chip">No federado</span>
             {% else %}
                 {% for a in asociado %}
                 {% if request.user == a.persona %}
                 {% if forloop.last %}
                 {% if a.estado and a.get_vigente %}
-                        <h5 class="text-center" style="color:green">Federado</h5>
+                        <span class="estado-chip estado-ok">Federado</span>
                     {% else %}
-                        <h5 class="text-center" style="color:skyblue">No Federado</h5>
+                        <span class="estado-chip">No federado</span>
                     {% endif %}
                 {% endif %}
                 {% endif %}
@@ -44,6 +46,9 @@
                 </div>
 
 
+             </div>
+             <div class="panel-paso panel-evento">
+             <h4 class="paso">El evento</h4>
              <div class="form-control-btn-group">
                 <div class="row-item">{#evento relacionado#}
                     <label> Seleccioná tu competencia:*</label>
@@ -57,7 +62,7 @@
                 <br>
                 <div class="row-item"> {#modalidad#}
                     <div> {{form.modalidad.label}}</div>
-                        <select style="color:green;" name="modalidad" id="id_modalidad"  class="form-control" required>
+                        <select name="modalidad" id="id_modalidad"  class="form-control" required>
                             <option value='0'></option>
                            {% for x in modalidad_evento %}
                             <option value="{{x.modalidad}}" data-chained="{{x.id}}">{{x.modalidad|safe}}</option>
@@ -67,7 +72,7 @@
                 <br>
                 <div class="row-item">{#catgoria#}
                     <div> {{form.categoria.label}}</div>
-                        <select style="color:red; font-weight: bold;" name="categoria" id="id_categoria" class="form-select" required>
+                        <select name="categoria" id="id_categoria" class="form-select" required>
                             <option value='0'></option>
                             {% for x in modalidad_evento %}
                             {% for e in x.categoria_disponible.all %}
@@ -79,7 +84,7 @@
                 <br>
                 <div class="row-item">{#distancia#}
                     <div> {{form.distancia.label}}</div>
-                        <select style="color:red; font-weight: bold;" name="distancia" id="id_distancia" class="form-select"  required >
+                        <select name="distancia" id="id_distancia" class="form-select"  required >
 
                             {% for x in modalidad_evento %}
                             {% for e in x.distancia_disponible.all %}
@@ -92,7 +97,7 @@
                 <br>
                 <div class="row-item"> {#bici#}
                     <div> {{form.bici.label}}</div>
-                        <select style="color:red; font-weight: bold;" name="bici" id="id_bici" class="form-select" required>
+                        <select name="bici" id="id_bici" class="form-select" required>
                             <option value='0'></option>
                             {% for x in modalidad_evento %}
                             {% for e in x.bici_disponible.all %}
@@ -116,12 +121,15 @@
                 <br>
                 <div class="row-item">
                     <label> {{form.emmac_file.label}}</label>
-                    <div style="color:red; font-weight: bold;">{{form.emmac_file.errors}}</div>
+                    <div class="error-campo">{{form.emmac_file.errors}}</div>
                     <div>{{form.emmac_file}}</div>
                 </div>
                 <br>
 
-            <div class="form-control container p-4 text-white" style="background-color:#dc3545db">
+            </div>
+            </div>
+            <div class="form-control container panel-paso panel-pago">
+               <h4 class="paso">El pago</h4>
                <div class="row-item">
                     <div> {{form.formaPago.label}}</div>
                         <select name="formaPago" id="id_formaPago" class="form-select" required>
@@ -218,21 +226,23 @@
                 <br>
                 <div class="row-item">
                     <label>{{form.comprobPago.label}}</label>
-                    <div style="color:rgb(55, 0, 255); font-weight: bold;">{{form.comprobPago.errors}}</div>
+                    <div class="error-campo">{{form.comprobPago.errors}}</div>
                         <div>{{form.comprobPago}}</div>
                 </div>
             </div>
-            <br>
+            <div class="panel-paso panel-extra">
                 <div class="row-item">
                     <label> {{form.comentario.label}}</label>
                     <div>{{form.comentario}}</div>
                 </div>
 
-                {% if  request.user.get_edad < 18%}
+                {% if es_menor %}
+                <div class="panel-menores-interno">
                     <br>
                     <hr>
                     <br>
-                    <p style="color:blue"><b>Por favor completá la siguiente sección para menores de 18 años:</b></p>
+                    <h4 class="paso-sin-numero">Sos menor de 18 años</h4>
+                    <p class="nota-paso">Por favor completá los datos de tu madre, padre o tutor. Son obligatorios para inscribirte.</p>
                     <div class="row-item">
                         <label > {{form.responsable_tutor.label}}</label>
                         <div>{{form.responsable_tutor}} </div>
@@ -244,8 +254,8 @@
                     </div>
                     <br>
                         <div class="row-item">
-                            <label > {{form2.relacion.label}}</label>
-                            <div>{{form2.relacion}} </div>
+                            <label > {{form.relacion.label}}</label>
+                            <div>{{form.relacion}} </div>
                         </div>
                     <br>
                     <div class="row-item">
@@ -263,11 +273,12 @@
                         <div>{{form.telefono_responsable}}</div>
                     </div>
                     <br>
+                </div>
                 {% endif %}
 
             </div>
             <br><br>
-             <div class="form-control p-5"> <!--Declaracion-->
+             <div class="form-control panel-paso panel-declaracion"> <!--Declaracion-->
                 <b><div class="form-check ">
                     <input class="form-check-input" type="checkbox" value="" id="invalidCheck" required>
                     <label class="form-check-label " for="invalidCheck">
@@ -323,18 +334,6 @@
 <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
     <script src="{% static 'registro/js/jquery.chained.min.js' %}"></script>
 
-<script>
-     {
-        alert("ESTIMADO ATLETA,"+"\n"+
-        "recuerde que LAS IMÁGENES o PDF que adjunte deben tener"+"\n"+
-        "un tamaño máximo de 2Mbs"+"\n"+
-        "\n"+
-    "SU INSCIRPCION SE CONFIRMARÁ AL RECIBIR UN EMAIL "+"\n"+
-    "DENTRO DE LOS 5 MINUTOS DE RECIBIDA SU INSCRIPCIÓN");
-
-        }
-    ;
-</script>
 
 <script>
   $(function(){
@@ -360,6 +359,8 @@
   });
   </script>
 
+
+<script src="{% static 'inscripcion/js/archivos.js' %}"></script>
 
 {% endblock %}
 

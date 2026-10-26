@@ -30,6 +30,8 @@
 
   <!-- Template Main CSS File -->
   <link href="{% static 'registro/assets/css/style.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/css/ajustes.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/css/tema.css' %}" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: NiceAdmin - v2.4.1
@@ -287,7 +289,7 @@
          <nav class="header-nav ms-auto" >
           <ul class="d-flex align-items-center">
             <li class="nav-item dropdown">
-              <a class=" nav-icon" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/" >
+              <a class=" nav-icon" href="{% url 'login' %}" >
                 <i class=""><span class="badge bg-primary-light ">Ingresar</span></i>
               </a><!-- End Notification Icon -->
             </li><!-- End Notification Nav -->
@@ -1202,6 +1204,8 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'registro/assets/js/main.js' %}"></script>
+  <script src="{% static 'registro/js/ajustes.js' %}"></script>
+  <script src="{% static 'inscripcion/js/archivos.js' %}"></script>
 
 
   <script>
@@ -1257,20 +1261,6 @@
                 });
             } );
         </script> {% endcomment %}
-
-
-
-
-
-     <script>
-        $(function() {
-        // Sidebar toggle behavior
-        $('#sidebarCollapse').on('click',
-        function() {
-        $('#sidebar, #content').toggleClass('active');
-        });
-        });
-        </script>
 
 
 

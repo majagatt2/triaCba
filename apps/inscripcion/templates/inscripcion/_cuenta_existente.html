@@ -1,0 +1,42 @@
+{% comment %}
+Formulario de inscripcion SIN cuenta: si la persona ya tiene cuenta (por su CUIL) se le ofrece
+ingresar y seguir desde su cuenta, donde el formulario es mas corto.
+Se muestra solo si el servidor detecto el CUIL repetido, o cuando el script lo detecta al escribirlo.
+{% endcomment %}
+{% url 'inscribirme' evento_id as url_inscribirme %}
+<p class="text-center my-2">¿Ya tenés cuenta en la asociación?
+    <a href="{% url 'login' %}?next={{ url_inscribirme|urlencode }}"><b>Ingresá</b></a> y completás menos datos.</p>
+
+<div id="cuenta-existente" class="alert alert-warning shadow-sm mx-auto my-3" role="alert" style="max-width: 760px; border-left: 6px solid #D62828; scroll-margin-top: 90px;"
+     data-url-chequeo="{% url 'cuil_registrado' %}" {% if not cuil_existente %}hidden{% endif %}>
+    <h4 class="alert-heading fw-bold">Ya tenés una cuenta con este CUIL</h4>
+    <p class="mb-2">No hace falta cargar tus datos de nuevo. Ingresá con tu email, tu CUIL o tu usuario
+       y te llevamos directo al formulario de este evento.</p>
+    <a class="btn btn-primary me-2 mb-2" href="{% url 'login' %}?next={{ url_inscribirme|urlencode }}">Ingresar y seguir con la inscripción</a>
+    <a class="d-inline-block mb-2" href="{% url 'password_reset' %}">No me acuerdo la contraseña</a>
+</div>
+<script>
+  (function () {
+    var caja = document.getElementById('cuenta-existente');
+    function revisar() {
+      var campo = document.getElementById('id_cuil');
+      if (!campo) return;
+      var digitos = (campo.value || '').replace(/\D/g, '');
+      if (digitos.length !== 11) return;
+      fetch(caja.dataset.urlChequeo + '?cuil=' + digitos, { credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          var antes = caja.hidden;
+          caja.hidden = !d.existe;
+          if (d.existe && antes) caja.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        })
+        .catch(function () {});
+    }
+    document.addEventListener('DOMContentLoaded', function () {
+      var campo = document.getElementById('id_cuil');
+      if (!campo) return;
+      campo.addEventListener('change', revisar);
+      campo.addEventListener('input', function () { if (campo.value.replace(/\D/g, '').length === 11) revisar(); });
+    });
+  })();
+</script>

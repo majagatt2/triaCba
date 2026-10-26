@@ -87,7 +87,10 @@ class InscripcionAdmin(admin.ModelAdmin):
             return f.formaPago
 
 
-    list_filter = ('eventoRelacionado','distancia', 'categoria','grupo', 'confirm_pago','acreditacion','persona', 'montoAbonado')
+    # 'persona' como filtro cargaba las 1.600+ personas en la barra lateral: ahora se busca con el buscador
+    list_filter = ('eventoRelacionado','distancia', 'categoria','grupo', 'confirm_pago','acreditacion', 'montoAbonado')
+    search_fields = ('persona__last_name', 'persona__first_name', 'persona__cuil', 'persona__dni', 'persona__email')
+    list_select_related = ('persona', 'eventoRelacionado__tipo')
     list_editable = ['categoria','control_pago','confirm_pago','acreditacion','numero','numero_chip',]
     list_per_page = 20
 

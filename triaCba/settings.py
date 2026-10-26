@@ -35,7 +35,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # security.W018
-DEBUG = False
+DEBUG = os.environ.get('DJANGO_DEBUG') == '1'
 
 # security.W016
 CSRF_COOKIE_SECURE = True
@@ -217,6 +217,9 @@ AUTH_USER_MODEL = 'usuarios.Persona'
 LOGIN_REDIRECT_URL = reverse_lazy('index')
 LOGOUT_REDIRECT_URL = reverse_lazy('login')
 
+# Se puede ingresar con usuario, email o CUIL
+AUTHENTICATION_BACKENDS = ['apps.usuarios.backends.UsuarioEmailOCuilBackend']
+
 
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
@@ -238,3 +241,28 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 IMPORT_EXPORT_USE_TRANSACTIONS = True
 
 
+# --- Desarrollo local: solo se activa si el .env lo pide ---
+# En PythonAnywhere estas variables no existen, asi que no cambia nada.
+if DEBUG:
+    ALLOWED_HOSTS += ['localhost', '127.0.0.1']
+    # runserver no tiene HTTPS: sin esto el navegador queda en blanco en 127.0.0.1
+    SECURE_SSL_REDIRECT = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+    SECURE_HSTS_SECONDS = 0
+
+if os.environ.get('DB_LOCAL_SQLITE') == '1':
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': BASE_DIR / 'db.sqlite3',
+        }
+    }
+    MEDIA_ROOT = BASE_DIR / 'media'
+    STATIC_ROOT = BASE_DIR / 'static'
+
+# Crear la base local desde los modelos actuales (el historial de migraciones
+# no se puede reproducir desde cero). Solo se usa con LOCAL_SYNCDB=1.
+if os.environ.get('LOCAL_SYNCDB') == '1':
+    MIGRATION_MODULES = {app: None for app in [
+        'escuela', 'registro', 'socio', 'inscripcion', 'usuarios', 'emails']}

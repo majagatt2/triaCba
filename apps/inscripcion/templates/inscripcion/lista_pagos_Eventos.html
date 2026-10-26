@@ -75,6 +75,11 @@
                 </table>
             </div>
 
+        {% else %}
+            <div class="alert alert-light text-center my-3">
+                <p class="mb-2">Todavía no tenés inscripciones.</p>
+                <a class="btn btn-primary" href="{% url 'eventos' %}">Ver próximos eventos</a>
+            </div>
         {% endif %}
     {% endif %}
 

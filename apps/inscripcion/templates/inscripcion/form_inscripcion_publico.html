@@ -13,8 +13,8 @@
 {% load crispy_forms_tags %}
 
     <div class="vh-120 " >
-       <h3 class="text-center text-white bg-black bg-opacity-25 p-2"><b>Registro Inscripcion al Evento:</b></h3>
-       <h3 class="text-center ">
+       <h3 class="text-center text-white bg-black bg-opacity-25 p-2"><b>Inscripción al evento</b></h3>
+       <h3 class="subtitulo-inscripcion">
                     {% for e in eventos %}
                     {% if forloop.last %}
                     <b>{{e}}</b>
@@ -22,25 +22,17 @@
                     {% endfor %}
                 </h3>
         <br>
-        {% if form.errors %}
-            {% for field in form %}
-                {% for error in field.errors %}
-                    <p> {{ errors }} </p>
-                {% endfor %}
-            {% endfor %}
-
-            {% for error in form.non_field_errors %}
-                <p> {{ error }} </p>
-            {% endfor %}
-        {% endif %}
-        <form  method="POST" class="needs-validation  text-black" enctype="multipart/form-data" id="formulario" onsubmit="send();move();">
+        {% include "inscripcion/_aviso_archivos.html" %}
+        {% include "inscripcion/_cuenta_existente.html" %}
+        {% include "inscripcion/_errores_formulario.html" with form_a=form form_b=form2 %}
+        <form  method="POST" class="needs-validation text-black form-inscripcion" enctype="multipart/form-data" id="formulario" data-inscripcion>
 
             {% csrf_token %}
 
             <div class="row justify-content-center">
                 <div class="col-md-4 p-2 justify-content-center">
-                    <div class="form-control" style="background-color:; "><!--COLUMNA INFORMACION PERSONAL-->
-                        <h4 class="text-center text-black card-title"><b>Información Personal para tu cuenta:</b></h4>
+                    <div class="form-control panel-paso panel-datos"><!--COLUMNA INFORMACION PERSONAL-->
+                        <h4 class="paso">Tus datos</h4>
                         <hr>
                         <br>
 
@@ -85,11 +77,11 @@
                         <div class="" >{{form.sexo}}</div>
 
                         <label>{{form.fotoPerfil.label}}</label>
-                        <div style="color:red; font-weight: bold;">{{form.fotoPerfil.errors}}</div>
+                        <div class="error-campo">{{form.fotoPerfil.errors}}</div>
                         <div class="" >{{form.fotoPerfil}}</div>
 
                         <label>{{form.fotoDni.label}}</label>
-                        <div style="color:red; font-weight: bold;">{{form.fotoDni.errors}}</div>
+                        <div class="error-campo">{{form.fotoDni.errors}}</div>
                         <div class="" >{{form.fotoDni}}</div>
                         {% endcomment %}
 
@@ -101,88 +93,11 @@
                 </div>
                 <br>
 
-                <div class=" col-md-4  p-2 justify-content-center">
-                        <div class=" form-control text-white"  style="background-color:#273d5ee6; "> <!--COLUMNA SOBRE EL EVENTO-->
-                            <h4 class="text-center text-white card-title"><b>Sobre el evento:</b></h4>
-                            <hr>
-                            <br>
-                            <div class="form-control-btn-group">
-                                <div class="row-item">{#evento relacionado#}
-                                    <label></label>
-                                    <select name="eventoRelacionado" id="id_evento" class="form-select"  required>
-                                        <option value='Seleccionar'>Seleccionar</option>
-                                        {% for x in modalidad_evento %}
-                                            <option value="{{x.id}}">{{x.modalidad}} - {{x.evento|safe}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <br>
-                                <div class="row-item"> {#modalidad#}
-                                    <div> {{form2.modalidad.label}}</div>
-                                        <select style="color:green;" name="modalidad" id="id_modalidad"  class="form-control" required>
-                                            <option value='0'></option>
-                                        {% for x in modalidad_evento %}
-                                            <option value="{{x.modalidad}}" data-chained="{{x.id}}">{{x.modalidad|safe}}</option>
-                                        {% endfor %}
-                                        </select>
-                                </div>
-                                <br>
-                                <div class="row-item">{#catgoria#}
-                                    <div> {{form2.categoria.label}}</div>
-                                        <select style="color:red; font-weight: bold;" name="categoria" id="id_categoria" class="form-select" required>
-                                            <option value='0'></option>
-                                            {% for x in modalidad_evento %}
-                                            {% for e in x.categoria_disponible.all %}
-                                            <option value="{{e.categoria}}" data-chained="{{x.id}}">{{e}}</option>
-                                            {% endfor %}
-                                            {% endfor %}
-                                        </select>
-                                </div>
-                                <br>
-                                <div class="row-item">{#distancia#}
-                                    <div> {{form2.distancia.label}}</div>
-                                        <select style="color:red; font-weight: bold;" name="distancia" id="id_distancia" class="form-select"  required >
+                <div class="col-md-4 p-2">
+                                     <div class="form-control panel-paso panel-menores" id="panel-menores" data-fecha-evento="{{ eventos.0.fechaEvento|date:'Y-m-d' }}" {% if not menor_detectado %}hidden{% endif %}> <!--COLUMNA Menores 18-->
 
-                                            {% for x in modalidad_evento %}
-                                            {% for e in x.distancia_disponible.all %}
-                                                <option value="{{e.distancia}}" data-chained="{{x.id}}">{{e}}</option>
-                                            {% endfor %}
-                                            {% endfor %}
-                                        </select>
-                                </div>
-                                <br>
-                                <div class="row-item"> {#bici#}
-                                    <div> {{form2.bici.label}}</div>
-                                        <select style="color:red; font-weight: bold;" name="bici" id="id_bici" class="form-select" required>
-                                            <option value='0'></option>
-                                            {% for x in modalidad_evento %}
-                                            {% for e in x.bici_disponible.all %}
-                                            <option value="{{e.bici}}" data-chained="{{x.id}}">{{e}}</option>
-                                            {% endfor %}
-                                            {% endfor %}
-                                        </select>
-
-                                </div>
-                                <br>
-                                <div class="row-item"> {#nombre_equipo_posta#}
-                                    <label> {{form2.nombreEquipoPosta.label}}</label>
-                                    <input class="form-control" placeholder="Nombre Equipo - Obligatorio para Postas"{{form2.nombreEquipoPosta}}
-                                </div>
-                                <br>
-                                <div class="row-item"> {#Obra Social#}
-                                        <label> {{form2.obra_social.label}}</label>
-                                        <div>{{form2.obra_social}}</div>
-                                </div>
-                                <br>
-                                <div class="row-item"> {#Archivo Emmac#}
-                                    <label> {{form2.emmac_file.label}}</label>
-                                    <div style="color:red; font-weight: bold;">{{form2.emmac_file.errors}}</div>
-                                    <div>{{form2.emmac_file}}</div>
-                                </div>
-                                <br><br>
-                                     <div class="form-control text-white" style="background-color:#1d420cb8 ; " > <!--COLUMNA Menores 18-->
-
-                                        <p class="card-title text-center text-white"><b>Sección obligatoria para menores de 18 años:</b></p>
+                                        <h4 class="paso-sin-numero">Sos menor de 18 años</h4>
+                                        <p class="nota-paso">Por favor completá los datos de tu madre, padre o tutor. Son obligatorios para inscribirte.</p>
                                         <hr>
                                         <br>
                                         <div class="row-item">
@@ -216,6 +131,87 @@
                                         </div>
                                         <br>
                                     </div>
+                </div>
+
+                <div class=" col-md-4  p-2 justify-content-center">
+                        <div class="form-control panel-paso panel-evento"> <!--COLUMNA SOBRE EL EVENTO-->
+                            <h4 class="paso">El evento</h4>
+                            <hr>
+                            <br>
+                            <div class="form-control-btn-group">
+                                <div class="row-item">{#evento relacionado#}
+                                    <label></label>
+                                    <select name="eventoRelacionado" id="id_evento" class="form-select"  required>
+                                        <option value='Seleccionar'>Seleccionar</option>
+                                        {% for x in modalidad_evento %}
+                                            <option value="{{x.id}}">{{x.modalidad}} - {{x.evento|safe}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <br>
+                                <div class="row-item"> {#modalidad#}
+                                    <div> {{form2.modalidad.label}}</div>
+                                        <select name="modalidad" id="id_modalidad"  class="form-control" required>
+                                            <option value='0'></option>
+                                        {% for x in modalidad_evento %}
+                                            <option value="{{x.modalidad}}" data-chained="{{x.id}}">{{x.modalidad|safe}}</option>
+                                        {% endfor %}
+                                        </select>
+                                </div>
+                                <br>
+                                <div class="row-item">{#catgoria#}
+                                    <div> {{form2.categoria.label}}</div>
+                                        <select name="categoria" id="id_categoria" class="form-select" required>
+                                            <option value='0'></option>
+                                            {% for x in modalidad_evento %}
+                                            {% for e in x.categoria_disponible.all %}
+                                            <option value="{{e.categoria}}" data-chained="{{x.id}}">{{e}}</option>
+                                            {% endfor %}
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                                <br>
+                                <div class="row-item">{#distancia#}
+                                    <div> {{form2.distancia.label}}</div>
+                                        <select name="distancia" id="id_distancia" class="form-select"  required >
+
+                                            {% for x in modalidad_evento %}
+                                            {% for e in x.distancia_disponible.all %}
+                                                <option value="{{e.distancia}}" data-chained="{{x.id}}">{{e}}</option>
+                                            {% endfor %}
+                                            {% endfor %}
+                                        </select>
+                                </div>
+                                <br>
+                                <div class="row-item"> {#bici#}
+                                    <div> {{form2.bici.label}}</div>
+                                        <select name="bici" id="id_bici" class="form-select" required>
+                                            <option value='0'></option>
+                                            {% for x in modalidad_evento %}
+                                            {% for e in x.bici_disponible.all %}
+                                            <option value="{{e.bici}}" data-chained="{{x.id}}">{{e}}</option>
+                                            {% endfor %}
+                                            {% endfor %}
+                                        </select>
+
+                                </div>
+                                <br>
+                                <div class="row-item"> {#nombre_equipo_posta#}
+                                    <label> {{form2.nombreEquipoPosta.label}}</label>
+                                    <input class="form-control" placeholder="Nombre Equipo - Obligatorio para Postas"{{form2.nombreEquipoPosta}}
+                                </div>
+                                <br>
+                                <div class="row-item"> {#Obra Social#}
+                                        <label> {{form2.obra_social.label}}</label>
+                                        <div>{{form2.obra_social}}</div>
+                                </div>
+                                <br>
+                                <div class="row-item"> {#Archivo Emmac#}
+                                    <label> {{form2.emmac_file.label}}</label>
+                                    <div class="error-campo">{{form2.emmac_file.errors}}</div>
+                                    <div>{{form2.emmac_file}}</div>
+                                </div>
+                                <br><br>
 
 
 
@@ -225,8 +221,8 @@
                     </div>
                     <br>
                         <div class=" col-md-4  p-2 justify-content-center">
-                            <div class="form-control container p-4 text-white" style="background-color:#dc3545db">   <!--Forma de pago-->
-                                <h4 class="text-center text-white card-title"><b>Sobre el pago:</b></h4>
+                            <div class="form-control container panel-paso panel-pago">   <!--Forma de pago-->
+                                <h4 class="paso">El pago</h4>
                                 <hr>
                                 <div class="row-item"> {{form2.formaPago.label}}</div>
                                     <select name="formaPago" id="id_formaPago" class="form-select" required>
@@ -323,7 +319,7 @@
                                 <br>
                                 <div class="row-item">
                                     <label>{{form2.comprobPago.label}}</label>
-                                    <div style="color:rgb(55, 0, 255); font-weight: bold;">{{form2.comprobPago.errors}}</div>
+                                    <div class="error-campo">{{form2.comprobPago.errors}}</div>
                                         <div>{{form2.comprobPago}}</div>
                                 </div>
                             </div>
@@ -336,7 +332,7 @@
 
             <br><br>
 
-            <div class="form-control p-5"> <!--Declaracion-->
+            <div class="form-control panel-paso panel-declaracion"> <!--Declaracion-->
                 <b>
                 <br>
                 <div class="form-check ">
@@ -368,7 +364,7 @@
                 </b>
             </div>
             <br>
-            <div class="d-flex justify-content-center"> <!--Botones-->
+            <div class="d-flex justify-content-center botones-inscripcion"> <!--Botones-->
 
                 <a class="btn btn-secondary" href={% url 'eventos_publico' %}>Cancelar</a>
                 &nbsp;
@@ -385,18 +381,6 @@
     <script src="{% static 'registro/js/jquery.chained.min.js' %}"></script>
 
 
-<script>
-     {
-        alert("ESTIMADO ATLETA,"+"\n"+
-        "recuerde que LAS IMÁGENES o PDF que adjunte deben tener"+"\n"+
-        "un tamaño máximo de 2Mbs"+"\n"+
-        "\n"+
-    "SU INSCIRPCION SE CONFIRMARÁ AL RECIBIR UN EMAIL "+"\n"+
-    "DENTRO DE LOS 5 MINUTOS DE RECIBIDA SU INSCRIPCIÓN.");
-
-        }
-    ;
-</script>
 
 <script>
   $(function(){
@@ -422,6 +406,9 @@
   });
   </script>
 
+
+<script src="{% static 'inscripcion/js/archivos.js' %}"></script>
+<script src="{% static 'inscripcion/js/menores.js' %}"></script>
 
 {% endblock %}
 

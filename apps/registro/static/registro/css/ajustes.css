@@ -1,0 +1,54 @@
+/*
+ * Ajustes visuales de triaCba (se cargan despues del estilo de la plantilla NiceAdmin).
+ * Objetivo: que nada quede corrido ni cortado, en celular y en computadora.
+ */
+
+/* 1. Contenido nitido: antes todo <main> tenia opacity 0.8 y se veia lavado. */
+main, #main, body.img { opacity: 1 !important; }
+
+/* 2. Paginas sin menu lateral (visitantes, formularios publicos):
+      la plantilla igual dejaba 300px vacios a la izquierda en pantallas grandes. */
+body.sin-menu #main,
+body.sin-menu #footer { margin-left: 0 !important; }
+body.sin-menu .toggle-sidebar-btn { display: none; }
+body.sin-menu #main > * { max-width: 1100px; margin-left: auto; margin-right: auto; }
+
+/* 3. Nada mas ancho que la pantalla */
+#main img, #main video, #main iframe { max-width: 100%; height: auto; }
+#main td, #main th, .card { overflow-wrap: break-word; }
+
+/* 4. Tablas: se deslizan de costado dentro de su caja, sin cortar columnas */
+.tabla-scroll, .dataTable-container { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.dataTable-container > table, .tabla-scroll > table { min-width: 100%; }
+.aviso-deslizar { display: none; font-size: .8rem; color: #6c757d; margin: 4px 0; }
+
+@media (max-width: 768px) {
+  #main { padding: 16px 10px; }
+  #main table { font-size: .85rem; }
+  #main th { white-space: nowrap; }
+  #main td, #main th { padding: .45rem .5rem; }
+  .aviso-deslizar.visible { display: block; }
+  /* listados de varias columnas: cada dato en una sola linea y la tabla se desliza */
+  #main table.tabla-ancha td, #main table.tabla-ancha th { white-space: nowrap; }
+
+  /* buscador y "filas por pagina" de las tablas, uno debajo del otro */
+  .dataTable-top { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; }
+  .dataTable-top > div { float: none; width: 100%; }
+  .dataTable-search, .dataTable-input { width: 100%; }
+  .dataTable-bottom { display: flex; flex-direction: column; gap: 6px; align-items: center; }
+
+  /* titulos grandes que se salian */
+  #main h1 { font-size: 1.6rem; }
+  #main h2 { font-size: 1.35rem; }
+  #main h3 { font-size: 1.2rem; }
+
+  /* formularios: campos a lo ancho */
+  #main .form-control, #main .form-select { width: 100%; }
+}
+
+/* 5. Textos de ayuda legibles sobre fondos oscuros */
+.bg-black .form-text, .bg-dark .form-text, .text-white .form-text,
+.bg-black .helptext, .text-white .helptext { color: #e9ecef !important; opacity: .9; }
+
+/* 6. Foto de perfil del encabezado cuando no hay imagen */
+.foto-perfil-vacia { font-size: 30px; color: #012970; line-height: 1; }

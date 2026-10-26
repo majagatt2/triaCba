@@ -116,6 +116,9 @@ class Asociado(models.Model):
 
     @property
     def get_vencimiento_emmac(self):
+        # Sin fecha de emision cargada se toma como vencido (antes la pagina daba error 500)
+        if not self.fecha_emision_emmac:
+            return date(2000, 1, 1)
         vencimiento = self.fecha_emision_emmac + timedelta(days=365)
         return vencimiento
 

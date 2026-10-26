@@ -25,10 +25,10 @@ class InscripcionForm(forms.ModelForm):
     #     'class': 'form-control'}), label="Adjunte el comprobante de Pago* - Sólo jpg o png hasta 2Mb*", required=True,)
 
     comprobPago = forms.FileField(widget=forms.FileInput(
-        attrs={'accept': 'application/pdf,image/jpg,image/jpeg,image/png', 'class': 'form-control'}), label="Adjunte el comprobante de Pago* - Sólo jpg, jpeg, png y pdf hasta 2Mb*", required=True)
+        attrs={'accept': 'application/pdf,image/jpg,image/jpeg,image/png', 'class': 'form-control'}), label="Comprobante de pago* (foto jpg o png, o PDF de hasta 2 MB)", required=True)
 
     emmac_file = forms.FileField(widget=forms.FileInput(attrs={
-        'class': 'form-control','accept': 'image/jpg,image/jpeg,image/png'}), label="Foto Emmac o Certifidado Médico* - Sólo jpg o png hasta 2Mb*", required=True,)
+        'class': 'form-control','accept': 'image/jpg,image/jpeg,image/png'}), label="Foto del Emmac o certificado médico* (jpg o png)", required=True,)
 
 
     class Meta:
@@ -104,7 +104,8 @@ class EventosForm(forms.ModelForm):
 class PersonaForm(forms.ModelForm):
     fechaNacimiento = DateField(widget=forms.widgets.DateInput(attrs={'type': 'date', 'class':'form-control'}), label="Fecha de Nacimiento")
     cuil = forms.CharField(widget=forms.TextInput(attrs={
-                           'class': 'form-control','placeholder':'Sin guiones'}), validators=[validar_cuil])
+                           'class': 'form-control','placeholder':'Sin guiones'}), validators=[validar_cuil],
+                           error_messages={'unique': 'Ya tenés una cuenta con este CUIL. Tocá "Ingresar" arriba (o recuperá tu contraseña) y anotate desde Eventos.'})
     first_name = forms.CharField(widget=forms.TextInput(attrs={
         'class': 'form-control', 'placeholder': 'como figura en el DNI'}), max_length=100, required=True, label='Nombres')
     last_name = forms.CharField(widget=forms.TextInput(attrs={
@@ -113,7 +114,7 @@ class PersonaForm(forms.ModelForm):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'class': 'form-control',}), required=True)
 
     fotoDni = forms.FileField(widget=forms.FileInput(attrs={
-        'class': 'form-control','accept': 'image/jpg,image/jpeg,image/png',}), label="Adjuntar foto de tu  Dni (Sólo jpg o png hasta 2Mb)", required=True)
+        'class': 'form-control','accept': 'image/jpg,image/jpeg,image/png',}), label="Foto de tu DNI* (jpg o png)", required=True)
 
     # fotoPerfil = ImageField(
     #     widget=forms.FileInput(

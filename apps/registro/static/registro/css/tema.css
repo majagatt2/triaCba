@@ -1,0 +1,252 @@
+/*
+ * Tema visual de triaCba ("carril"): se carga despues de la plantilla NiceAdmin y de ajustes.css.
+ * Para volver al aspecto anterior alcanza con sacar la linea que carga este archivo en base/index3 y base/index5.
+ *
+ * Paleta tomada del logo: azul lago y rojo Cordoba, sobre un gris claro de pista.
+ * Tipografia: Barlow Condensed (titulos, aire de dorsal de carrera) + Barlow (texto). Ambas incluidas en el sitio.
+ * Lo distintivo: los titulos de cada pagina llevan una franja roja a la izquierda, como un carril de pileta.
+ */
+
+@font-face { font-family: 'Barlow'; font-weight: 400; font-style: normal; font-display: swap; src: url('../fonts/barlow-latin-400-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 500; font-style: normal; font-display: swap; src: url('../fonts/barlow-latin-500-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 600; font-style: normal; font-display: swap; src: url('../fonts/barlow-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow'; font-weight: 700; font-style: normal; font-display: swap; src: url('../fonts/barlow-latin-700-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-weight: 600; font-style: normal; font-display: swap; src: url('../fonts/barlow-condensed-latin-600-normal.woff2') format('woff2'); }
+@font-face { font-family: 'Barlow Condensed'; font-weight: 700; font-style: normal; font-display: swap; src: url('../fonts/barlow-condensed-latin-700-normal.woff2') format('woff2'); }
+
+:root {
+  --lago: #0E2A47;       /* titulos, menu, encabezados de tabla */
+  --rojo: #D62828;       /* accion principal, franja de titulos */
+  --rojo-oscuro: #B01E1E;
+  --agua: #1C7C9C;       /* links e iconos */
+  --pista: #F3F5F8;      /* fondo */
+  --tinta: #1B2430;      /* texto */
+  --gris: #5B6776;       /* texto secundario */
+  --linea: #DDE3EA;      /* bordes */
+  --verde: #2E7D32;
+  --radio: 10px;
+  --bs-body-font-family: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif;
+}
+
+/* ---------- Base ---------- */
+body {
+  font-family: 'Barlow', system-ui, -apple-system, 'Segoe UI', sans-serif !important;
+  font-size: 16px;
+  color: var(--tinta);
+  background-color: var(--pista) !important;
+}
+/* La foto de fondo queda apenas insinuada detras de un velo claro */
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+  background: rgba(243, 245, 248, .93);
+}
+a { color: var(--agua); }
+a:hover { color: var(--lago); }
+h1, h2, h3, h4, h5, .card-title, .pagetitle h1 {
+  font-family: 'Barlow Condensed', 'Barlow', sans-serif !important;
+  font-weight: 600;
+  color: var(--lago);
+  letter-spacing: .2px;
+}
+:focus-visible { outline: 3px solid rgba(28, 124, 156, .45); outline-offset: 2px; }
+
+/* ---------- Encabezado y menu ---------- */
+#header.header { background: #fff; box-shadow: none; border-bottom: 1px solid var(--linea); }
+#header .toggle-sidebar-btn, #header .nav-profile span, #header .nav-icon { color: var(--lago); }
+#header .badge.bg-primary-light { background: var(--rojo) !important; color: #fff !important; font-style: normal; font-weight: 600; padding: .45em .9em; }
+#header .badge.bg-warning-light { background: transparent !important; color: var(--lago) !important; border: 1px solid var(--linea); font-style: normal; font-weight: 600; padding: .45em .9em; }
+#header .nav-icon i { font-style: normal; }
+
+.sidebar { background: #fff !important; border-right: 1px solid var(--linea); box-shadow: none; }
+.sidebar-nav .nav-link,
+.sidebar-nav .nav-link.collapsed {
+  background: transparent; color: var(--lago); font-weight: 600; border-radius: 8px;
+}
+.sidebar-nav .nav-link span[style] { color: inherit !important; }   /* colores sueltos de cada item */
+.sidebar-nav .nav-link i, .sidebar-nav .nav-link.collapsed i { color: var(--agua); }
+.sidebar-nav .nav-link:hover, .sidebar-nav .nav-link.collapsed:hover { background: #EAF0F6; color: var(--lago); }
+.sidebar-nav .nav-heading { color: var(--gris); font-weight: 600; }
+
+/* ---------- Titulos de pagina: la franja de carril ---------- */
+#main h2.bg-black, #main h3.bg-black, #main h2.bg-dark, #main h3.bg-dark {
+  background: transparent !important;
+  color: var(--lago) !important;
+  text-align: left !important;
+  border-left: 6px solid var(--rojo);
+  padding: 2px 0 2px 14px !important;
+  margin: 4px 0 18px;
+  font-size: clamp(1.6rem, 1.25rem + 1.4vw, 2.2rem);
+  font-weight: 700;
+  line-height: 1.15;
+}
+#main h2.bg-black strong, #main h3.bg-black b { font-weight: 700; }
+
+/* ---------- Tarjetas y paneles ---------- */
+.card { border: 1px solid var(--linea); border-radius: var(--radio); box-shadow: none; }
+.card-header { background: #fff; border-bottom: 1px solid var(--linea); }
+
+/* Formularios que venian sobre negro semitransparente: panel blanco con texto oscuro */
+form.form-control.bg-black, .form-control.bg-black {
+  background: #fff !important;
+  color: var(--tinta) !important;
+  border: 1px solid var(--linea);
+  border-radius: var(--radio);
+  padding: 20px;
+}
+form.bg-black .text-white:not(.btn):not(.badge):not(.alert),
+form.text-white:not(.btn) { color: var(--tinta) !important; }
+
+/* Columnas de color del formulario de inscripcion: blancas con una franja superior del color original */
+.form-control[style*="#273d5e"], .form-control[style*="#1d420c"], .form-control[style*="#dc3545"], .form-control[style*="#076b8b"] {
+  background: #fff !important; color: var(--tinta) !important;
+  border: 1px solid var(--linea); border-radius: var(--radio); padding-top: 14px;
+}
+.form-control[style*="#273d5e"] { border-top: 6px solid var(--lago); }
+.form-control[style*="#076b8b"] { border-top: 6px solid var(--agua); }
+.form-control[style*="#1d420c"] { border-top: 6px solid var(--verde); }
+.form-control[style*="#dc3545"] { border-top: 6px solid var(--rojo); }
+.form-control[style*="#273d5e"] .text-white, .form-control[style*="#1d420c"] .text-white,
+.form-control[style*="#dc3545"] .text-white, .form-control[style*="#076b8b"] .text-white,
+.form-control[style*="#273d5e"] h4, .form-control[style*="#1d420c"] h4, .form-control[style*="#dc3545"] h4 { color: var(--lago) !important; }
+/* selects que tenian texto rojo o verde suelto */
+select.form-select[style*="color:red"], select.form-control[style*="color:green"] { color: var(--tinta) !important; font-weight: 500 !important; }
+
+/* ---------- Campos y botones ---------- */
+.form-control, .form-select {
+  border: 1px solid #C9D2DC; border-radius: 8px; font-size: 1rem; padding: .55rem .75rem; color: var(--tinta);
+}
+.form-control:focus, .form-select:focus { border-color: var(--agua); box-shadow: 0 0 0 .2rem rgba(28, 124, 156, .2); }
+label, .form-label { font-weight: 500; }
+.btn { border-radius: 8px; font-weight: 600; padding: .5rem 1.1rem; }
+.btn-primary, .btn-danger { background: var(--rojo); border-color: var(--rojo); color: #fff; }
+.btn-primary:hover, .btn-primary:focus, .btn-danger:hover { background: var(--rojo-oscuro); border-color: var(--rojo-oscuro); color: #fff; }
+.btn-secondary { background: #fff; color: var(--lago); border: 1px solid #C9D2DC; }
+.btn-secondary:hover { background: #EAF0F6; color: var(--lago); border-color: #C9D2DC; }
+.btn-success { background: var(--verde); border-color: var(--verde); }
+
+/* ---------- Tablas ---------- */
+#main .table { color: var(--tinta); }
+#main .table > thead > tr, #main tr.table-info, #main tr.table-success, #main thead.table-info {
+  --bs-table-bg: #E9EEF4; background: #E9EEF4;
+}
+#main .table > thead th { color: var(--lago); font-weight: 600; border-bottom: 2px solid #C9D2DC; }
+#main .table > tbody > tr:hover > * { background: #F6F8FB; }
+.dataTable-input, .dataTable-selector { border: 1px solid #C9D2DC; border-radius: 8px; padding: .4rem .6rem; }
+.dataTable-pagination a { border-radius: 6px; }
+.dataTable-pagination .active a { background: var(--lago); color: #fff; }
+
+/* ---------- Tarjetas de eventos (listado de proximos eventos) ---------- */
+.row > .shadow-lg[style*="background-color:red"] {
+  background: #fff !important;
+  border: 1px solid var(--linea);
+  border-top: 6px solid var(--rojo);
+  border-radius: var(--radio) !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+.row > .shadow-lg[style*="background-color:red"] > .card { border: 0; border-radius: var(--radio) !important; }
+.row > .shadow-lg[style*="background-color:red"] a[style*="#F26B1E"] { color: var(--lago) !important; }
+.row > .shadow-lg[style*="background-color:red"] b[style*="#f21e1e"] {
+  color: var(--rojo) !important; font-family: 'Barlow', sans-serif; font-size: .95rem; font-weight: 600;
+}
+.row > .shadow-lg[style*="background-color:red"] h4 { font-size: 1.5rem; line-height: 1.15; }
+
+/* ---------- Pie ---------- */
+#footer.footer { border-top: 1px solid var(--linea); color: var(--gris); }
+#footer .copyright, #footer .copyright strong { color: var(--gris); font-weight: 500; }
+
+/* ---------- Alertas propias del sitio ---------- */
+.alert { border-radius: var(--radio); }
+.alert-info { background: #E8F3F7; border-color: #C5E1EA; color: #0F4C5F; }
+
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+/* ---------- Formularios de inscripcion a eventos: una sola columna, pasos numerados, sin colores sueltos ---------- */
+.form-inscripcion {
+  counter-reset: paso;
+  max-width: 760px; margin: 0 auto 32px;
+  background: transparent !important; border: 0 !important; padding: 0 !important; color: var(--tinta) !important;
+}
+.form-inscripcion > .row { margin: 0; }
+.form-inscripcion > .row > [class*="col-"] { flex: 0 0 100%; max-width: 100%; padding: 0 !important; }
+.form-inscripcion br { display: none; }
+.form-inscripcion .row-item { margin-bottom: 16px; }
+
+#main .titulo-inscripcion, .titulo-inscripcion {
+  color: var(--lago) !important; text-align: left !important; font-weight: 700;
+  border-left: 6px solid var(--rojo); padding: 2px 0 2px 14px; margin: 4px 0 6px;
+  font-size: clamp(1.6rem, 1.25rem + 1.4vw, 2.2rem);
+}
+.subtitulo-inscripcion {
+  text-align: left !important; font-size: 1.2rem !important; color: var(--gris) !important; font-weight: 600;
+  margin: 0 0 18px 20px;
+}
+.subtitulo-inscripcion b { font-weight: 600; }
+body.sin-menu #main .subtitulo-inscripcion, #main h3.bg-black + .subtitulo-inscripcion { max-width: 760px; }
+
+.atleta-inscripcion { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin: 0 0 18px 20px; }
+.atleta-inscripcion .atleta-nombre { font-weight: 600; font-size: 1.1rem; color: var(--lago); }
+.estado-chip {
+  display: inline-flex; align-items: center; gap: 6px; font-size: .85rem; font-weight: 600;
+  padding: 3px 10px; border-radius: 999px; background: #EEF1F5; color: var(--gris);
+}
+.estado-chip::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: #9AA6B2; }
+.estado-chip.estado-ok { background: #E7F3EA; color: #1F5F2A; }
+.estado-chip.estado-ok::before { background: var(--verde); }
+
+.panel-paso {
+  background: #fff !important; color: var(--tinta) !important;
+  border: 1px solid var(--linea) !important; border-radius: var(--radio) !important;
+  padding: 22px 22px 6px !important; margin: 0 0 18px !important; height: auto !important;
+}
+.panel-paso .text-white, .panel-paso .card-title { color: inherit !important; }
+.panel-paso > hr { display: none; }
+.form-inscripcion .panel-paso .panel-paso { border: 0 !important; padding: 0 !important; margin: 0 !important; }
+.form-inscripcion .panel-paso .panel-menores { border: 1px dashed #C9D2DC !important; padding: 16px 16px 2px !important; margin: 8px 0 16px !important; }
+
+h4.paso, h4.paso-sin-numero {
+  display: flex; align-items: center; gap: 10px;
+  text-align: left !important; font-size: 1.4rem !important; color: var(--lago) !important;
+  margin: 0 0 16px !important; font-weight: 700 !important;
+}
+h4.paso::before {
+  counter-increment: paso; content: counter(paso);
+  flex: none; width: 30px; height: 30px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  background: var(--lago); color: #fff; font-family: 'Barlow', sans-serif; font-size: 1rem; font-weight: 600;
+}
+.nota-paso { color: var(--gris); font-size: .95rem; margin: -8px 0 14px; }
+.panel-menores { background: #F7F9FB !important; border-style: dashed !important; }
+
+/* Etiquetas y campos parejos */
+.form-inscripcion label, .form-inscripcion .row-item > div:first-child:not(:has(input, select, textarea)) {
+  font-weight: 500; color: var(--tinta) !important; margin-bottom: 4px; display: block;
+}
+.form-inscripcion select, .form-inscripcion input:not([type="checkbox"]):not([type="radio"]):not([type="submit"]):not(.btn) { color: var(--tinta) !important; font-weight: 400 !important; }
+
+/* Declaracion final */
+.panel-declaracion { padding: 18px 20px !important; font-weight: 400; }
+.panel-declaracion > b { font-weight: 400; }
+.panel-declaracion .form-check { display: flex; gap: 12px; align-items: flex-start; padding-left: 0; }
+.panel-declaracion .form-check-input {
+  float: none; margin: 3px 0 0; flex: none; width: 1.3em; height: 1.3em;
+  border: 2px solid #9AA6B2; background-color: #fff;
+}
+.panel-declaracion .form-check-input:checked { background-color: var(--rojo); border-color: var(--rojo); }
+.panel-declaracion ul { padding-left: 1.1rem; margin: 0; color: var(--tinta); }
+.panel-declaracion li { margin-bottom: 4px; }
+
+.botones-inscripcion, .form-inscripcion .d-flex.justify-content-end { gap: 10px; margin: 6px 0 24px; justify-content: flex-end !important; }
+@media (max-width: 576px) {
+  .panel-paso { padding: 18px 14px 4px !important; }
+  .subtitulo-inscripcion, .atleta-inscripcion { margin-left: 0; }
+  .botones-inscripcion .btn, .form-inscripcion .d-flex.justify-content-end .btn { flex: 1; }
+}
+
+/* Franja de color arriba de cada seccion del formulario de inscripcion */
+.panel-paso.panel-datos  { border-top: 5px solid var(--agua) !important; }
+.panel-paso.panel-evento { border-top: 5px solid var(--lago) !important; }
+.panel-paso.panel-pago   { border-top: 5px solid var(--rojo) !important; }
+.form-inscripcion .panel-paso.panel-menores { border: 1px solid var(--linea) !important; border-top: 5px solid var(--verde) !important; background: #fff !important; padding: 22px 22px 6px !important; margin: 0 0 18px !important; }
+.panel-menores[hidden] { display: none !important; }
+.panel-menores-interno { border-top: 5px solid var(--verde); margin: 8px -22px 0; padding: 18px 22px 2px; }
