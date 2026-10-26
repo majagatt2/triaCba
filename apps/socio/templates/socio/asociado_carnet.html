@@ -1,218 +1,179 @@
 {% extends "base/index3.html" %}
+{% load static tz %}
 {% block content %}
-{% load static %}
 
-<style>
-    .special {
-text-align:center;
-color: #0000DF;
-background: #eee;
-font-family: 'arial';
-font-size: 15px;
-letter-spacing: 0;
-text-shadow: -1px -1px 1px #df0000, -1px 1px 1px #df0000, -1px 1px 1px #df0000, 1px 1px 1px #df0000;
-}
+{% if carnet and estado != 'vencido' %}
+<div class="carnet-pagina">
+    <article class="carnet carnet-{{ estado }}" aria-label="Carnet de deportista federado">
+        <header class="carnet-encabezado">
+            <img src="{% static 'registro/logo_triatloncba_relieve.png' %}" alt="Triatlón Córdoba" class="carnet-logo">
+            <div class="carnet-tipo">
+                <span>Deportista federado</span>
+                <small>Asociación de Triatlón de Córdoba</small>
+            </div>
+        </header>
 
-.special2 {
-    text-align:center;
-    color: #fff;
-    background: #eee;
-    font-family: impact;
-    font-size: 22px;
-    letter-spacing: 0;
-   text-shadow: -2px -2px 2px #0000DF, 2px -2px 2px #0000DF, -2px 2px 2px #0000DF, 2px 2px 2px #0000DF;
-}
-
-
-</style>
-
-
-
-<form method="POST"  enctype="multipart">
-{% csrf_token %}
-{%  if user.is_authenticated %}
-    {% if asociado %}
-
-        {% for s in asociado %}
-
-            {% if forloop.last %}
-                {% if s.persona == request.user %}
-                    {% if s.get_vigente %}
-
-
-                        <div class="  d-flex flex-column align-items-center" >
-                            <div class="row d-flex justify-content-center align-items-center h-100 shadow-lg p-1 mb-2 bg-opacity-75" style= "background-color:red; border-radius: 15px"  >
-                                <div class=" text-black" style= "border-radius: 15px;
-                                            background-color:#EAF2F8;
-                                            background-image: url({% static ''%});
-                                            background-size: contain;
-                                            background-blend-mode: overlay; //saturation
-                                            background-repeat: repeat;
-                                            background-atachment: fixed;
-                                            background-position: center;
-
-                                            background-origin: content-box;
-                                            ">
-                                            <br>
-                                    <div class="row text-center ">
-                                                <br>
-                                        <p style="font-size:11px;">Fecha Certificado:
-                                            <b style="font-size:13px;">
-                                            {% now "j F Y H:i" %}
-                                            </b>
-                                        </p>
-                                        <div class="align-items-center">
-                                                <img src="{% static  'registro/logo_triatloncba_relieve.png' %}" class=""
-                                                    width="" alt="Triatlón Córdoba">
-                                        </div>
-                                            
-                                        <p class="special">
-                                            CERTIFICADO DEPORTISTA FEDERADO<br>
-                                        </p>
-                                        <h3 class="name text-center"><b>{{s.persona.first_name}} {{s.persona.last_name}}</b></h3>
-                                        <br>
-                                       
-
-                                    </div>
-
-                                    <div class="row people">
-                                        <div class="col-12 col-md-6 offset-md-3">
-                                            <div class="flex-box" ><img class="rounded mx-auto d-block pb-3"  src={{request.user.fotoPerfil.url}} width="70" height="80">
-                                                <table style="width:100%">
-                                                        <tr>
-                                                            <td>Asociado:</td>
-                                                            <td>
-                                                                {% if s.estado %}
-                                                                    <h4  class="name text-center" style="color:green"><b>{{s.estado|yesno:'Activo,Inactivo'}}</b></h4>
-                                                                {%  else %}
-                                                                    <h5 class="name text-center" style="color:red"><b>{{s.estado|yesno:'Activo,Pendiente de Activación'}}</b></h5>
-                                                                {%  endif %}
-                                                            </td>
-                                                        
-                                                        </tr>    
-                                                        <tr>
-                                                            <td>Tipo Asociado:</td>
-                                                            <td><h5 class="name text-center">{{s.tipoAsociado}}</h5></td>
-                                                            </tr>
-                                                        <tr>
-                                                            <td>Nº de Federado:</td>
-                                                            <td><h5 class="name text-center">{{s.persona.cuil}}</h5></td>
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Vencimiento Certificado:</td>
-                                                            <td>
-                                                                {% if now > s.get_vencimiento %}
-                                                                    <h4 class="name text-center" style="color:red"><b>{{s.get_vencimiento|date:" d/mm/Y"}}</b></h4>
-                                                                    {% else %}
-                                                                    <h4 class="name text-center"><b>{{s.get_vencimiento}}</b></h4>
-                                                                {% endif %}
-                                                            </td>
-                                                        
-                                                        </tr>
-                                                        <tr>
-                                                            <td>Entrenador Polo Kempes:</td>
-                                                            <td><h5 class="name text-center">{{s.entrenador}}</h5></td>
-                                                            </tr>
-                                                        <tr>
-                                                    
-                                                </table>
-                                                <extends class="title text-center p=5">
-                                                    <div class="border border-secondary border-opacity-50 p-2">
-                                                    {% if s.get_sit_emmac %}
-                                                        <div>
-                                                        <p>Emmac:
-                                                        <span style="color:green">Nº {{s.numero_emmac}} Vigente</span>
-                                                        <p>Vencimiento: {{s.get_vencimiento_emmac}}</p>
-                                                        </p> 
-                                                        </div>
-                                                    {% elif s.get_sit_emmac == False and s.get_emmac_no_presentado == False  %}
-                                                        <div>
-                                                        <h5 style="color:red"><b>Nº {{s.numero_emmac}} Vencido</b></h5>
-                                                        Venció el: {{s.get_vencimiento_emmac}}
-                                                        </div>
-                                                    {% elif s.get_emmac_no_presentado %}
-                                                        <div>
-                                                        <h5 style="color:red"><b>Nº </b>- No declara</h5>
-                                                        Venció el: No declara
-                                                        </div>
-
-                                                    {% endif %}
-                                                        <div >
-                                                        <a href={{s.emmac_file.url}}>Ver Emmac:
-                                                        </a>
-                                                        </div>
-                                                    </div>
-                                                </extends>
-
-
-
-
-                                                <br>
-                                                <strong><p class="description text-center">El presente Certificado es válido para <br>constatar su situación Actual. </p></strong>
-
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                                <div class="d-flex justify-content-end">
-                                    <a class='btn btn-primary btn-sm' href={% url 'editar_socio' s.id %}>Actualizar</a>
-                                </div>
-                        </div>
-                        <br><br><br><br>
-
-
-
-
-
-                {% else %}
-                <div class="card page p-4" style="opacity:1">
-                    <h4> Hola {{request.user.first_name|title}}:</h4>
-                    <h2>Vemos que se te ha vencido el período federativo:</h2>
-                    <div>
-                        {% for n in requisitos %}
-                        {{n|safe}}
-                        {% endfor %}
-
-                        <p> Tu último período asociativo venció el: <b>{{s.get_vencimiento}}</b>
-                    </div>
-                        <p><b>
-                            Presioná en el siguiente link para volver a asociarte: </b></p>
-                        <div class="d-flex justify-content-center">
-                            <a class="btn btn-outline-primary" href={% url 'asociarse' %}>Asociarme</a>
-                        </div>
-                </div>
-                {% endif %}
+        <section class="carnet-persona">
+            {% if foto %}
+                <img src="{{ foto }}" alt="Foto de {{ persona.first_name }}" class="carnet-foto">
+            {% else %}
+                <div class="carnet-foto carnet-iniciales" aria-hidden="true">{{ iniciales }}</div>
             {% endif %}
+            <div>
+                <h2 class="carnet-nombre">{{ persona.first_name|title }} {{ persona.last_name|title }}</h2>
+                <p class="carnet-dato">DNI {{ dni }}</p>
+                <p class="carnet-dato">{{ carnet.tipoAsociado }}</p>
+            </div>
+        </section>
+
+        <section class="carnet-estado" role="status">
+            <span class="carnet-punto" aria-hidden="true"></span>
+            <div>
+                <strong>{{ estado_texto }}</strong>
+                {% if estado == 'vigente' %}<span>hasta el {{ vencimiento|date:"d/m/Y" }}</span>
+                {% else %}<span>Tu pago todavía no fue aprobado por la asociación</span>{% endif %}
+            </div>
+        </section>
+
+        <dl class="carnet-detalle">
+            <div>
+                <dt>Emmac</dt>
+                <dd>
+                    {% if emmac_ok %}Vigente hasta {{ emmac_vencimiento|date:"d/m/Y" }}
+                    {% elif emmac_presentado %}<span class="carnet-alerta">Vencido el {{ emmac_vencimiento|date:"d/m/Y" }}</span>
+                    {% else %}<span class="carnet-alerta">No presentado</span>{% endif %}
+                </dd>
+            </div>
+            <div>
+                <dt>Nº de federado</dt>
+                <dd>{{ persona.cuil }}</dd>
+            </div>
+            {% if carnet.entrenador and carnet.entrenador.id != 12 %}
+            <div>
+                <dt>Entrenador Kempes</dt>
+                <dd>{{ carnet.entrenador }}</dd>
+            </div>
             {% endif %}
-        {% endfor %}
+        </dl>
 
+        <footer class="carnet-verificacion">
+            <div id="carnet-qr" class="carnet-qr" data-url="{{ url_verificacion }}" role="img" aria-label="Código QR para verificar este carnet"></div>
+            <div class="carnet-hora">
+                <span class="carnet-hora-titulo">Carnet en vivo</span>
+                <time id="carnet-reloj" data-inicio="{{ ahora_ms }}">{{ ahora|timezone:"America/Argentina/Cordoba"|date:"d/m/Y H:i:s" }}</time>
+                <span class="carnet-hora-ayuda">Hora de Córdoba. Escaneando el código se ve la situación actual.</span>
+            </div>
+        </footer>
+        <div class="carnet-latido" aria-hidden="true"></div>
+    </article>
 
-    {% else %}
-    <div class="card page p-4" style="opacity:1">
-        <h4> Hola {{request.user.first_name|title}}:</h4>
-
-        <div >
-            <br>
-            {% for n in requisitos %}
-            {{n|safe}}
-            {% endfor %}
-        </div>
-    <p><b>Presioná en el siguiente link para asociarte: </b></p>
-        <div class="d-flex justify-content-center">
-            <a class="btn btn-outline-primary" href={% url 'asociarse' %}>Asociarme</a>
-        </div>
+    <div class="carnet-acciones">
+        <a class="btn btn-secondary" href="{% url 'editar_socio' carnet.id %}">Actualizar mis datos</a>
+        {% if carnet.emmac_file %}<a class="btn btn-secondary" href="{{ carnet.emmac_file.url }}">Ver mi Emmac</a>{% endif %}
     </div>
-    {% endif %}
-
-{% endif %}
-
-</form>
 </div>
 
+{% elif carnet %}
+<div class="carnet-pagina">
+    <div class="card p-4">
+        <h2 class="carnet-titulo-aviso">Tu período de federado venció</h2>
+        <p>Hola {{ request.user.first_name|title }}. Tu último período venció el <b>{{ vencimiento|date:"d/m/Y" }}</b>, por eso no podemos mostrarte el carnet.</p>
+        <div class="mb-3">{% for n in requisitos %}{{ n|safe }}{% endfor %}</div>
+        <a class="btn btn-primary" href="{% url 'asociarse' %}">Volver a asociarme</a>
+    </div>
+</div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+{% else %}
+<div class="carnet-pagina">
+    <div class="card p-4">
+        <h2 class="carnet-titulo-aviso">Todavía no sos deportista federado</h2>
+        <p>Hola {{ request.user.first_name|title }}. Para tener tu carnet tenés que asociarte.</p>
+        <div class="mb-3">{% for n in requisitos %}{{ n|safe }}{% endfor %}</div>
+        <a class="btn btn-primary" href="{% url 'asociarse' %}">Asociarme</a>
+    </div>
+</div>
+{% endif %}
 
-{% endblock  %}
+<style>
+  .carnet-pagina { max-width: 440px; margin: 8px auto 32px; }
+  .carnet {
+    position: relative; overflow: hidden; background: #fff; border-radius: 18px;
+    border: 1px solid var(--linea, #DDE3EA); box-shadow: 0 14px 34px rgba(14, 42, 71, .18);
+  }
+  .carnet-encabezado {
+    display: flex; align-items: center; gap: 14px; padding: 16px 18px 14px;
+    border-top: 7px solid var(--rojo, #D62828); border-bottom: 1px solid var(--linea, #DDE3EA);
+  }
+  .carnet-logo { width: 112px; height: auto; }
+  .carnet-tipo { display: flex; flex-direction: column; line-height: 1.15; }
+  .carnet-tipo span { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.35rem; color: var(--lago, #0E2A47); }
+  .carnet-tipo small { color: var(--gris, #5B6776); font-size: .8rem; }
+
+  .carnet-persona { display: flex; align-items: center; gap: 16px; padding: 18px; }
+  .carnet-foto { width: 92px; height: 112px; object-fit: cover; border-radius: 10px; flex: none; border: 1px solid var(--linea, #DDE3EA); }
+  .carnet-iniciales { display: flex; align-items: center; justify-content: center; background: #E9EEF4; color: var(--lago, #0E2A47);
+                      font-family: 'Barlow Condensed', sans-serif; font-size: 2.2rem; font-weight: 700; }
+  .carnet-nombre { font-size: 1.7rem !important; line-height: 1.05; margin: 0 0 6px; color: var(--lago, #0E2A47); }
+  .carnet-dato { margin: 0; color: var(--tinta, #1B2430); font-size: .98rem; }
+
+  .carnet-estado { display: flex; align-items: center; gap: 12px; margin: 0 18px; padding: 12px 14px; border-radius: 12px; }
+  .carnet-estado strong { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 1.6rem; line-height: 1; }
+  .carnet-estado span { font-size: .95rem; }
+  .carnet-punto { width: 14px; height: 14px; border-radius: 50%; flex: none; }
+  .carnet-vigente .carnet-estado { background: #E7F3EA; color: #1F5F2A; }
+  .carnet-vigente .carnet-punto { background: #2E7D32; box-shadow: 0 0 0 0 rgba(46, 125, 50, .6); animation: carnet-pulso 1.6s infinite; }
+  .carnet-pendiente .carnet-estado { background: #FFF4DB; color: #7A5200; }
+  .carnet-pendiente .carnet-punto { background: #E0A100; }
+
+  .carnet-detalle { margin: 14px 18px 4px; }
+  .carnet-detalle > div { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid #EEF1F5; }
+  .carnet-detalle dt { font-weight: 500; color: var(--gris, #5B6776); }
+  .carnet-detalle dd { margin: 0; text-align: right; font-weight: 600; color: var(--tinta, #1B2430); }
+  .carnet-alerta { color: var(--rojo, #D62828); }
+
+  .carnet-verificacion { display: flex; align-items: center; gap: 14px; padding: 14px 18px 18px; }
+  .carnet-qr { width: 112px; height: 112px; flex: none; background: #fff; }
+  .carnet-qr svg, .carnet-qr img { width: 100%; height: 100%; display: block; }
+  .carnet-hora { display: flex; flex-direction: column; }
+  .carnet-hora-titulo { font-size: .8rem; color: var(--gris, #5B6776); font-weight: 600; }
+  .carnet-hora time { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.45rem; color: var(--lago, #0E2A47); font-variant-numeric: tabular-nums; }
+  .carnet-hora-ayuda { font-size: .78rem; color: var(--gris, #5B6776); line-height: 1.3; }
+
+  /* Franja que se mueve: una captura de pantalla vieja no la tiene en movimiento */
+  .carnet-latido { height: 6px; background: linear-gradient(90deg, var(--lago, #0E2A47), var(--agua, #1C7C9C), var(--rojo, #D62828), var(--lago, #0E2A47));
+                   background-size: 300% 100%; animation: carnet-mover 3s linear infinite; }
+  @keyframes carnet-mover { to { background-position: 300% 0; } }
+  @keyframes carnet-pulso { 70% { box-shadow: 0 0 0 9px rgba(46, 125, 50, 0); } 100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); } }
+  @media (prefers-reduced-motion: reduce) { .carnet-latido, .carnet-vigente .carnet-punto { animation: none; } }
+
+  .carnet-acciones { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 16px; }
+  .carnet-titulo-aviso { font-size: 1.6rem; }
+  @media (max-width: 380px) { .carnet-foto { width: 78px; height: 96px; } .carnet-nombre { font-size: 1.45rem !important; } .carnet-qr { width: 96px; height: 96px; } }
+</style>
+
+<script src="{% static 'socio/js/qrcode-generator-1.4.4.js' %}"></script>
+<script>
+  (function () {
+    var caja = document.getElementById('carnet-qr');
+    if (caja && window.qrcode) {
+      var qr = qrcode(0, 'M');
+      qr.addData(caja.dataset.url);
+      qr.make();
+      caja.innerHTML = qr.createSvgTag({ cellSize: 4, margin: 0, scalable: true });
+    }
+    // Reloj que avanza desde la hora del servidor (no la del telefono, que se puede cambiar)
+    var reloj = document.getElementById('carnet-reloj');
+    if (reloj) {
+      var inicio = parseInt(reloj.dataset.inicio, 10), t0 = performance.now();
+      var fmt = new Intl.DateTimeFormat('es-AR', { timeZone: 'America/Argentina/Cordoba', day: '2-digit', month: '2-digit', year: 'numeric',
+                                                   hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      var tic = function () { reloj.textContent = fmt.format(new Date(inicio + (performance.now() - t0))).replace(',', ''); };
+      tic(); setInterval(tic, 1000);
+      // al volver a la pestaña despues de un rato, se recarga para traer la situacion actual
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible' && performance.now() - t0 > 10 * 60 * 1000) location.reload();
+      });
+    }
+  })();
+</script>
+{% endblock %}

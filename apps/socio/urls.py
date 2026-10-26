@@ -18,6 +18,7 @@ urlpatterns = [
     
     path('lista_pagos_socio/', login_required(AsociadoPagosList.as_view()), name='lista_pagos_socio'),
     
+    path('verificar/<str:token>/', views.verificar_carnet, name='verificar_carnet'),
     path('carnet/', login_required(AsociadoCertifList.as_view()), name='carnet'),
     
    

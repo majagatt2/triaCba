@@ -13,6 +13,7 @@ from apps.inscripcion.models import (
     EventoBici, EventoCategoria, EventoCosto, EventoDistancia, EventoFormasPago,
     EventoModalidade, Eventos, EventoTipo, ModalidadEventos,
 )
+from apps.socio.models import Asociado, AsociadoTipo, EntrenadoresKempe, EntrenamientoTurno
 from apps.usuarios.models import Persona
 
 
@@ -54,8 +55,19 @@ class Command(BaseCommand):
             atleta.set_password('prueba1234')
             atleta.save()
 
+        # El atleta de prueba queda federado (para ver el carnet en /asociado/carnet/)
+        atleta = Persona.objects.get(cuil='20123456786')
+        if not Asociado.objects.filter(persona=atleta).exists():
+            tipo = AsociadoTipo.objects.filter(duracion__gte=365).first() or AsociadoTipo.objects.create(tipoAsociado='Activo', duracion=365)
+            turno, _ = EntrenamientoTurno.objects.get_or_create(nombre='Mañana', defaults=dict(cupo_turno=20, desde='07:00', hasta='09:00'))
+            if not EntrenadoresKempe.objects.filter(id=12).exists():
+                EntrenadoresKempe.objects.create(id=12, nombre='Sin entrenador', turno=turno)
+            Asociado.objects.create(persona=atleta, fecha=hoy - timedelta(days=30), tipoAsociado=tipo, obra_social='OSDE',
+                                    estado=True, fecha_emision_emmac=hoy - timedelta(days=10), numero_emmac='4521')
+
         self.stdout.write(self.style.SUCCESS(
             f'Listo. Evento de prueba: id {evento.id}\n'
             f'  Formulario sin cuenta:  /inscripcion/inscripcion_publico/{evento.id}\n'
-            f'  Formulario con cuenta:  /inscripcion/inscribirme/{evento.id}  (usuario atleta_prueba / prueba1234)'
+            f'  Formulario con cuenta:  /inscripcion/inscribirme/{evento.id}  (usuario atleta_prueba / prueba1234)\n'
+            f'  Carnet de federado:     /asociado/carnet/  (mismo usuario)'
         ))

@@ -1,0 +1,44 @@
+{% extends "base/index1.html" %}
+{% load static tz %}
+{% block title %}Verificación de carnet · TriaCba{% endblock %}
+{% block content %}
+<main class="acceso verificacion">
+    <img src="{% static 'registro/logo_triatloncba_relieve.png' %}" class="acceso-logo" alt="Triatlón Córdoba">
+    {% if invalido %}
+        <h1 class="acceso-titulo">Carnet no válido</h1>
+        <div class="acceso-error">Este código no corresponde a ningún carnet de la asociación.</div>
+    {% else %}
+        <h1 class="acceso-titulo">Verificación de carnet</h1>
+        <div class="verif-persona">
+            {% if foto %}<img src="{{ foto }}" alt="Foto" class="verif-foto">{% else %}<div class="verif-foto verif-iniciales">{{ iniciales }}</div>{% endif %}
+            <div>
+                <p class="verif-nombre">{{ persona.first_name|title }} {{ persona.last_name|title }}</p>
+                <p class="verif-dato">DNI {{ dni }}</p>
+                <p class="verif-dato">{{ asociado.tipoAsociado }}</p>
+            </div>
+        </div>
+        <div class="verif-estado verif-{{ estado }}">
+            <strong>{{ estado_texto }}</strong>
+            {% if estado == 'vigente' %}<span>hasta el {{ vencimiento|date:"d/m/Y" }}</span>
+            {% elif estado == 'vencido' %}<span>venció el {{ vencimiento|date:"d/m/Y" }}</span>
+            {% else %}<span>pago sin aprobar</span>{% endif %}
+        </div>
+        <p class="verif-dato mt-2"><b>Emmac:</b>
+            {% if emmac_ok %}vigente hasta {{ emmac_vencimiento|date:"d/m/Y" }}{% elif emmac_presentado %}vencido el {{ emmac_vencimiento|date:"d/m/Y" }}{% else %}no presentado{% endif %}</p>
+    {% endif %}
+    <p class="verif-hora">Consultado el {{ ahora|timezone:"America/Argentina/Cordoba"|date:"d/m/Y" }} a las {{ ahora|timezone:"America/Argentina/Cordoba"|date:"H:i:s" }} (hora de Córdoba)</p>
+</main>
+<style>
+  .verif-persona { display: flex; gap: 14px; align-items: center; margin-bottom: 14px; }
+  .verif-foto { width: 84px; height: 100px; object-fit: cover; border-radius: 10px; border: 1px solid var(--linea); flex: none; }
+  .verif-iniciales { display: flex; align-items: center; justify-content: center; background: #E9EEF4; color: var(--lago); font-family: 'Barlow Condensed', sans-serif; font-size: 2rem; font-weight: 700; }
+  .verif-nombre { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.5rem; color: var(--lago); margin: 0 0 4px; line-height: 1.1; }
+  .verif-dato { margin: 0; color: var(--tinta); }
+  .verif-estado { border-radius: 10px; padding: 12px 14px; }
+  .verif-estado strong { display: block; font-family: 'Barlow Condensed', sans-serif; font-size: 1.7rem; line-height: 1; }
+  .verif-vigente { background: #E7F3EA; color: #1F5F2A; }
+  .verif-pendiente { background: #FFF4DB; color: #7A5200; }
+  .verif-vencido { background: #FDECEC; color: #8A1C1C; }
+  .verif-hora { margin: 16px 0 0; font-size: .85rem; color: var(--gris); text-align: center; }
+</style>
+{% endblock %}

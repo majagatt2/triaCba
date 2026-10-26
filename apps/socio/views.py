@@ -43,6 +43,15 @@ class AsociadoCertifList(ListView):
 
         context['asociado'] = lista
         context['requisitos']= AsociadoRequisitos.objects.all()
+        if lista:
+            ultimo = lista[-1]
+            context.update(datos_carnet(ultimo))
+            context['asociado'] = lista
+            context['carnet'] = ultimo
+            context['ahora'] = ahora_cordoba()
+            context['ahora_ms'] = int(timezone.now().timestamp() * 1000)
+            token = signing.dumps(ultimo.pk, salt=SALT_CARNET)
+            context['url_verificacion'] = self.request.build_absolute_uri(reverse('verificar_carnet', args=[token]))
         return context
 
 
@@ -273,3 +282,73 @@ class AsociadoPagosList(ListView):
 def mensaje(request):
     return render(request, 'socio/mensaje_pago.html')
 
+
+# ---------- Carnet digital ----------
+
+from django.core import signing
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+from django.utils import timezone
+from zoneinfo import ZoneInfo
+
+ZONA_CORDOBA = ZoneInfo('America/Argentina/Cordoba')
+SALT_CARNET = 'carnet-federado'
+
+
+def _dni_con_puntos(dni):
+    digitos = ''.join(c for c in str(dni or '') if c.isdigit())
+    if not digitos:
+        return ''
+    return f"{int(digitos):,}".replace(',', '.')
+
+
+def datos_carnet(asociado):
+    """Todo lo que muestra el carnet (y la pagina de verificacion) sobre un asociado."""
+    hoy = date.today()
+    vencimiento = asociado.get_vencimiento
+    vigente = vencimiento >= hoy
+    if not vigente:
+        estado, estado_texto = 'vencido', 'Vencido'
+    elif not asociado.estado:
+        estado, estado_texto = 'pendiente', 'Pendiente de activación'
+    else:
+        estado, estado_texto = 'vigente', 'Vigente'
+    emmac_presentado = bool(asociado.fecha_emision_emmac) and not asociado.get_emmac_no_presentado
+    persona = asociado.persona
+    foto = ''
+    if persona.fotoPerfil and 'Default_1234' not in persona.fotoPerfil.name:
+        foto = persona.fotoPerfil.url
+    return {
+        'asociado': asociado,
+        'persona': persona,
+        'foto': foto,
+        'iniciales': ((persona.first_name or ' ')[0] + (persona.last_name or ' ')[0]).strip().upper(),
+        'dni': _dni_con_puntos(persona.dni),
+        'estado': estado,
+        'estado_texto': estado_texto,
+        'vencimiento': vencimiento,
+        'emmac_ok': emmac_presentado and asociado.get_sit_emmac,
+        'emmac_presentado': emmac_presentado,
+        'emmac_vencimiento': asociado.get_vencimiento_emmac if emmac_presentado else None,
+    }
+
+
+def ahora_cordoba():
+    return timezone.localtime(timezone.now(), ZONA_CORDOBA)
+
+
+def verificar_carnet(request, token):
+    """Pagina publica que abre el QR del carnet: muestra la situacion REAL al momento de escanear."""
+    try:
+        asociado_id = signing.loads(token, salt=SALT_CARNET)
+    except signing.BadSignature:
+        return render(request, 'socio/verificar_carnet.html', {'invalido': True, 'ahora': ahora_cordoba()}, status=404)
+    asociado = get_object_or_404(Asociado.objects.select_related('persona', 'tipoAsociado', 'entrenador'), pk=asociado_id)
+    # si la persona se volvio a asociar, vale el registro mas nuevo
+    ultimo = Asociado.objects.filter(persona=asociado.persona).select_related('persona', 'tipoAsociado', 'entrenador').order_by('id').last()
+    contexto = datos_carnet(ultimo or asociado)
+    contexto['ahora'] = ahora_cordoba()
+    respuesta = render(request, 'socio/verificar_carnet.html', contexto)
+    respuesta['X-Robots-Tag'] = 'noindex, nofollow'
+    respuesta['Cache-Control'] = 'no-store'
+    return respuesta
