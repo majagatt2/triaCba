@@ -22,7 +22,9 @@ body {
 }
 body::before {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: linear-gradient(180deg, rgba(14, 42, 71, .55) 0%, rgba(14, 42, 71, .82) 100%);
+  background:
+    linear-gradient(180deg, rgba(14, 42, 71, .15) 0%, rgba(14, 42, 71, .55) 100%),
+    url('../assets/img/Largada tria 2025.jpg') center / cover no-repeat;
 }
 
 h1, h2, h3, h4, .acceso-titulo { font-family: 'Barlow Condensed', 'Barlow', sans-serif; font-weight: 700; color: var(--lago); }

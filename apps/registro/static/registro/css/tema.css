@@ -35,11 +35,22 @@ body {
   color: var(--tinta);
   background-color: var(--pista) !important;
 }
-/* La foto de fondo queda apenas insinuada detras de un velo claro */
+/* Foto de fondo visible detras de un velo claro suave.
+   Va en una capa fija (y no en el fondo del body) para que tambien quede quieta en el celular. */
 body::before {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: rgba(243, 245, 248, .93);
+  background:
+    linear-gradient(180deg, rgba(243, 245, 248, .30) 0%, rgba(243, 245, 248, .55) 100%),
+    url('../assets/img/Medalla 23_24.jpg') center / cover no-repeat;
 }
+/* Textos que van directo sobre la foto: llevan una base blanca para leerse bien */
+#main h2.bg-black, #main h3.bg-black, #main h2.bg-dark, #main h3.bg-dark, #main .titulo-inscripcion {
+  background: rgba(255, 255, 255, .9) !important; border-radius: 0 8px 8px 0; padding: 6px 14px !important;
+}
+.subtitulo-inscripcion, .atleta-inscripcion, .linea-cuenta {
+  background: rgba(255, 255, 255, .9); border-radius: 8px; padding: 6px 12px;
+}
+.subtitulo-inscripcion { display: block; }
 a { color: var(--agua); }
 a:hover { color: var(--lago); }
 h1, h2, h3, h4, h5, .card-title, .pagetitle h1 {
@@ -250,3 +261,6 @@ h4.paso::before {
 .form-inscripcion .panel-paso.panel-menores { border: 1px solid var(--linea) !important; border-top: 5px solid var(--verde) !important; background: #fff !important; padding: 22px 22px 6px !important; margin: 0 0 18px !important; }
 .panel-menores[hidden] { display: none !important; }
 .panel-menores-interno { border-top: 5px solid var(--verde); margin: 8px -22px 0; padding: 18px 22px 2px; }
+
+/* Paginas del panel de administracion (base index5): sin foto, fondo liso para leer tablas */
+body.img::before { background: var(--pista); }

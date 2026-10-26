@@ -4,8 +4,8 @@ ingresar y seguir desde su cuenta, donde el formulario es mas corto.
 Se muestra solo si el servidor detecto el CUIL repetido, o cuando el script lo detecta al escribirlo.
 {% endcomment %}
 {% url 'inscribirme' evento_id as url_inscribirme %}
-<p class="text-center my-2">¿Ya tenés cuenta en la asociación?
-    <a href="{% url 'login' %}?next={{ url_inscribirme|urlencode }}"><b>Ingresá</b></a> y completás menos datos.</p>
+<p class="text-center my-2"><span class="linea-cuenta">¿Ya tenés cuenta en la asociación?
+    <a href="{% url 'login' %}?next={{ url_inscribirme|urlencode }}"><b>Ingresá</b></a> y completás menos datos.</span></p>
 
 <div id="cuenta-existente" class="alert alert-warning shadow-sm mx-auto my-3" role="alert" style="max-width: 760px; border-left: 6px solid #D62828; scroll-margin-top: 90px;"
      data-url-chequeo="{% url 'cuil_registrado' %}" {% if not cuil_existente %}hidden{% endif %}>
