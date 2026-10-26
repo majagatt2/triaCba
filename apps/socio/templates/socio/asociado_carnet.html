@@ -1,0 +1,218 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load static %}
+
+<style>
+    .special {
+text-align:center;
+color: #0000DF;
+background: #eee;
+font-family: 'arial';
+font-size: 15px;
+letter-spacing: 0;
+text-shadow: -1px -1px 1px #df0000, -1px 1px 1px #df0000, -1px 1px 1px #df0000, 1px 1px 1px #df0000;
+}
+
+.special2 {
+    text-align:center;
+    color: #fff;
+    background: #eee;
+    font-family: impact;
+    font-size: 22px;
+    letter-spacing: 0;
+   text-shadow: -2px -2px 2px #0000DF, 2px -2px 2px #0000DF, -2px 2px 2px #0000DF, 2px 2px 2px #0000DF;
+}
+
+
+</style>
+
+
+
+<form method="POST"  enctype="multipart">
+{% csrf_token %}
+{%  if user.is_authenticated %}
+    {% if asociado %}
+
+        {% for s in asociado %}
+
+            {% if forloop.last %}
+                {% if s.persona == request.user %}
+                    {% if s.get_vigente %}
+
+
+                        <div class="  d-flex flex-column align-items-center" >
+                            <div class="row d-flex justify-content-center align-items-center h-100 shadow-lg p-1 mb-2 bg-opacity-75" style= "background-color:red; border-radius: 15px"  >
+                                <div class=" text-black" style= "border-radius: 15px;
+                                            background-color:#EAF2F8;
+                                            background-image: url({% static ''%});
+                                            background-size: contain;
+                                            background-blend-mode: overlay; //saturation
+                                            background-repeat: repeat;
+                                            background-atachment: fixed;
+                                            background-position: center;
+
+                                            background-origin: content-box;
+                                            ">
+                                            <br>
+                                    <div class="row text-center ">
+                                                <br>
+                                        <p style="font-size:11px;">Fecha Certificado:
+                                            <b style="font-size:13px;">
+                                            {% now "j F Y H:i" %}
+                                            </b>
+                                        </p>
+                                        <div class="align-items-center">
+                                                <img src="{% static  'registro/logo_triatloncba_relieve.png' %}" class=""
+                                                    width="" alt="Triatlón Córdoba">
+                                        </div>
+                                            
+                                        <p class="special">
+                                            CERTIFICADO DEPORTISTA FEDERADO<br>
+                                        </p>
+                                        <h3 class="name text-center"><b>{{s.persona.first_name}} {{s.persona.last_name}}</b></h3>
+                                        <br>
+                                       
+
+                                    </div>
+
+                                    <div class="row people">
+                                        <div class="col-12 col-md-6 offset-md-3">
+                                            <div class="flex-box" ><img class="rounded mx-auto d-block pb-3"  src={{request.user.fotoPerfil.url}} width="70" height="80">
+                                                <table style="width:100%">
+                                                        <tr>
+                                                            <td>Asociado:</td>
+                                                            <td>
+                                                                {% if s.estado %}
+                                                                    <h4  class="name text-center" style="color:green"><b>{{s.estado|yesno:'Activo,Inactivo'}}</b></h4>
+                                                                {%  else %}
+                                                                    <h5 class="name text-center" style="color:red"><b>{{s.estado|yesno:'Activo,Pendiente de Activación'}}</b></h5>
+                                                                {%  endif %}
+                                                            </td>
+                                                        
+                                                        </tr>    
+                                                        <tr>
+                                                            <td>Tipo Asociado:</td>
+                                                            <td><h5 class="name text-center">{{s.tipoAsociado}}</h5></td>
+                                                            </tr>
+                                                        <tr>
+                                                            <td>Nº de Federado:</td>
+                                                            <td><h5 class="name text-center">{{s.persona.cuil}}</h5></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Vencimiento Certificado:</td>
+                                                            <td>
+                                                                {% if now > s.get_vencimiento %}
+                                                                    <h4 class="name text-center" style="color:red"><b>{{s.get_vencimiento|date:" d/mm/Y"}}</b></h4>
+                                                                    {% else %}
+                                                                    <h4 class="name text-center"><b>{{s.get_vencimiento}}</b></h4>
+                                                                {% endif %}
+                                                            </td>
+                                                        
+                                                        </tr>
+                                                        <tr>
+                                                            <td>Entrenador Polo Kempes:</td>
+                                                            <td><h5 class="name text-center">{{s.entrenador}}</h5></td>
+                                                            </tr>
+                                                        <tr>
+                                                    
+                                                </table>
+                                                <extends class="title text-center p=5">
+                                                    <div class="border border-secondary border-opacity-50 p-2">
+                                                    {% if s.get_sit_emmac %}
+                                                        <div>
+                                                        <p>Emmac:
+                                                        <span style="color:green">Nº {{s.numero_emmac}} Vigente</span>
+                                                        <p>Vencimiento: {{s.get_vencimiento_emmac}}</p>
+                                                        </p> 
+                                                        </div>
+                                                    {% elif s.get_sit_emmac == False and s.get_emmac_no_presentado == False  %}
+                                                        <div>
+                                                        <h5 style="color:red"><b>Nº {{s.numero_emmac}} Vencido</b></h5>
+                                                        Venció el: {{s.get_vencimiento_emmac}}
+                                                        </div>
+                                                    {% elif s.get_emmac_no_presentado %}
+                                                        <div>
+                                                        <h5 style="color:red"><b>Nº </b>- No declara</h5>
+                                                        Venció el: No declara
+                                                        </div>
+
+                                                    {% endif %}
+                                                        <div >
+                                                        <a href={{s.emmac_file.url}}>Ver Emmac:
+                                                        </a>
+                                                        </div>
+                                                    </div>
+                                                </extends>
+
+
+
+
+                                                <br>
+                                                <strong><p class="description text-center">El presente Certificado es válido para <br>constatar su situación Actual. </p></strong>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                                <div class="d-flex justify-content-end">
+                                    <a class='btn btn-primary btn-sm' href={% url 'editar_socio' s.id %}>Actualizar</a>
+                                </div>
+                        </div>
+                        <br><br><br><br>
+
+
+
+
+
+                {% else %}
+                <div class="card page p-4" style="opacity:1">
+                    <h4> Hola {{request.user.first_name|title}}:</h4>
+                    <h2>Vemos que se te ha vencido el período federativo:</h2>
+                    <div>
+                        {% for n in requisitos %}
+                        {{n|safe}}
+                        {% endfor %}
+
+                        <p> Tu último período asociativo venció el: <b>{{s.get_vencimiento}}</b>
+                    </div>
+                        <p><b>
+                            Presioná en el siguiente link para volver a asociarte: </b></p>
+                        <div class="d-flex justify-content-center">
+                            <a class="btn btn-outline-primary" href={% url 'asociarse' %}>Asociarme</a>
+                        </div>
+                </div>
+                {% endif %}
+            {% endif %}
+            {% endif %}
+        {% endfor %}
+
+
+    {% else %}
+    <div class="card page p-4" style="opacity:1">
+        <h4> Hola {{request.user.first_name|title}}:</h4>
+
+        <div >
+            <br>
+            {% for n in requisitos %}
+            {{n|safe}}
+            {% endfor %}
+        </div>
+    <p><b>Presioná en el siguiente link para asociarte: </b></p>
+        <div class="d-flex justify-content-center">
+            <a class="btn btn-outline-primary" href={% url 'asociarse' %}>Asociarme</a>
+        </div>
+    </div>
+    {% endif %}
+
+{% endif %}
+
+</form>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.bundle.min.js"></script>
+
+{% endblock  %}

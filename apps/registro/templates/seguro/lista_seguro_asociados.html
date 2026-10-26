@@ -1,0 +1,69 @@
+{% extends "base/index2.html" %}
+
+{% block bottom %}
+<i class="bi bi-list toggle-sidebar-btn"></i>
+<h5 class="text-align-center m-4">Seguro Asociados Kempes</h5>
+{% endblock %}
+
+
+{% block content %}
+{% comment %} {%  if user.is_authenticated %}
+{% if request.user.is_staff %} {% endcomment %}
+
+{%  block nav%}
+{% endblock %}
+
+
+<h2><strong>SEGURO ASOCIADOS ACTIVOS</strong></h2>
+<h4>Lista asociados que ingresan al Kempes</h4>
+
+    <div style="overflow-x:auto;">
+    <table class = "table datatable table-light" >
+        <thead>
+            <tr class="table-info">
+
+                <th>Nº</th>
+
+                <th>Nombre</th>
+                <th>Dni</th>
+                <th>Cuil</th>
+                <th>Fecha Nacimiento</th>
+                <th>Nacionalidad</th>
+                <th>Desde</th>
+                <th>Póliza</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if object_list %}
+                {% for s in object_list %}
+
+                {% if  s.entrenador.nombre != 'Sin Entrenador'%}
+                <tr >
+                    <td>{{forloop.counter}}</td>
+
+                    <td>{{s.persona|title}}</td>
+                    <td>{{s.persona.dni}}</td>
+                    <td>{{s.persona.cuil}}</td>
+                    <td>{{s.persona.fechaNacimiento|date:"d/m/Y"}}</td>
+                    <td>{{s.persona.nacionalidad}}</td>
+                    <td>{{s.fecha|date:"Y/m/d"}}</td>
+                    {% if s.entrenador.nombre == "Escuela" %}
+                    <td style="color:blue;">Póliza Escuela</td>
+                    {% else %}
+                    <td>Póliza Asociados</td>
+                    {% endif %}
+
+                </tr>
+                {% endif %}
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+{% comment %} {% endif %}
+{% endif %} {% endcomment %}
+
+{% endblock  %}
+

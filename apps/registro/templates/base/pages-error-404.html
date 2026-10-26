@@ -1,0 +1,20 @@
+{% extends "base/index3.html" %}
+{% load static %}
+
+{% block content %}
+
+  <main>
+    <div class="container">
+
+      <section class="section error-404 min-vh-100 d-flex flex-column align-items-center justify-content-center">
+        <h2></h2>
+        <h2>El dato solicitado no está disponible</h2>
+        <a class="btn" href="{% url 'index' %}">Regresar</a>
+        <img src={% static "registro/logo_triatloncba.png"%} class="img-fluid py-5" alt="Page Not Found">
+        
+      </section>
+
+    </div>
+  </main><!-- End #main -->
+
+{% endblock %}

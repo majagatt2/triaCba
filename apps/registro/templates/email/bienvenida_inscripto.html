@@ -1,0 +1,83 @@
+{% extends 'base/index3.html' %}
+
+{% block aside %}
+{% endblock %}
+
+{% block nav %}
+{% endblock %}
+
+
+{% block content %}
+
+
+            <div class="container align-items-center justify-content-center">
+                <div class="justify-content-center">
+                    <div class="col-lg-6">
+
+                    <!-- Email input -->
+
+
+
+                    <div class="">
+                        <h1> Gracias <strong style="color:green">{{persona.first_name}}</strong> por inscribirte en:<br>
+                        <strong style="color:#F36808">{{eventoRelacionado}}</strong>
+                        </h1>
+                        <h3>Recuerda que tu inscripción quedará firme una vez aprobada la documentación y conciliado el pago realizado. Esto puede demorar hasta 72 hs.</h3>
+
+                        <p> Para ver el listado de inscriptos puedes ir a <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/inscripcion/eventos_publico/"><b><h4>Eventos</h4></b></a> y presionar sobre <b>"Lista de Inscriptos"</b> o puedes ingresar a tu cuenta e ir a "Mis Eventos"</p>
+                        <p> Te informamos que al inscribirte automáticamente YA has abierto una cuenta a la cual te hemos redireccionado cuando te instribiste.
+                        Tu usuario (<b>usuario </b>:  <b style="color:red;">{{username}}</b>)<br>
+                        Tu contraseña provisoria (<b>contraseña </b>:  <b style="color:red;">triacba-2025</b>)</p><br>
+                        <p>En tu cuenta también puedes ver tu/s inscripción/es entrando en "Mis inscripciones" o actualizar tus datos pesonales, etc.</p>
+
+                        Para cambiar tu contraseña debes ir a <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/"><b><h4>Ingresar</h4></b></a>
+                        y presionar sobre "Olvidaste tu contraseña?",
+                        ingresar tu mail registrado y seguir los pasos.<br>
+
+
+                        <strong style="font-size:20px;">Tus datos de inscripción:</strong>
+                            <ul style="font-size:15px;">
+                                <li>Evento: <b>{{eventoRelacionado}}</b></li>
+                                <li>Distancia: <b>{{distancia}}</b></li>
+                                <li>Categoria: <b>{{categoria}}</b></li>
+                                <li>Bici: <b>{{bici}}</b></li>
+                                <li>Costo evento: <b>${{montoDebeAbonar}}</b></li>
+                                <li>Monto Abonado: <b>${{montoAbonado}}</b></li>
+                                <li>Fecha de Pago: <b>{{fechaPago}}</b></li>
+                                <li>Comentario: <b>{{comentario|default:"No declara"}}</b></li>
+                                <li>Obra Social: <b>{{obra_social}}</b></li>
+                                <li>Responsable Tutor: <b>{{responsable_tutor|default:"No declara"}}</b></li>
+                                <li>Relación Legal: <b>{{relacion_legal|default:"No declara"}}</b></li>
+                                <li>DNI responsable: <b>{{dni_responsable|default:"No declara"}}</b></li>
+                                <li>eMail Responsable: <b>{{mail_responsable|default:"No declara"}}</b></li>
+                                <li>Telefono Responsable <b>{{telefono_responsable|default:"No declara"}}</b></li>
+
+                            </ul>
+
+
+                        <p>Si ingreses a tu cuenta te diriges a las distintas pestañas disponibles y sigues las indicaciones:</p>
+                        <ul>
+                            <li><b>“Mis Datos”</b> para que puedas actualizar y subir tu foto de perfil y Foto dni</li>
+                            <li><b>“Certificado Federado”</b> para que, en caso de que te hayas asociado, puedas ver tu situación asociativa actual, vencimientos, actualizar, emmac, etc</li>
+                            <li><b>“Mi Pago Anual Asociación”</b> para que puedas subir cada pago que hayas realizado y puedas ver el historial de tus pagos</li>
+                            <li><b>“Mi Pago Mensual Escuela”</b> Si asistes a nuestra Escuela, podrás subir cada pago que hayas realizado y puedes ver el historial de tus pagos</li>
+                            <li><b>“Próximos eventos”</b> también te puedes inscribir por aquí</li>
+                            <li><b>“Mis Inscripciones”</b> para ver el historial de los eventos en los que te has inscripto.</li>
+                        </ul>
+                    </div>
+                    <div class="container justify-content-center">
+                    <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/"><b><h1>Ingresar</h1></b></a>
+                    </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+{% endblock %}
+
+
+
+

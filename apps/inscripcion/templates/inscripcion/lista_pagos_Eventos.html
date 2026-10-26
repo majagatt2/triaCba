@@ -1,0 +1,83 @@
+{% extends "base/index3.html" %}
+{% block content %}
+{% load static %}
+
+
+<form method='POST' class=" form-control bg-opacity-25">
+    {% csrf_token %}
+    {%  if user.is_authenticated %}
+
+        <h2 class="text-white p-2 bg-black bg-opacity-50"><strong>Mis Inscripciones</strong></h2>
+
+
+        {% if object_list %}
+
+            <div style="overflow-x:auto;">
+                <table class ="table" id="mis_tablas">
+                    <thead >
+                        <tr class="table-info">
+                            {% comment %} <th scope="col">Nº</th> {% endcomment %}
+                            <th>Estado</th>
+                            {% comment %} <th scope="col">Nombre</th> {% endcomment %}
+                            <th>Evento</th>
+                            <th>Distancia</th>
+                            <th>Categoria</th>
+                            <th>Modalidad</th>
+                            <th>Equipo</th>
+                            <th>Fecha Pago</th>
+
+                            <th>Monto Abonado</th>
+                            <th>Comprob Pago</th>
+
+                        </tr>
+                    </thead>
+
+                        {% for c in inscripcion_list %}
+
+                            <tbody>
+                                {% if c.persona == request.user %}
+
+                                    {% comment %} <td>{{c.id}}</td> {% endcomment %}
+
+                                    {% if c.confirm_pago == False %}
+                                        <th style="color:red">Pendiente</td>
+                                    {% else %}
+                                        <td><img src={% static 'registro/tilde2.png' %}  width="30" height="30"></td>
+                                    {% endif %}
+
+                                    {% comment %} <td>{{c.persona.first_name|title}} {{c.persona.last_name|title}}</td> {% endcomment %}
+
+
+                                    <td><p><b>{{c.eventoRelacionado}}</p></td>
+                                    <td>{{c.distancia}}</td>
+                                    <td>{{c.categoria}}</td>
+                                    <td>{{c.modalidad}}</td>
+
+                                    {% if c.nombreEquipoPosta == None %}
+                                        <td>---</td>
+                                    {% else %}
+                                        <td>{{c.nombreEquipoPosta}}</td>
+                                    {% endif %}
+
+                                    <td>{{c.fechaPago|date:"d/m/Y"}}</td>
+
+                                    <th>$ {{c.montoAbonado|floatformat:"-3g"}}</td>
+                                    <td><a href={{c.comprobPago.url}}>
+                                            <img src={{c.comprobPago.url}} width="20" height="20">
+                                        </a>
+                                    </td>
+
+                                {% endif %}
+
+                            </tbody>
+                        {% endfor %}
+
+                </table>
+            </div>
+
+        {% endif %}
+    {% endif %}
+
+</form>
+
+{% endblock  %}

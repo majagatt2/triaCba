@@ -1,0 +1,72 @@
+{% extends "base/index2.html" %}
+
+
+{% block content %}
+{% load static %}
+{%  if user.is_authenticated %}
+{% if request.user.is_staff or request.user.username == 'cmonasterolo' or request.user.username == 'mpolo'%}
+
+
+
+
+
+    {% csrf_token %}
+    <h3>Listado de pagos Bono Mensual Escuela</h3>
+    <div style="overflow-x:auto;">
+    <table class = "table table-borderless datatable">
+        <thead>
+            <tr class="table-info">
+                <th>Nombre</th>
+                {% for bono in bonos %}
+                <th>{{bono.id}}</th>
+                {% endfor %}
+                {% comment %} <th>Cuota</th>
+                <th>Febrero</th>
+                <th>Marzo</th>
+                <th>Abril</th>
+                <th>Mayo</th>
+                <th>Junio</th>
+                <th>Julio</th>
+                <th>Agosto</th>
+                <th>Septiembre</th>
+                <th>Octubre</th>
+                <th>Noviembre</th>
+                <th>Diciembre</th> {% endcomment %}
+
+            </tr>
+        </thead>
+
+        <tbody>
+
+            {% if object_list %}
+                {% for asociado in asociados %}
+                    <tr style="font-size:12px;">
+                        <td >{{asociado|title}}</td>
+                                {% for c in object_list %}
+                                {% for bono in bonos %}
+                                {%  if c.formaPago == bono.formaPago %}
+                                    {% if c.asociado == asociado  %}
+                                        <td>${{c.montoAbonado|floatformat:"-3g"}}<br><span style="font-size:9px;">{{c.fechaPago|date:"d/m/Y"}}</span><br><span style="font-size:9px;">{{c.formaPago}}</span></td>
+                                    {% endif %}
+                                {% endif %}
+                                {% endfor %}
+                                {% endfor %}
+                    </tr>
+                {% endfor %}
+            {% else%}
+                <tr>
+                    <td><h3>No hay pagos registrados</h3></td>
+                </tr>
+
+            {% endif %}
+        </tbody>
+    </table>
+</div>
+
+
+
+{% endif %}
+{% endif %}
+
+{% endblock  %}
+

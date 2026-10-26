@@ -1,0 +1,122 @@
+{% extends "base/index2.html" %}
+{% block content %}
+{% load static %}
+
+
+{% comment %} {%  if user.is_authenticated %}
+{% if request.user.is_staff %} {% endcomment %}
+
+{%  block nav %}
+{% endblock %}
+
+
+{% for evento in eventos %}
+
+
+
+    <form method='POST'>
+        {% csrf_token %}
+        <h3>
+            {% for key, value in inscriptos.items %}
+            {% if key == evento  %}
+            {% if value == 1 %}
+            <b >{{value}}</b> atleta aprobado
+            {% else %}
+            <b>{{value}}</b> atletas aprobados
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+            <br>
+            {% for key, value in inscriptos_acreditados.items %}
+            {% if key == evento  %}
+            {% if value == 1 %}
+            <b style="color:rgb(38, 0, 255); font-weight: bold;">{{value}} atleta acreditado</b>
+            {% else %}
+            <b style="color:rgb(38, 0, 255); font-weight: bold;">{{value}} atletas acreditados</b>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+        </h3>
+
+        <h3 style="color:red">{{evento}}</h3>
+
+        <div style="overflow-x:auto;">
+        <table class = 'table table-borderless datatable'>
+            <thead>
+                <tr class="table-info">
+
+                    <th>Id</th>
+                    <th>Numero Corredor</th>
+                    <th>N° Chip</th>
+                    <th>Apellido</th>
+                    <th>Nombre</th>
+                    <th>Dni</th>
+                    <th>Fecha Nacimiento</th>
+                    <th>Edad 31/12</th>
+                    <th>Sexo</th>
+                    <th>Ciudad</th>
+                    <th>Modalidad</th>
+                    <th>Equipo</th>
+                    <th>Distancia</th>
+                    <th>Categoria</th>
+                    <th>Bici</th>
+
+
+
+
+                </tr>
+            </thead>
+
+            <tbody>
+                {% if inscripcion_list %}
+
+                {% if evento.publicar  %}
+                    {% for c in inscripcion_list %}
+                    {% if evento.id == c.eventoRelacionado.id %}
+                        <tr>
+                            {% comment %} <td>{{forloop.counter}}</td> {% endcomment %}
+                            <td>{{c.id}}</td>
+                            <td class="justify-content-center">{{c.numero|title}}</td>
+                            <td class="justify-content-center">{{c.numero_chip|title}}</td>
+                            <td>{{c.persona.last_name|title}}</td>
+                            <td>{{c.persona.first_name|title}}</td>
+                            <td>{{c.persona.dni}}</td>
+                            <td>{{c.persona.fechaNacimiento|date:"d/m/Y"}}</td>
+                            <td>{{c.edad_31_Dic}}</td>
+                            <td>{{c.persona.sexo}}</td>
+                            <td>{{c.persona.ciudad|title}}</td>
+                            {% comment %} <td>{{c.eventoRelacionado}}</td> {% endcomment %}
+                            <td>{{c.modalidad}}</td>
+
+                            {% if c.nombreEquipoPosta == None %}
+                            <td>----</td>
+                            {% else %}
+                            <td>{{c.nombreEquipoPosta}}</td>
+                            {% endif %}
+
+                            <td>{{c.distancia}}</td>
+                            <td>{{c.categoria}}</td>
+                            <td>{{c.bici}}</td>
+                        </tr>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+
+
+
+                {% else%}
+
+                        <td><h3>No hay atletas acreditados</h3></td>
+
+
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+    </form>
+{% endfor %}
+
+
+
+{% endblock  %}
+

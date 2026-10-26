@@ -1,0 +1,382 @@
+{% extends "base/index2.html" %}
+
+
+{% block content %}
+{% load static %}
+{%  if user.is_authenticated %}
+{% if request.user.is_staff %}
+
+
+
+
+
+    {% csrf_token %}
+    <h3>Listado de pagos Socios</h3>
+    <div style="overflow-x:auto;">
+    <table class = "table datatable">
+        <thead>
+            <tr class="table-info">
+                <th>Nombre</th>
+                <th>Estado</th>
+                <th>Enero</th>
+                <th>Febrero</th>
+                <th>Marzo</th>
+                <th>Abril</th>
+                <th>Mayo</th>
+                <th>Junio</th>
+                <th>Julio</th>
+                <th>Agosto</th>
+                <th>Septiembre</th>
+                <th>Octubre</th>
+                <th>Noviembre</th>
+                <th>Diciembre</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if asociadopagos_list %}
+            {% for c in asociadopagos_list %}
+            {% for asociado in asociados_todos %}
+            {% if c.personaAsociada == asociado.persona %}
+
+            <tr>
+                <td class="align-middle">{{asociado.persona}}</td>
+
+                {% if asociado.get_vigente and asociado.estado %}
+                <td class="align-middle" style="color:blue">Activo</td>
+                {% else %}
+                <td class="align-middle" style="color:red">Inactivo</td>
+                {% endif %}
+
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '01'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '02'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '03'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '04'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '05'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '06'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '07'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '08'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '09'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '10'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '11'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+                <td class="text-center align-middle">
+                    {% if c.fechaPago|date:'m' == '12'  %}
+                    <p>
+                    {{c.fechaPago|date:'Y/m/d'}}<br>
+                    {{c.formaPago}}<br>
+                    ${{c.montoAbonado|floatformat:"-3g"}}
+                    ${{c.montoDebeAbonar|floatformat:"-3g"}}
+
+                    {% if c.get_diferencia < 0 %}
+                    <text style="color:red;font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia > 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% elif c.get_diferencia == 0 %}
+                    <text style="color:blue; font-size:9px">${{c.get_diferencia|floatformat:"-3g"}}</text>
+                    {% endif %}<br>
+
+                    {{c.tipoAsociadoPago}}
+                    {% if c.confirm_pago == False  %}
+                    <p style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</p>
+                    {% else %}
+                    <p> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </p>
+                    {% endif %}
+                    </p>
+                    {% endif %}
+                </td>
+
+            </tr>
+        {% endif %}
+        {% endfor %}
+        {% endfor %}
+        {% endif %}
+
+
+        </tbody>
+
+    </table>
+</div>
+
+
+
+{% endif %}
+{% endif %}
+
+{% endblock  %}
+

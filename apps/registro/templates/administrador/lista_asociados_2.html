@@ -1,0 +1,73 @@
+{% extends "base/index2.html" %}
+{% block content %}
+{%  if user.is_authenticated %}
+{% if request.user.is_staff %}
+   <h4>Lista Asamblea: {{count}} asociados > 18 años</h4>
+    <div style="overflow-x:auto;">
+    <table class = "table table-borderless datatable" >
+        <thead>
+            <tr class="table-info">
+
+                <th>Nombre</th>
+                <th>Dni</th>
+                <th>Edad</th>
+                <th>Email</th>
+                <!-- <th>Estado</th>
+                <th>Vto.Emmac</th>
+                <th>Vto.Carnet</th> -->
+                <th>Tipo Asociado</th>
+
+                <!-- <th>Emmac</th> -->
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {% if object_list %}
+                {% for s in object_list %}
+                {% if s.persona.get_edad >= 18 %}
+
+
+
+                <tr >
+
+
+
+                    <td>{{s.persona.last_name|title}}, {{s.persona.first_name|title}} </td>
+                    <td>{{s.persona.dni}}</td>
+
+
+                    <td>{{s.persona.get_edad}}</td>
+
+
+
+
+                    <td>{{s.persona.email}}</td>
+                    <td>{{s.tipoAsociado}}</td>
+
+
+                    {% comment %} <td><img src={{s.emmac_file.url}} width="15" height="15"></td> {% endcomment %}
+                </tr>
+
+                {% endif %}
+                {% endfor %}
+
+
+
+            {% else%}
+                <tr>
+                    <td><h2>No hay personas asociadas</h2></td>
+                </tr>
+
+            {% endif %}
+        </tbody>
+    </table>
+    <div/>
+{% endif %}
+{% endif %}
+
+
+
+
+{% endblock  %}
+

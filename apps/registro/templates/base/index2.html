@@ -1,0 +1,123 @@
+{% extends "base/index5.html" %}
+{% load static %}
+
+
+
+
+
+ {% block aside %}
+  <aside id="sidebar" class="sidebar">
+
+    <ul class="sidebar-nav" id="sidebar-nav">
+      {%  if user.is_authenticated %}
+
+        {% if request.user.is_staff and request.user.groups.all.0.name == 'Admin' %}
+          <li class="nav-item">
+              <a class="nav-link collapsed"   href={% url 'resumen' %}>Estadisticas</a></li>
+          <li class="nav-item">
+              <a class="nav-link collapsed"   href={% url 'create_email' %}> Emails</a></li>
+         <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_personas' %}>Personas</a></li>
+         <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_asociados' %}>Asociados</a></li>
+
+        <li class="nav-item">
+            <a  class="nav-link collapsed" href={% url 'lista_asociados_asamblea' %}>Asociados asamblea >18</a></li>
+
+
+          <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_entrenadores' %}>Entrenadores</a></li>
+          <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_pagos_socios' %}>Pagos Socios</a></li>
+          <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_eventos' %}>Eventos</a></li>
+          {% comment %} <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_inscriptos' %}>Inscriptos Eventos</a></li> {% endcomment %}
+
+          <li class="nav-heading">PARA TERCEROS:</li>
+
+          <li class="nav-item">
+            <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#">
+            <i class="bi bi-exclamation-triangle-fill" style="color:brown"></i><span>Seguros</span>
+            <i class="bi bi-chevron-down ms-auto"></i>
+            </a>
+            <ul id="forms-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+              <li>
+                <a href={% url 'seguro_asociados' %}>
+                <i class="bi bi-circle"></i><span>Seguro Asociados</span>
+                </a>
+              </li>
+              <li>
+                <a href={% url 'seguro_entrenadores' %}>
+                  <i class="bi bi-circle"></i><span>Seguro Entrenadores</span>
+                </a>
+              </li>
+
+              <li>
+                <a href={% url 'seguro_inscriptos' %}>
+                  <i class="bi bi-circle"></i><span>Seguro Inscriptos Eventos</span>
+                </a>
+              </li>
+            </ul>
+            <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'lista_kempes' %}">
+              <i class="bi bi-eye"></i>
+              <span>Kempes</span>
+            </a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link collapsed" href="{% url 'lista_agencia' %}">
+              <i class="bi bi-eye"></i>
+              <span>Agencia</span>
+            </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'lista_inscriptos_publico' %}">
+              <i class="bi bi-globe"></i>
+              <span>Inscriptos Andres</span>
+              </a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link collapsed" href="{% url 'lista_asociados_publico' %}">
+              <i class="bi bi-globe"></i>
+              <span>Personas Asociadas Activas</span>
+              </a>
+            </li>
+          <br>
+        {% endif %}
+
+        {% if  request.user.username == 'cmonasterolo' or request.user.username == 'mpolo' or request.user.is_staff %}
+            <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_escuela' %}>Escuela</a></li>
+            <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_pagos_escuelaAdmin' %}>Escuela Pagos</a></li>
+
+            <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_pagos_escuelaAdmin_mensual' %}>Pagos por Mes</a></li>
+
+            <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'estad_escuela' %}>Escuela Estadisticas</a></li>
+        {% endif %}
+
+        {% if request.user.groups.all.0.name == 'Inscripciones' %}
+          <li class="nav-item">
+              <a  class="nav-link collapsed" href={% url 'lista_eventos' %}>Eventos</a></li>
+          {% endif %}
+        <br>
+
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="{% url 'index' %}">
+            <i class="bi bi-arrow-left-square"></i>
+            <span>Volver</span>
+          </a>
+        </li>
+
+      {% endif %}
+    </ul>
+
+  </aside>
+
+
+{% endblock %}
+
+
