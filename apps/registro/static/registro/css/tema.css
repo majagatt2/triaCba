@@ -41,7 +41,7 @@ body::before {
   content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none;
   background:
     linear-gradient(180deg, rgba(243, 245, 248, .30) 0%, rgba(243, 245, 248, .55) 100%),
-    url('../assets/img/Medalla 23_24.jpg') center / cover no-repeat;
+    url('../fondos/medalla-triatlon.jpg') center 42% / cover no-repeat;
 }
 /* Textos que van directo sobre la foto: llevan una base blanca para leerse bien */
 #main h2.bg-black, #main h3.bg-black, #main h2.bg-dark, #main h3.bg-dark, #main .titulo-inscripcion {
