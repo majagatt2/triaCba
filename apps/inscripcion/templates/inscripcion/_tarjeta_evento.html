@@ -1,0 +1,43 @@
+{% comment %}
+Tarjeta de un evento en el listado de eventos (publico y con cuenta).
+Recibe: ev (el evento). Estados (ev.estado_inscripcion):
+  abierta   -> boton "Inscribirme"
+  cerrada   -> "Inscripción cerrada por ahora" (check "Inscripción abierta" destildado)
+  terminada -> "Inscripción terminada" (check "Inscripción terminada" tildado)
+  pasado    -> sin mensaje (la fecha del evento ya paso)
+{% endcomment %}
+{% with estado=ev.estado_inscripcion %}
+<article class="tarjeta-evento{% if estado != 'abierta' %} tarjeta-cerrada{% endif %}">
+    <header class="tarjeta-evento-titulo">
+        <h3>{{ ev.nombreEvento }}</h3>
+    </header>
+    <div class="tarjeta-evento-cuerpo">
+        <p class="tarjeta-evento-tipo">{{ ev.tipo }}</p>
+        {% if ev.link_mapa %}
+            <p class="tarjeta-evento-dato"><a class="tarjeta-evento-mapa" href="{{ ev.link_mapa }}" target="_blank" rel="noopener" title="Ver en Google Maps"><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ ev.lugar|title }} <i class="bi bi-box-arrow-up-right icono-mapa" aria-hidden="true"></i><span class="visually-hidden"> (abre Google Maps)</span></a></p>
+        {% else %}
+            <p class="tarjeta-evento-dato"><i class="bi bi-geo-alt" aria-hidden="true"></i> {{ ev.lugar|title }}</p>
+        {% endif %}
+        <p class="tarjeta-evento-dato"><i class="bi bi-calendar-event" aria-hidden="true"></i> {{ ev.fechaEvento|date:"l j \d\e F \d\e Y"|lower|capfirst }}</p>
+
+        {% if estado == 'abierta' %}
+            <a class="tarjeta-evento-inscribirme" href="{% url 'eventos_detalles' ev.id %}">
+                Inscribirme
+                <svg class="icono-inscribirme" viewBox="0 0 40 40" aria-hidden="true">
+                    <rect x="3" y="9" width="27" height="27" rx="5" fill="none" stroke="currentColor" stroke-width="3.2"/>
+                    <path d="M11 22 l6 6 L37 3" fill="none" stroke="#D62828" stroke-width="4.2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+        {% elif estado == 'terminada' %}
+            <p class="tarjeta-evento-cerrada"><i class="bi bi-lock-fill" aria-hidden="true"></i> Inscripción terminada</p>
+        {% elif estado == 'cerrada' %}
+            <p class="tarjeta-evento-cerrada"><i class="bi bi-lock" aria-hidden="true"></i> Inscripción cerrada por ahora</p>
+        {% endif %}
+    </div>
+    {% if ev.publicar %}
+    <footer class="tarjeta-evento-pie">
+        <a href="{% url 'lista_inscriptos' ev.id %}"><i class="bi bi-people" aria-hidden="true"></i> Ver inscriptos</a>
+    </footer>
+    {% endif %}
+</article>
+{% endwith %}

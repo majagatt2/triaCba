@@ -12,6 +12,7 @@
     var obligatorios = ['id_responsable_tutor', 'id_dni_responsable', 'id_telefono_responsable']
       .map(function (id) { return document.getElementById(id); }).filter(Boolean);
     var relacion = document.getElementById('id_relacion_legal');
+    var relacionOtro = document.getElementById('id_relacion');
 
     function edadAlEvento(valor) {
       var partes = (valor || '').split('-');
@@ -27,6 +28,12 @@
       if (!relacion) return;
       relacion.setCustomValidity(!panel.hidden && (relacion.value === '' || relacion.value === '1')
         ? 'Elegí qué relación tiene con vos.' : '');
+      if (relacionOtro) {
+        var pideCual = !panel.hidden && relacion.value === '4';
+        relacionOtro.required = pideCual;
+        var fila = relacionOtro.closest('.row-item');
+        if (fila) fila.hidden = !pideCual && !relacionOtro.value;
+      }
     }
 
     function actualizar(desplazar) {

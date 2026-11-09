@@ -29,6 +29,23 @@ def edad_al(fecha_nacimiento, fecha):
     return fecha.year - fecha_nacimiento.year - ((fecha.month, fecha.day) < (fecha_nacimiento.month, fecha_nacimiento.day))
 
 
+def categoria_no_corresponde(form, request, evento, fecha_nacimiento, sexo):
+    """Controla que la categoria elegida corresponda a la edad (a la fecha de calculo del evento) y sexo.
+    Si no corresponde, agrega el error al formulario y devuelve True."""
+    categoria = (form.cleaned_data.get('categoria') or '') if hasattr(form, 'cleaned_data') else ''
+    if not evento or not categoria:
+        return False
+    modalidad = ModalidadEventos.objects.filter(evento=evento, id=request.POST.get('eventoRelacionado') or 0).first()
+    if modalidad is None:
+        return False
+    edad = edad_al(fecha_nacimiento, evento.fecha_calculo_edad)
+    if categoria in {c.categoria for c in modalidad.categorias_para(edad, sexo)}:
+        return False
+    detalle = f' (tenés {edad} años al {evento.fecha_calculo_edad:%d/%m/%Y})' if edad is not None else ''
+    form.add_error('categoria', f'La categoría "{categoria}" no corresponde a tu edad{detalle}. Elegí otra de la lista.')
+    return True
+
+
 def faltan_datos_menor(form):
     """Para menores de 18: los datos del adulto responsable son obligatorios. Marca los que faltan."""
     datos = form.cleaned_data
@@ -37,6 +54,8 @@ def faltan_datos_menor(form):
         form.add_error('responsable_tutor', 'Completá el nombre y apellido de tu madre, padre o tutor.'); faltan = True
     if datos.get('relacion_legal') in (None, '', '1'):
         form.add_error('relacion_legal', 'Elegí qué relación tiene con vos.'); faltan = True
+    elif datos.get('relacion_legal') == '4' and not (datos.get('relacion') or '').strip():
+        form.add_error('relacion', 'Contanos qué relación tiene con vos (elegiste "Otro").'); faltan = True
     if not datos.get('dni_responsable'):
         form.add_error('dni_responsable', 'Completá el DNI del adulto responsable.'); faltan = True
     if not (datos.get('telefono_responsable') or '').strip():
@@ -143,6 +162,15 @@ class InscripcionEventoCreate(LoginRequiredMixin, SuccessMessageMixin,CreateView
     form_class = InscripcionForm
     success_url = reverse_lazy('mis_inscripciones')
 
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        evento = Eventos.objects.filter(id=self.kwargs.get('pk')).first()
+        edad = edad_al(self.request.user.fechaNacimiento, evento.fechaEvento if evento else None)
+        if edad is not None and edad < 18:  # el navegador ya avisa si faltan los datos del responsable
+            for campo in ('responsable_tutor', 'relacion_legal', 'dni_responsable', 'telefono_responsable'):
+                form.fields[campo].widget.attrs['required'] = True
+        return form
+
     def get_context_data(self, **kwargs):
         context = super(InscripcionEventoCreate, self).get_context_data(**kwargs)
         filtro = self.kwargs.get('pk', None)
@@ -173,6 +201,8 @@ class InscripcionEventoCreate(LoginRequiredMixin, SuccessMessageMixin,CreateView
 
         edad = edad_al(persona.fechaNacimiento, eventos[0].fechaEvento)
         if edad is not None and edad < 18 and faltan_datos_menor(form):
+            return self.form_invalid(form)
+        if categoria_no_corresponde(form, self.request, eventos[0], persona.fechaNacimiento, persona.sexo):
             return self.form_invalid(form)
 
         nuevo = form.save(commit=False)
@@ -221,6 +251,9 @@ class InscripcionPublicoEventoCreate(SuccessMessageMixin, CreateView):
                        evento.fechaEvento if evento else None)
         menor = edad is not None and edad < 18
         if validos and menor and faltan_datos_menor(form2):
+            validos = False
+        if validos and categoria_no_corresponde(form2, request, evento, form.cleaned_data.get('fechaNacimiento'),
+                                                form.cleaned_data.get('sexo')):
             validos = False
 
         if validos:
@@ -283,8 +316,10 @@ class InscripcionEventoUsuarioList(ListView):
 
 class EventosList(ListView):
     model = Eventos
-    queryset = Eventos.objects.filter(estado=True).order_by("fechaEvento")
     template_name = 'inscripcion/eventos.html'
+
+    def get_queryset(self):
+        return Eventos.para_listado()
 
     def form_valid(self, form):
         form.instance.persona = self.request.user
@@ -293,8 +328,10 @@ class EventosList(ListView):
 
 class EventosPublicoList(ListView):
     model = Eventos
-    queryset = Eventos.objects.filter(estado=True).order_by("fechaEvento")
     template_name = 'inscripcion/eventos_publico.html'
+
+    def get_queryset(self):
+        return Eventos.para_listado()
 
 
 

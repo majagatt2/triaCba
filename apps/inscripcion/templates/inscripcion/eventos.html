@@ -22,55 +22,9 @@
 
     <section class="justify-content-center"  >
 
-            <div class="row justify-content-center" style="padding-top:">
+            <div class="grilla-eventos">
                 {% for eventos in eventos_list %}
-                <div class="justify-content-center p-1 h-120 shadow-lg " style="width: 22rem; margin: 0.3rem; background-color:red; border-radius: 15px;">
-
-                    <div class=" justify-content-center text-center card p-1 h-100" style="width: 100%; margin: 0rem; border-radius: 15px;" >
-
-                        <div class="card-title text-center ui-shadow-sm h-100 " >
-                            {% if eventos.inscribirse %}
-                            <h4 class=""  href="{% url 'eventos_detalles' eventos.id %}">
-                                        <a style="color:#F26B1E" href={% url 'eventos_detalles' eventos.id %}><b>{{eventos.nombreEvento}}</b><br><b style="color:#f21e1e">{{eventos.tipo}}</b></a></h4>
-                            {%  else %}
-                            <h4 class=""  >
-                                        <a style="color:#F26B1E" ><b>{{eventos.nombreEvento}}</b><br><b style="color:#f21e1e">{{eventos.tipo}}</b></a></h4>
-                            {%  endif%}
-
-
-
-                            <p class="text-black  card-body text-opacity-75"><span class="text-black text-opacity-50"> Lugar: </span>{{eventos.lugar}}</p>
-
-                                <p class="small text-black"><span class="text-black text-opacity-50"> Fecha:</span> <b>{{eventos.fechaEvento}}</b>
-
-                                    <br>
-                                </p>
-
-                        </div>
-                         <div class="card-body text-center ui-shadow-sm h-100 " >
-                            {% if eventos.inscribirse %}
-                                <a href={% url 'eventos_detalles' eventos.id %} class="link-danger text-decoration-none pb-1 "><b><i class="bi bi-info-circle-fill"></i> Inscribirme </b><i class="bi bi-pencil-square"></i></a>
-                            {%  else %}
-                                <p class="link-warning "><i class="bi bi-x-circle"> Inscripción inactiva</i></p>
-                            {% endif %}
-                         </div>
-
-
-                                {% if eventos.publicar %}
-
-                                <a href={% url 'lista_inscriptos' eventos.id %} class="link-info text-end pb-1 "><b><i class="bi bi-eye"></i>Listado Inscriptos</b></a>
-                                {%  else %}
-                                <a href="#" class=" text-end pb-1 text-black-50 "><i class="bi bi-eye-slash-fill"></i>Listado Inscriptos</a>
-                                {% endif %}
-
-
-
-                    </div>
-                </div>
-
-
-
-
+                    {% include "inscripcion/_tarjeta_evento.html" with ev=eventos %}
                 {% endfor %}
 
 

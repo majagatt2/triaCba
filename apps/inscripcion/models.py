@@ -3,7 +3,10 @@
 from unittest.util import _MAX_LENGTH
 from django.db import models
 from ckeditor.fields import RichTextField
-from datetime import date
+from datetime import date, timedelta
+from urllib.parse import quote_plus
+from zoneinfo import ZoneInfo
+from django.utils import timezone
 from django.core.validators import FileExtensionValidator
 from apps.registro.validators import validate_field_size
 
@@ -15,6 +18,14 @@ from apps.usuarios.models import Persona
 from apps.socio.models import Asociado
 
 # Create your models here.
+
+
+# Dias que un evento sigue apareciendo en el listado despues de su fecha.
+DIAS_VISIBLE_DESPUES_DEL_EVENTO = 15
+
+
+def hoy_cordoba():
+    return timezone.now().astimezone(ZoneInfo('America/Argentina/Cordoba')).date()
 
 
 class EventoTipo(models.Model):
@@ -62,6 +73,18 @@ class EventoCategoria(models.Model):
     def __str__(self):
         return f"{self.categoria}"
 
+    def corresponde_a(self, edad, sexo=None):
+        """True si la persona (edad a la fecha de calculo del evento, y sexo) entra en esta categoria.
+        Si la categoria no tiene edad_desde / edad_hasta / sexo, ese limite no se aplica."""
+        if edad is not None:
+            if self.edad_desde is not None and edad < self.edad_desde:
+                return False
+            if self.edad_hasta is not None and edad > self.edad_hasta:
+                return False
+        if sexo and self.sexo and self.sexo != sexo:
+            return False
+        return True
+
     class Meta:
         verbose_name = "Categoria"
         verbose_name_plural = 'Categorias'
@@ -98,10 +121,20 @@ class Eventos(models.Model):
     #     EventoBici)  # through='EventoAsignacionDistancia'
     nombreEvento = models.CharField(max_length=60)
     lugar = models.CharField(max_length=25)
+    direccion = models.CharField(
+        'Dirección', max_length=200, blank=True, default='',
+        help_text='Opcional. Dirección del evento (ej: "Costanera, Almafuerte, Córdoba") o un link de Google Maps. '
+                  'Si se completa, el lugar en la tarjeta abre el mapa.')
     cupo = models.IntegerField(blank=False, null=False)
     estado = models.BooleanField(("visible"), default=True)
     contenido = RichTextField()
-    inscribirse = models.BooleanField(default=True)
+    inscribirse = models.BooleanField(
+        'Inscripción abierta', default=True,
+        help_text='Si se destilda, la tarjeta muestra "Inscripción cerrada por ahora".')
+    inscripcion_terminada = models.BooleanField(
+        'Inscripción terminada', default=False,
+        help_text='Cierre definitivo (por ejemplo, cupo lleno). La tarjeta muestra "Inscripción terminada" '
+                  'y tiene prioridad sobre "Inscripción abierta".')
     publicar = models.BooleanField(default=False)
     seguro = models.BooleanField(default=False)
     time_control = models.BooleanField(("Andres"),default=False)
@@ -113,6 +146,34 @@ class Eventos(models.Model):
 
     def __str__(self):
         return f"{self.tipo} - {self.lugar} - {self.nombreEvento} - {self.fechaEvento.strftime('%d/%m/%Y')}  "
+
+    @property
+    def ya_paso(self):
+        return self.fechaEvento < hoy_cordoba()
+
+    @classmethod
+    def para_listado(cls):
+        """Eventos visibles para el listado: no muestra los que pasaron hace mas de N dias."""
+        desde = hoy_cordoba() - timedelta(days=DIAS_VISIBLE_DESPUES_DEL_EVENTO)
+        return cls.objects.filter(estado=True, fechaEvento__gte=desde).order_by('fechaEvento')
+
+    @property
+    def estado_inscripcion(self):
+        """'pasado', 'terminada', 'abierta' o 'cerrada' (cerrada por ahora)."""
+        if self.ya_paso:
+            return 'pasado'
+        if self.inscripcion_terminada:
+            return 'terminada'
+        return 'abierta' if self.inscribirse else 'cerrada'
+
+    @property
+    def link_mapa(self):
+        d = (self.direccion or '').strip()
+        if not d:
+            return ''
+        if d.startswith(('http://', 'https://')):
+            return d
+        return 'https://www.google.com/maps/search/?api=1&query=' + quote_plus(d)
 
 
 
@@ -150,6 +211,13 @@ class ModalidadEventos(models.Model):
 
     def __str__(self):
         return f"{self.modalidad}"
+
+    def categorias_para(self, edad, sexo=None):
+        """Categorias de esta modalidad que le corresponden a la persona.
+        Si ninguna corresponde (datos de categorias incompletos), devuelve todas para no bloquear la inscripcion."""
+        todas = list(self.categoria_disponible.all())
+        aptas = [c for c in todas if c.corresponde_a(edad, sexo)]
+        return aptas or todas
 
     class Meta:
         verbose_name = "Modalidad Evento"

@@ -20,8 +20,8 @@ from django.utils.html import format_html
 
 class EventoAdmin(admin.ModelAdmin):
     #inlines = [EventoAsignacionDistanciaAdmin, EventoAsignacionModalidadAdmin,EventoAsignacionCategoriaAdmin]
-    list_display = ('fechaEvento', 'tipo', 'nombreEvento', 'lugar', 'cupo', 'estado','inscribirse','seguro','publicar','time_control')
-    list_editable = ('cupo', 'estado','inscribirse','seguro','publicar','time_control')
+    list_display = ('fechaEvento', 'tipo', 'nombreEvento', 'lugar', 'cupo', 'estado','inscribirse','inscripcion_terminada','seguro','publicar','time_control')
+    list_editable = ('cupo', 'estado','inscribirse','inscripcion_terminada','seguro','publicar','time_control')
     search_fields = ('año', 'fechaEvento', 'temporada',
                      'tipo', 'nombreEvento', 'lugar', 'estado')
     list_filter = ('año',  'temporada', 'tipo', 'lugar', 'estado')

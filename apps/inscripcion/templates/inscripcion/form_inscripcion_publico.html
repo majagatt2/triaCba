@@ -161,14 +161,15 @@
                                 <br>
                                 <div class="row-item">{#catgoria#}
                                     <div> {{form2.categoria.label}}</div>
-                                        <select name="categoria" id="id_categoria" class="form-select" required>
+                                        <select name="categoria" id="id_categoria" class="form-select" required data-fecha-calculo="{{ eventos.0.fecha_calculo_edad|date:'Y-m-d' }}" data-elegida="{{ form2.categoria.value|default_if_none:'' }}">
                                             <option value='0'></option>
                                             {% for x in modalidad_evento %}
                                             {% for e in x.categoria_disponible.all %}
-                                            <option value="{{e.categoria}}" data-chained="{{x.id}}">{{e}}</option>
+                                            <option value="{{e.categoria}}" data-chained="{{x.id}}" data-desde="{{ e.edad_desde|default_if_none:'' }}" data-hasta="{{ e.edad_hasta|default_if_none:'' }}" data-sexo="{{ e.sexo|default_if_none:'' }}">{{e}}</option>
                                             {% endfor %}
                                             {% endfor %}
                                         </select>
+                        <div id="aviso-categorias" class="form-text" aria-live="polite"></div>
                                 </div>
                                 <br>
                                 <div class="row-item">{#distancia#}
@@ -389,8 +390,6 @@
       $("#id_distancia").chained("#id_evento");
       $("#id_modalidad").val("{{form2.modalidad.id}}").change();
       $("#id_modalidad").chained("#id_evento");
-      $("#id_categoria").val("{{form2.categoria.id}}").change();
-      $("#id_categoria").chained("#id_evento");
       $("#id_bici").val("{{form2.bici.id}}").change();
       $("#id_bici").chained("#id_evento");
 
@@ -408,6 +407,7 @@
 
 
 <script src="{% static 'inscripcion/js/archivos.js' %}"></script>
+<script src="{% static 'inscripcion/js/categorias.js' %}"></script>
 <script src="{% static 'inscripcion/js/menores.js' %}"></script>
 
 {% endblock %}

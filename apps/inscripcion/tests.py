@@ -189,6 +189,30 @@ class InscripcionTests(TestCase):
         self.assertEqual(r.status_code, 302)
         self.assertEqual(Inscripcion.objects.get().responsable_tutor, 'Ana Perez')
 
+    def test_menor_sin_cuenta_cada_dato_del_responsable_es_obligatorio(self):
+        completos = dict(responsable_tutor='Ana Perez', relacion_legal='2', dni_responsable='20111222',
+                         telefono_responsable='3511234567')
+        for falta, mensaje in (('responsable_tutor', 'nombre y apellido'), ('relacion_legal', 'qué relación'),
+                               ('telefono_responsable', 'teléfono')):
+            datos = {**self.datos_persona(fechaNacimiento='2012-05-01'),
+                     **self.datos_inscripcion(**{**completos, falta: ''})}
+            r = self.client.post(reverse('inscripcion_publico', args=[self.evento.id]), datos)
+            self.assertContains(r, mensaje, msg_prefix=falta)
+        self.assertEqual(Inscripcion.objects.count(), 0)
+
+    def test_menor_relacion_otro_pide_cual(self):
+        datos = {**self.datos_persona(fechaNacimiento='2012-05-01'),
+                 **self.datos_inscripcion(responsable_tutor='Ana Perez', relacion_legal='4', relacion='',
+                                          dni_responsable='20111222', telefono_responsable='3511234567')}
+        r = self.client.post(reverse('inscripcion_publico', args=[self.evento.id]), datos)
+        self.assertContains(r, 'elegiste &quot;Otro&quot;')
+        self.assertEqual(Inscripcion.objects.count(), 0)
+        datos = {**self.datos_persona(fechaNacimiento='2012-05-01'),  # archivos nuevos: los anteriores ya se leyeron
+                 **self.datos_inscripcion(responsable_tutor='Ana Perez', relacion_legal='4', relacion='Abuela',
+                                          dni_responsable='20111222', telefono_responsable='3511234567')}
+        r = self.client.post(reverse('inscripcion_publico', args=[self.evento.id]), datos)
+        self.assertEqual(r.status_code, 302)
+
     def test_menor_con_cuenta_ve_la_seccion_y_es_obligatoria(self):
         menor = Persona.objects.create(cuil='20444444445', username='menor', email='m@example.com', dni='1', domicilio='x',
                                        ciudad='x', telefono='1', fechaNacimiento=date(2012, 5, 1), sexo='M')
@@ -202,3 +226,109 @@ class InscripcionTests(TestCase):
     def test_mayor_con_cuenta_no_ve_la_seccion(self):
         self.client.force_login(self.atleta)
         self.assertNotContains(self.client.get(reverse('inscribirme', args=[self.evento.id])), 'Sos menor de 18 años')
+
+    # --- Categorias filtradas por edad / sexo ---
+
+    def rangos(self, elite, promocional):
+        from apps.inscripcion.models import EventoCategoria
+        for nombre, (desde, hasta, sexo) in (('Elite', elite), ('Promocional', promocional)):
+            EventoCategoria.objects.filter(categoria=nombre).update(edad_desde=desde, edad_hasta=hasta, sexo=sexo)
+        from apps.inscripcion.models import ModalidadEventos
+        return ModalidadEventos.objects.filter(evento=self.evento).first().id
+
+    def test_categoria_corresponde_a(self):
+        from apps.inscripcion.models import EventoCategoria
+        c = EventoCategoria(categoria='X', edad_desde=18, edad_hasta=29, sexo='F')
+        self.assertTrue(c.corresponde_a(18, 'F'))
+        self.assertTrue(c.corresponde_a(29, 'F'))
+        self.assertFalse(c.corresponde_a(30, 'F'))
+        self.assertFalse(c.corresponde_a(17, 'F'))
+        self.assertFalse(c.corresponde_a(20, 'M'))
+        self.assertTrue(EventoCategoria(categoria='Libre').corresponde_a(70, 'M'))
+
+    def test_con_cuenta_categoria_de_otra_edad_no_se_inscribe(self):
+        mod = self.rangos((18, 29, None), (30, None, None))  # el atleta de prueba tiene mas de 30
+        self.client.force_login(self.atleta)
+        r = self.client.post(reverse('inscribirme', args=[self.evento.id]),
+                             self.datos_inscripcion(eventoRelacionado=mod, categoria='Elite'))
+        self.assertContains(r, 'no corresponde a tu edad')
+        self.assertFalse(Inscripcion.objects.filter(persona=self.atleta).exists())
+        r = self.client.post(reverse('inscribirme', args=[self.evento.id]),
+                             self.datos_inscripcion(eventoRelacionado=mod, categoria='Promocional'))
+        self.assertEqual(r.status_code, 302)
+
+    def test_publico_categoria_de_otro_sexo_no_se_inscribe(self):
+        mod = self.rangos((None, None, 'M'), (None, None, 'F'))  # Juana es F
+        datos = {**self.datos_persona(), **self.datos_inscripcion(eventoRelacionado=mod, categoria='Elite')}
+        r = self.client.post(reverse('inscripcion_publico', args=[self.evento.id]), datos)
+        self.assertContains(r, 'no corresponde a tu edad')
+        self.assertFalse(Persona.objects.filter(cuil=CUIL_NUEVO).exists())
+
+    def test_si_ninguna_categoria_corresponde_no_bloquea(self):
+        mod = self.rangos((90, 99, None), (90, 99, None))
+        self.client.force_login(self.atleta)
+        r = self.client.post(reverse('inscribirme', args=[self.evento.id]),
+                             self.datos_inscripcion(eventoRelacionado=mod, categoria='Elite'))
+        self.assertEqual(r.status_code, 302)
+
+
+@override_settings(SECURE_SSL_REDIRECT=False,
+                   STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+class TarjetaEventoTests(TestCase):
+    """Estados de inscripcion y link a Google Maps en la tarjeta de eventos."""
+
+    @classmethod
+    def setUpTestData(cls):
+        call_command('datos_prueba', verbosity=0)
+        cls.evento = Eventos.objects.get(nombreEvento='EVENTO DE PRUEBA')
+
+    def cambiar(self, **campos):
+        Eventos.objects.filter(pk=self.evento.pk).update(**campos)
+        return Eventos.objects.get(pk=self.evento.pk)
+
+    def pagina(self):
+        return self.client.get(reverse('eventos_publico')).content.decode()
+
+    def test_abierta(self):
+        ev = self.cambiar(fechaEvento=date(2099, 1, 1), inscribirse=True, inscripcion_terminada=False)
+        self.assertEqual(ev.estado_inscripcion, 'abierta')
+        self.assertIn('tarjeta-evento-inscribirme', self.pagina())
+
+    def test_cerrada_por_ahora(self):
+        ev = self.cambiar(fechaEvento=date(2099, 1, 1), inscribirse=False, inscripcion_terminada=False)
+        self.assertEqual(ev.estado_inscripcion, 'cerrada')
+        self.assertIn('Inscripción cerrada por ahora', self.pagina())
+
+    def test_terminada_gana_aunque_este_abierta(self):
+        ev = self.cambiar(fechaEvento=date(2099, 1, 1), inscribirse=True, inscripcion_terminada=True)
+        self.assertEqual(ev.estado_inscripcion, 'terminada')
+        html = self.pagina()
+        self.assertIn('Inscripción terminada', html)
+        self.assertNotIn('tarjeta-evento-inscribirme', html)
+
+    def test_evento_pasado_sin_mensaje(self):
+        ev = self.cambiar(fechaEvento=date(2020, 1, 1), inscribirse=True)
+        self.assertEqual(ev.estado_inscripcion, 'pasado')
+        html = self.pagina()
+        self.assertNotIn('tarjeta-evento-inscribirme', html)
+        self.assertNotIn('Inscripción cerrada', html)
+        self.assertNotIn('Inscripción terminada', html)
+
+    def test_link_mapa(self):
+        ev = self.cambiar(direccion='')
+        self.assertEqual(ev.link_mapa, '')
+        self.assertNotIn('tarjeta-evento-mapa', self.pagina())
+        ev = self.cambiar(direccion='Costanera, Almafuerte, Córdoba')
+        self.assertTrue(ev.link_mapa.startswith('https://www.google.com/maps/search/?api=1&query=Costanera'))
+        self.assertIn('tarjeta-evento-mapa', self.pagina())
+        ev = self.cambiar(direccion='https://maps.app.goo.gl/abc123')
+        self.assertEqual(ev.link_mapa, 'https://maps.app.goo.gl/abc123')
+
+    def test_listado_oculta_eventos_viejos(self):
+        from datetime import timedelta
+        from apps.inscripcion.models import hoy_cordoba, DIAS_VISIBLE_DESPUES_DEL_EVENTO
+        hoy = hoy_cordoba()
+        self.cambiar(fechaEvento=hoy - timedelta(days=DIAS_VISIBLE_DESPUES_DEL_EVENTO))
+        self.assertIn('EVENTO DE PRUEBA', self.pagina())
+        self.cambiar(fechaEvento=hoy - timedelta(days=DIAS_VISIBLE_DESPUES_DEL_EVENTO + 1))
+        self.assertNotIn('EVENTO DE PRUEBA', self.pagina())

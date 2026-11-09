@@ -75,7 +75,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end">
-                        {%  if n.inscribirse %}
+                        {%  if n.estado_inscripcion == 'abierta' %}
                             {%  if user.is_authenticated %}
                                 <a class="btn btn-secondary" href={% url 'eventos' %}>Volver</a>
                                 &nbsp;
@@ -102,13 +102,13 @@
                             {%  if user.is_authenticated %}
                                 <a class="btn btn-secondary" href={% url 'eventos' %}>Volver</a>
                                 &nbsp;
-                                <a class="btn btn-light" >Inscripción Cerrada</a>
+                                <a class="btn btn-light" >{% if n.estado_inscripcion == 'terminada' %}Inscripción terminada{% elif n.estado_inscripcion == 'cerrada' %}Inscripción cerrada por ahora{% else %}Inscripción cerrada{% endif %}</a>
                             {% else %}
                                 <div class="form-control   p-2 border-4 shadow-lg">
                                     <div class="text-center">
                                         <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-secondary" href={% url 'eventos_publico' %}>Volver</a>
                                         &nbsp;
-                                        <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-light" ><i class="bi bi-door-open"></i> Inscripción Cerrada</a>
+                                        <a style="box-shadow: 3px 3px rgba(0,0,0,0.3)" class="btn btn-light" ><i class="bi bi-door-open"></i> {% if n.estado_inscripcion == 'terminada' %}Inscripción terminada{% elif n.estado_inscripcion == 'cerrada' %}Inscripción cerrada por ahora{% else %}Inscripción cerrada{% endif %}</a>
                                     </div>
                                 </div>
                             {% endif %}

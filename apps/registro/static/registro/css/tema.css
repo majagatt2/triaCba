@@ -264,3 +264,55 @@ h4.paso::before {
 
 /* Paginas del panel de administracion (base index5): sin foto, fondo liso para leer tablas */
 body.img::before { background: var(--pista); }
+
+/* ---------- Tarjetas de proximos eventos (diseno pedido por la asociacion) ---------- */
+.grilla-eventos {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 18px;
+  max-width: 1150px; margin: 0 auto 28px;
+}
+.tarjeta-evento {
+  display: flex; flex-direction: column; background: #fff; border-radius: 14px; overflow: hidden;
+  border: 1px solid var(--linea); box-shadow: 0 6px 18px rgba(14, 42, 71, .10);
+}
+.tarjeta-evento-titulo {
+  background: var(--lago); border-top: 5px solid var(--rojo);
+  padding: 16px 18px; min-height: 92px; display: flex; align-items: center; justify-content: center;
+}
+.tarjeta-evento-titulo h3 {
+  margin: 0; color: #fff !important; text-align: center; font-weight: 700; line-height: 1.1;
+  font-size: 1.55rem; letter-spacing: .3px;
+}
+.tarjeta-evento-cuerpo { flex: 1; padding: 18px 18px 8px; text-align: center; }
+.tarjeta-evento-tipo {
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 2.1rem; line-height: 1;
+  color: var(--rojo); margin: 0 0 12px;
+}
+.tarjeta-evento-dato { margin: 0 0 4px; font-size: 1.08rem; font-weight: 500; color: var(--tinta); }
+.tarjeta-evento-dato i { color: var(--agua); margin-right: 4px; }
+.tarjeta-evento-mapa { color: inherit !important; text-decoration: none; border-bottom: 1px dashed var(--agua); }
+.tarjeta-evento-mapa:hover, .tarjeta-evento-mapa:focus-visible { color: var(--agua) !important; border-bottom-style: solid; }
+.tarjeta-evento-mapa .icono-mapa { font-size: .78em; margin: 0 0 0 4px; opacity: .75; }
+
+.tarjeta-evento-inscribirme {
+  display: inline-flex; align-items: center; gap: 10px; margin: 18px 0 8px;
+  font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.9rem; line-height: 1;
+  color: var(--rojo) !important; text-decoration: none; padding: 6px 14px; border-radius: 10px;
+}
+.tarjeta-evento-inscribirme:hover, .tarjeta-evento-inscribirme:focus-visible { background: #FDECEC; }
+.icono-inscribirme { width: 34px; height: 34px; color: var(--lago); flex: none; }
+
+.tarjeta-evento-cerrada {
+  display: inline-flex; align-items: center; gap: 6px; margin: 18px 0 8px; padding: 6px 12px;
+  border-radius: 999px; background: #EEF1F5; color: var(--gris); font-weight: 600; font-size: .95rem;
+}
+.tarjeta-cerrada .tarjeta-evento-titulo { background: #4A5D73; }
+.tarjeta-cerrada .tarjeta-evento-tipo { color: #A35353; }
+
+.tarjeta-evento-pie { padding: 10px 16px 14px; text-align: right; }
+.tarjeta-evento-pie a { color: var(--gris); font-size: .92rem; font-weight: 500; text-decoration: none; }
+.tarjeta-evento-pie a:hover { color: var(--lago); text-decoration: underline; }
+
+@media (max-width: 576px) {
+  .grilla-eventos { grid-template-columns: 1fr; gap: 14px; }
+  .tarjeta-evento-titulo { min-height: 0; }
+}

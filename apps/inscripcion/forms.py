@@ -94,6 +94,29 @@ class InscripcionForm(forms.ModelForm):
 
 
 
+    # Datos del adulto responsable (seccion que aparece solo para menores de 18).
+    # Son obligatorios cuando la persona es menor: lo controla faltan_datos_menor() en la vista
+    # y menores.js en el navegador.
+    ETIQUETAS_RESPONSABLE = {
+        'responsable_tutor': 'Nombre y apellido de madre, padre o tutor*',
+        'relacion_legal': 'Relación con vos*',
+        'relacion': '¿Cuál? (si elegiste "Otro")*',
+        'dni_responsable': 'DNI del responsable*',
+        'mail_responsable': 'Mail del responsable',
+        'telefono_responsable': 'Teléfono del responsable*',
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for campo, etiqueta in self.ETIQUETAS_RESPONSABLE.items():
+            if campo in self.fields:
+                self.fields[campo].label = etiqueta
+        if 'relacion' in self.fields:
+            self.fields['relacion'].widget.attrs['placeholder'] = 'Ej: abuela, tío, tutor legal'
+        if 'telefono_responsable' in self.fields:
+            self.fields['telefono_responsable'].widget.attrs.setdefault('inputmode', 'tel')
+
+
 class EventosForm(forms.ModelForm):
     class Meta:
         model = Eventos
