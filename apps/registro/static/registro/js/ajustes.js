@@ -3,6 +3,9 @@
   'use strict';
   function listo(fn) { document.readyState !== 'loading' ? fn() : document.addEventListener('DOMContentLoaded', fn); }
 
+  // En iPhone/iPad el estilo :active (efecto al tocar las tarjetas) solo funciona si hay un listener de toque.
+  document.addEventListener('touchstart', function () {}, { passive: true });
+
   // Formularios con validacion propia (novalidate): si falta completar algo, NO se envia,
   // no se muestra "Enviando…" y se lleva al primer campo con problema.
   // Va en fase de captura para frenar el envio antes que los onsubmit de cada plantilla.
