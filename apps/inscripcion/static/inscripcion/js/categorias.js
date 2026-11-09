@@ -47,15 +47,25 @@
       return !(s && c.sexo && c.sexo !== s);
     }
 
+    // Form sin cuenta: si alguna categoria depende de la edad o del sexo, no se muestran
+    // categorias hasta tener los dos datos (si no, aparecen las de ambos sexos y todas las edades).
+    var dependeDeDatos = todas.some(function (c) { return c.desde !== null || c.hasta !== null || c.sexo; });
+    function faltanDatos(e, s) {
+      if (!campoNac || !dependeDeDatos) return false;
+      return e === null || (campoSexo && !s);
+    }
+
     function armar() {
       var e = edad(), s = sexo();
       var deModalidad = todas.filter(function (c) { return c.modalidad === modalidad.value; });
-      var aptas = deModalidad.filter(function (c) { return corresponde(c, e, s); });
-      var lista = aptas.length ? aptas : deModalidad;
+      var esperando = deModalidad.length > 0 && faltanDatos(e, s);
+      var aptas = esperando ? [] : deModalidad.filter(function (c) { return corresponde(c, e, s); });
+      var lista = esperando ? [] : (aptas.length ? aptas : deModalidad);
       var actual = sel.value && sel.value !== '0' ? sel.value : elegida;
 
       sel.innerHTML = '';
-      var primera = new Option(deModalidad.length ? 'Elegí tu categoría' : 'Primero elegí el evento', '');
+      var primera = new Option(!deModalidad.length ? 'Primero elegí el evento'
+        : esperando ? 'Completá tu fecha de nacimiento y sexo' : 'Elegí tu categoría', '');
       sel.add(primera);
       var vistos = {};
       lista.forEach(function (c) {
@@ -69,13 +79,15 @@
       if (!aviso) return;
       var texto = '';
       if (deModalidad.length) {
-        if (e === null) {
-          if (campoNac && todas.some(function (c) { return c.desde !== null || c.hasta !== null; }))
-            texto = 'Completá tu fecha de nacimiento para ver solo las categorías de tu edad.';
+        if (esperando) {
+          var falta = e === null && !s ? 'tu fecha de nacimiento y tu sexo' : e === null ? 'tu fecha de nacimiento' : 'tu sexo';
+          texto = 'Para ver las categorías que te corresponden, completá arriba ' + falta + '.';
+        } else if (e === null) {
+          texto = '';
         } else if (!aptas.length) {
           texto = 'No encontramos una categoría para tu edad (' + e + ' años al ' + fechaCalculoTexto + '). Elegí la que corresponda.';
         } else if (aptas.length < deModalidad.length) {
-          texto = 'Te mostramos las categorías para tu edad: ' + e + ' años al ' + fechaCalculoTexto + '.';
+          texto = 'Categorías para ' + (s === 'F' ? 'mujeres de ' : s === 'M' ? 'varones de ' : '') + e + ' años (edad al ' + fechaCalculoTexto + ').';
         }
       }
       aviso.textContent = texto;
