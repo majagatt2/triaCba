@@ -242,9 +242,18 @@ class EventoCosto(models.Model):
     formaPago = models.ForeignKey(
         EventoFormasPago, verbose_name=("Forma"), on_delete=models.CASCADE)
     precio = models.IntegerField()
+    modalidades = models.ManyToManyField(
+        'ModalidadEventos', blank=True, related_name='costos', verbose_name='Modalidades',
+        help_text='Modalidades del evento a las que corresponde este costo. '
+                  'Si no elegís ninguna, el costo aparece para todas las modalidades del evento.')
 
     def __str__(self):
         return f"{self.formaPago}"
+
+    def aplica_a(self, modalidad_id):
+        """True si el costo corresponde a la modalidad (sin modalidades elegidas = corresponde a todas)."""
+        ids = [m.id for m in self.modalidades.all()]
+        return not ids or int(modalidad_id) in ids
 
     class Meta:
         verbose_name = "Costo"

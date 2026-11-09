@@ -140,7 +140,7 @@
                                 {% for c in costos %}
                                     {% with 2 as c.asociado %}
                                         {% if c.asociado == '2' %}
-                                            <option value="{{c.id}}">{{c.formaPago}}</option>
+                                            <option value="{{c.id}}" data-modalidades="{% for m in c.modalidades.all %}{{ m.id }} {% endfor %}">{{c.formaPago}}</option>
                                         {% endif %}
                                     {% endwith %}
                                 {% endfor %}
@@ -153,14 +153,14 @@
                                             {% for c in costos %}
                                                 {% if  a.estado and a.get_vigente %}
                                                     {% if c.asociado == '2' and a.estado == False %}
-                                                        <option value="{{c.id}}">{{c.formaPago}}</option>
+                                                        <option value="{{c.id}}" data-modalidades="{% for m in c.modalidades.all %}{{ m.id }} {% endfor %}">{{c.formaPago}}</option>
                                                     {% elif c.asociado == '1' and a.estado == True %}
-                                                        <option value="{{c.id}}">{{c.formaPago}}</option>
+                                                        <option value="{{c.id}}" data-modalidades="{% for m in c.modalidades.all %}{{ m.id }} {% endfor %}">{{c.formaPago}}</option>
                                                     {% endif %}
                                                 {% else %}
                                                     {% with 2 as c.asociado %}
                                                         {% if c.asociado == '2' %}
-                                                            <option value="{{c.id}}">{{c.formaPago}}</option>
+                                                            <option value="{{c.id}}" data-modalidades="{% for m in c.modalidades.all %}{{ m.id }} {% endfor %}">{{c.formaPago}}</option>
                                                         {% endif %}
                                                     {% endwith %}
                                                 {% endif %}
@@ -361,6 +361,7 @@
 
 <script src="{% static 'inscripcion/js/archivos.js' %}"></script>
 <script src="{% static 'inscripcion/js/categorias.js' %}"></script>
+<script src="{% static 'inscripcion/js/pagos.js' %}"></script>
 
 {% endblock %}
 

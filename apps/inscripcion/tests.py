@@ -273,6 +273,57 @@ class InscripcionTests(TestCase):
         self.assertContains(r, 'bases y condiciones')
         self.assertFalse(Inscripcion.objects.filter(persona=self.atleta).exists())
 
+    # --- Formas de pago segun la modalidad ---
+
+    def otra_modalidad(self):
+        from apps.inscripcion.models import EventoModalidade, ModalidadEventos
+        return ModalidadEventos.objects.create(evento=self.evento,
+                                               modalidad=EventoModalidade.objects.create(modalidad='Posta'))
+
+    def test_pago_de_otra_modalidad_no_se_inscribe(self):
+        from apps.inscripcion.models import ModalidadEventos
+        mod = ModalidadEventos.objects.filter(evento=self.evento).first()
+        self.costo.modalidades.set([self.otra_modalidad()])
+        self.client.force_login(self.atleta)
+        r = self.client.post(reverse('inscribirme', args=[self.evento.id]),
+                             self.datos_inscripcion(eventoRelacionado=mod.id))
+        self.assertContains(r, 'no corresponde a la modalidad elegida')
+        self.assertFalse(Inscripcion.objects.filter(persona=self.atleta).exists())
+
+    def test_pago_de_su_modalidad_o_sin_modalidades_se_inscribe(self):
+        from apps.inscripcion.models import ModalidadEventos
+        mod = ModalidadEventos.objects.filter(evento=self.evento).first()
+        self.costo.modalidades.set([mod, self.otra_modalidad()])
+        self.client.force_login(self.atleta)
+        r = self.client.post(reverse('inscribirme', args=[self.evento.id]),
+                             self.datos_inscripcion(eventoRelacionado=mod.id))
+        self.assertEqual(r.status_code, 302)
+        Inscripcion.objects.all().delete()
+        self.costo.modalidades.clear()  # sin modalidades = vale para todas
+        r = self.client.post(reverse('inscribirme', args=[self.evento.id]),
+                             self.datos_inscripcion(eventoRelacionado=mod.id))
+        self.assertEqual(r.status_code, 302)
+
+    def test_formulario_marca_modalidades_de_cada_pago(self):
+        from apps.inscripcion.models import ModalidadEventos
+        mod = ModalidadEventos.objects.filter(evento=self.evento).first()
+        self.costo.modalidades.set([mod])
+        r = self.client.get(reverse('inscripcion_publico', args=[self.evento.id]))
+        self.assertContains(r, 'value="%s" data-modalidades="%s "' % (self.costo.id, mod.id))
+        self.assertContains(r, 'inscripcion/js/pagos.js')
+
+    def test_admin_de_costos_muestra_solo_modalidades_del_evento(self):
+        admin_user = Persona.objects.create_superuser(cuil='20222222223', username='admin_t', email='a@example.com',
+                                                      password='x', dni='1', domicilio='x', ciudad='x', telefono='1',
+                                                      fechaNacimiento=date(1980, 1, 1), sexo='M')
+        self.client.force_login(admin_user)
+        posta = self.otra_modalidad()
+        r = self.client.get('/admin/inscripcion/eventocosto/%s/change/' % self.costo.id)
+        self.assertContains(r, 'Posta — EVENTO DE PRUEBA')
+        self.assertEqual(self.client.get('/admin/inscripcion/eventocosto/').status_code, 200)
+        self.assertEqual(self.client.get('/admin/inscripcion/eventocosto/add/').status_code, 200)
+        self.assertTrue(posta.id)
+
 
 @override_settings(SECURE_SSL_REDIRECT=False,
                    STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')

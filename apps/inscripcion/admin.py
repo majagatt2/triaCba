@@ -1,5 +1,6 @@
 from django.contrib import admin
 from apps.inscripcion.models import *
+from django import forms
 from django.utils.html import format_html
 
 # Register your models here.
@@ -27,11 +28,57 @@ class EventoAdmin(admin.ModelAdmin):
     list_filter = ('año',  'temporada', 'tipo', 'lugar', 'estado')
 
 
+class EventoCostoForm(forms.ModelForm):
+    class Meta:
+        model = EventoCosto
+        fields = '__all__'
+
+    def clean(self):
+        datos = super().clean()
+        evento, modalidades = datos.get('evento'), datos.get('modalidades')
+        if evento and modalidades:
+            ajenas = [m for m in modalidades if m.evento_id != evento.id]
+            if ajenas:
+                self.add_error('modalidades', 'Estas modalidades son de otro evento: '
+                               + ', '.join(str(m.modalidad) for m in ajenas))
+        return datos
+
+
 class EventoCostoAdmin(admin.ModelAdmin):
-    list_display = ('id', 'evento', 'asociado', 'formaPago', 'precio')
+    form = EventoCostoForm
+    list_display = ('id', 'evento', 'asociado', 'formaPago', 'precio', 'para_modalidades')
     list_editable = ('precio',)
     list_display_links = ('evento',)
     list_filter = ('evento',)
+    fields = ('evento', 'asociado', 'formaPago', 'precio', 'modalidades')
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('evento', 'formaPago').prefetch_related('modalidades__modalidad')
+
+    @admin.display(description='Modalidades')
+    def para_modalidades(self, obj):
+        nombres = [str(m.modalidad) for m in obj.modalidades.all()]
+        return ', '.join(nombres) if nombres else 'Todas'
+
+    def formfield_for_manytomany(self, db_field, request, **kwargs):
+        if db_field.name == 'modalidades':
+            # Solo las modalidades del evento del costo (o, al crear uno nuevo, las de eventos proximos)
+            object_id = request.resolver_match.kwargs.get('object_id') if request.resolver_match else None
+            costo = EventoCosto.objects.filter(pk=object_id).first() if object_id else None
+            qs = ModalidadEventos.objects.select_related('modalidad', 'evento')
+            if costo:
+                qs = qs.filter(evento=costo.evento)
+            else:
+                from datetime import timedelta
+                from apps.inscripcion.models import hoy_cordoba
+                qs = qs.filter(evento__fechaEvento__gte=hoy_cordoba() - timedelta(days=30))
+            kwargs['queryset'] = qs.order_by('evento__fechaEvento', 'evento__nombreEvento', 'id')
+            kwargs['widget'] = forms.CheckboxSelectMultiple
+        field = super().formfield_for_manytomany(db_field, request, **kwargs)
+        if db_field.name == 'modalidades':
+            field.label_from_instance = lambda m: (
+                f"{m.modalidad} — {m.evento.nombreEvento} ({m.evento.lugar}, {m.evento.fechaEvento:%d/%m/%Y})")
+        return field
 
 
 class EventoCategoriaAdmin(admin.ModelAdmin):

@@ -51,6 +51,22 @@ def categoria_no_corresponde(form, request, evento, fecha_nacimiento, sexo):
     return True
 
 
+def pago_no_corresponde(form, request, evento):
+    """Controla que la forma de pago (costo) elegida sea de este evento y de la modalidad elegida."""
+    costo_id = (form.cleaned_data.get('formaPago') or '') if hasattr(form, 'cleaned_data') else ''
+    if not evento or not str(costo_id).isdigit():
+        return False
+    costo = EventoCosto.objects.filter(id=costo_id, evento=evento).prefetch_related('modalidades').first()
+    modalidad_id = request.POST.get('eventoRelacionado') or ''
+    if costo is None:
+        form.add_error('formaPago', 'Elegí una forma de pago de la lista.')
+        return True
+    if modalidad_id.isdigit() and not costo.aplica_a(modalidad_id):
+        form.add_error('formaPago', f'La forma de pago "{costo.formaPago}" no corresponde a la modalidad elegida. Elegí otra de la lista.')
+        return True
+    return False
+
+
 def faltan_datos_menor(form):
     """Para menores de 18: los datos del adulto responsable son obligatorios. Marca los que faltan."""
     datos = form.cleaned_data
@@ -180,7 +196,7 @@ class InscripcionEventoCreate(LoginRequiredMixin, SuccessMessageMixin,CreateView
         context = super(InscripcionEventoCreate, self).get_context_data(**kwargs)
         filtro = self.kwargs.get('pk', None)
         context['eventos'] = Eventos.objects.filter(id=filtro)
-        context['costos'] = EventoCosto.objects.filter(evento=filtro)
+        context['costos'] = EventoCosto.objects.filter(evento=filtro).select_related('formaPago').prefetch_related('modalidades')
         context['modalidad_evento']= ModalidadEventos.objects.filter(evento=filtro)
         asociados = Asociado.objects.filter(persona=self.request.user)
         lista = []
@@ -209,6 +225,8 @@ class InscripcionEventoCreate(LoginRequiredMixin, SuccessMessageMixin,CreateView
             return self.form_invalid(form)
         if categoria_no_corresponde(form, self.request, eventos[0], persona.fechaNacimiento, persona.sexo):
             return self.form_invalid(form)
+        if pago_no_corresponde(form, self.request, eventos[0]):
+            return self.form_invalid(form)
 
         nuevo = form.save(commit=False)
         nuevo.save()
@@ -234,7 +252,7 @@ class InscripcionPublicoEventoCreate(SuccessMessageMixin, CreateView):
         context = super(InscripcionPublicoEventoCreate,self).get_context_data(**kwargs)
         filtro = self.kwargs.get('pk', None)
         context['eventos'] = Eventos.objects.filter(id=filtro)
-        context['costos'] = EventoCosto.objects.filter(evento=filtro)
+        context['costos'] = EventoCosto.objects.filter(evento=filtro).select_related('formaPago').prefetch_related('modalidades')
         context['modalidad_evento']= ModalidadEventos.objects.filter(evento=filtro)
         if 'form' not in context:
             context['form'] = self.form_class()
@@ -259,6 +277,8 @@ class InscripcionPublicoEventoCreate(SuccessMessageMixin, CreateView):
             validos = False
         if validos and categoria_no_corresponde(form2, request, evento, form.cleaned_data.get('fechaNacimiento'),
                                                 form.cleaned_data.get('sexo')):
+            validos = False
+        if validos and pago_no_corresponde(form2, request, evento):
             validos = False
 
         if validos:
@@ -298,7 +318,7 @@ class InscripcionPublicoEventoCreate(SuccessMessageMixin, CreateView):
             filtro = self.kwargs.get('pk', None)
 
             eventos = Eventos.objects.filter(id=filtro)
-            costos = EventoCosto.objects.filter(evento=filtro)
+            costos = EventoCosto.objects.filter(evento=filtro).select_related('formaPago').prefetch_related('modalidades')
             modalidad_evento = ModalidadEventos.objects.filter(evento=filtro)
             # Si el CUIL ya tiene cuenta, se le ofrece ingresar y seguir desde su cuenta
             cuil_existente = any(e.code == 'unique' for e in form.errors.as_data().get('cuil', []))
