@@ -213,11 +213,9 @@ class ModalidadEventos(models.Model):
         return f"{self.modalidad}"
 
     def categorias_para(self, edad, sexo=None):
-        """Categorias de esta modalidad que le corresponden a la persona.
-        Si ninguna corresponde (datos de categorias incompletos), devuelve todas para no bloquear la inscripcion."""
-        todas = list(self.categoria_disponible.all())
-        aptas = [c for c in todas if c.corresponde_a(edad, sexo)]
-        return aptas or todas
+        """Categorias de esta modalidad que le corresponden a la persona (puede ser ninguna).
+        Las categorias sin edad ni sexo cargados le corresponden a todos."""
+        return [c for c in self.categoria_disponible.all() if c.corresponde_a(edad, sexo)]
 
     class Meta:
         verbose_name = "Modalidad Evento"

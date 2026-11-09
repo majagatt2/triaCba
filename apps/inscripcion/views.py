@@ -41,8 +41,13 @@ def categoria_no_corresponde(form, request, evento, fecha_nacimiento, sexo):
     edad = edad_al(fecha_nacimiento, evento.fecha_calculo_edad)
     if categoria in {c.categoria for c in modalidad.categorias_para(edad, sexo)}:
         return False
-    detalle = f' (tenés {edad} años al {evento.fecha_calculo_edad:%d/%m/%Y})' if edad is not None else ''
-    form.add_error('categoria', f'La categoría "{categoria}" no corresponde a tu edad{detalle}. Elegí otra de la lista.')
+    aptas = modalidad.categorias_para(edad, sexo)
+    detalle = f' ({edad} años al {evento.fecha_calculo_edad:%d/%m/%Y})' if edad is not None else ''
+    if aptas:
+        form.add_error('categoria', f'La categoría "{categoria}" no corresponde a tu edad{detalle}. Elegí otra de la lista.')
+    else:
+        form.add_error('categoria', f'No encontramos una categoría para tu edad{detalle}. '
+                                    'Revisá las bases y condiciones del evento o consultá a la Asociación.')
     return True
 
 

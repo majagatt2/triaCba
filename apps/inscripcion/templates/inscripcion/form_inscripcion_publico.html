@@ -161,7 +161,7 @@
                                 <br>
                                 <div class="row-item">{#catgoria#}
                                     <div> {{form2.categoria.label}}</div>
-                                        <select name="categoria" id="id_categoria" class="form-select" required data-fecha-calculo="{{ eventos.0.fecha_calculo_edad|date:'Y-m-d' }}" data-elegida="{{ form2.categoria.value|default_if_none:'' }}">
+                                        <select name="categoria" id="id_categoria" class="form-select" required data-fecha-calculo="{{ eventos.0.fecha_calculo_edad|date:'Y-m-d' }}" data-bases-url="{% url 'eventos_detalles' eventos.0.id %}" data-elegida="{{ form2.categoria.value|default_if_none:'' }}">
                                             <option value='0'></option>
                                             {% for x in modalidad_evento %}
                                             {% for e in x.categoria_disponible.all %}

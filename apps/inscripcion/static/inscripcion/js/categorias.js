@@ -9,8 +9,8 @@
  *                                de los campos id_fechaNacimiento / id_sexo)
  *   data-elegida        categoria elegida antes (cuando el form vuelve con errores)
  * Cada <option>: data-chained (id de la modalidad), data-desde, data-hasta, data-sexo.
- * Si ninguna categoria corresponde, se muestran todas para no bloquear la inscripcion
- * (el servidor aplica la misma regla).
+ * Si ninguna categoria corresponde, no se muestra ninguna y se avisa (con link a las bases del
+ * evento si el select tiene data-bases-url). El servidor aplica la misma regla.
  */
 (function () {
   'use strict';
@@ -60,12 +60,14 @@
       var deModalidad = todas.filter(function (c) { return c.modalidad === modalidad.value; });
       var esperando = deModalidad.length > 0 && faltanDatos(e, s);
       var aptas = esperando ? [] : deModalidad.filter(function (c) { return corresponde(c, e, s); });
-      var lista = esperando ? [] : (aptas.length ? aptas : deModalidad);
+      var sinCategoria = !esperando && deModalidad.length > 0 && !aptas.length;
+      var lista = aptas;
       var actual = sel.value && sel.value !== '0' ? sel.value : elegida;
 
       sel.innerHTML = '';
       var primera = new Option(!deModalidad.length ? 'Primero elegí el evento'
-        : esperando ? 'Completá tu fecha de nacimiento y sexo' : 'Elegí tu categoría', '');
+        : esperando ? 'Completá tu fecha de nacimiento y sexo'
+        : sinCategoria ? 'No hay categorías para tu edad' : 'Elegí tu categoría', '');
       sel.add(primera);
       var vistos = {};
       lista.forEach(function (c) {
@@ -84,13 +86,24 @@
           texto = 'Para ver las categorías que te corresponden, completá arriba ' + falta + '.';
         } else if (e === null) {
           texto = '';
-        } else if (!aptas.length) {
-          texto = 'No encontramos una categoría para tu edad (' + e + ' años al ' + fechaCalculoTexto + '). Elegí la que corresponda.';
+        } else if (sinCategoria) {
+          texto = 'No encontramos una categoría para tu edad (' + e + ' años al ' + fechaCalculoTexto + ').';
         } else if (aptas.length < deModalidad.length) {
           texto = 'Categorías para ' + (s === 'F' ? 'mujeres de ' : s === 'M' ? 'varones de ' : '') + e + ' años (edad al ' + fechaCalculoTexto + ').';
         }
       }
       aviso.textContent = texto;
+      aviso.classList.toggle('aviso-sin-categoria', sinCategoria);
+      if (sinCategoria && sel.dataset.basesUrl) {
+        var link = document.createElement('a');
+        link.href = sel.dataset.basesUrl;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        link.textContent = 'Revisá las bases y condiciones del evento';
+        aviso.appendChild(document.createTextNode(' '));
+        aviso.appendChild(link);
+        aviso.appendChild(document.createTextNode(' o consultá a la Asociación.'));
+      }
     }
 
     function escuchar(campo) {

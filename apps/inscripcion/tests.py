@@ -264,12 +264,14 @@ class InscripcionTests(TestCase):
         self.assertContains(r, 'no corresponde a tu edad')
         self.assertFalse(Persona.objects.filter(cuil=CUIL_NUEVO).exists())
 
-    def test_si_ninguna_categoria_corresponde_no_bloquea(self):
+    def test_si_ninguna_categoria_corresponde_no_se_inscribe(self):
         mod = self.rangos((90, 99, None), (90, 99, None))
         self.client.force_login(self.atleta)
         r = self.client.post(reverse('inscribirme', args=[self.evento.id]),
                              self.datos_inscripcion(eventoRelacionado=mod, categoria='Elite'))
-        self.assertEqual(r.status_code, 302)
+        self.assertContains(r, 'No encontramos una categoría para tu edad')
+        self.assertContains(r, 'bases y condiciones')
+        self.assertFalse(Inscripcion.objects.filter(persona=self.atleta).exists())
 
 
 @override_settings(SECURE_SSL_REDIRECT=False,
