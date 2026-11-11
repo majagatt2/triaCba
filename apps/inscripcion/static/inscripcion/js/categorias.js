@@ -65,7 +65,7 @@
       var actual = sel.value && sel.value !== '0' ? sel.value : elegida;
 
       sel.innerHTML = '';
-      var primera = new Option(!deModalidad.length ? 'Primero elegí el evento'
+      var primera = new Option(!deModalidad.length ? 'Primero elegí tu modalidad'
         : esperando ? 'Completá tu fecha de nacimiento y sexo'
         : sinCategoria ? 'No hay categorías para tu edad' : 'Elegí tu categoría', '');
       sel.add(primera);

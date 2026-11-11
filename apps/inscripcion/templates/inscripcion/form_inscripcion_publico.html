@@ -140,25 +140,17 @@
                             <br>
                             <div class="form-control-btn-group">
                                 <div class="row-item">{#evento relacionado#}
-                                    <label></label>
+                                    <label for="id_evento">Elegí tu modalidad:*</label>
                                     <select name="eventoRelacionado" id="id_evento" class="form-select"  required>
-                                        <option value='Seleccionar'>Seleccionar</option>
+                                        <option value="">Elegí tu modalidad...</option>
                                         {% for x in modalidad_evento %}
-                                            <option value="{{x.id}}">{{x.modalidad}} - {{x.evento|safe}}</option>
+                                            <option value="{{x.id}}" data-modalidad="{{x.modalidad}}">{{x.modalidad}}</option>
                                         {% endfor %}
                                     </select>
                                 </div>
                                 <br>
-                                <div class="row-item"> {#modalidad#}
-                                    <div> {{form2.modalidad.label}}</div>
-                                        <select name="modalidad" id="id_modalidad"  class="form-control" required>
-                                            <option value='0'></option>
-                                        {% for x in modalidad_evento %}
-                                            <option value="{{x.modalidad}}" data-chained="{{x.id}}">{{x.modalidad|safe}}</option>
-                                        {% endfor %}
-                                        </select>
-                                </div>
-                                <br>
+                                {# la modalidad (texto) se completa sola con la opcion elegida arriba #}
+                <input type="hidden" name="modalidad" id="id_modalidad" value="{{ form2.modalidad.value|default_if_none:'' }}">
                                 <div class="row-item">{#catgoria#}
                                     <div> {{form2.categoria.label}}</div>
                                         <select name="categoria" id="id_categoria" class="form-select" required data-fecha-calculo="{{ eventos.0.fecha_calculo_edad|date:'Y-m-d' }}" data-bases-url="{% url 'eventos_detalles' eventos.0.id %}" data-elegida="{{ form2.categoria.value|default_if_none:'' }}">
@@ -388,8 +380,10 @@
       $("#id_evento").val("{{ form2.eventoRelacionado.id }}").change();
       $("#id_distancia").val("{{form2.distancia.id}}").change();
       $("#id_distancia").chained("#id_evento");
-      $("#id_modalidad").val("{{form2.modalidad.id}}").change();
-      $("#id_modalidad").chained("#id_evento");
+      // la modalidad elegida (texto) va en un campo oculto
+      $("#id_evento").on("change", function(){
+          $("#id_modalidad").val($(this).find("option:selected").data("modalidad") || "");
+      }).trigger("change");
       $("#id_bici").val("{{form2.bici.id}}").change();
       $("#id_bici").chained("#id_evento");
 

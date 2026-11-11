@@ -51,25 +51,17 @@
              <h4 class="paso">El evento</h4>
              <div class="form-control-btn-group">
                 <div class="row-item">{#evento relacionado#}
-                    <label> Seleccioná tu competencia:*</label>
+                    <label for="id_evento">Elegí tu modalidad:*</label>
                     <select name="eventoRelacionado" id="id_evento" class="form-select"  required>
-                        <option value='0'>Seleccionar</option>
+                        <option value="">Elegí tu modalidad...</option>
                         {% for x in modalidad_evento %}
-                            <option value="{{x.id}}"><b>{{x.modalidad}}</b> - {{x.evento|safe}}</option>
+                            <option value="{{x.id}}" data-modalidad="{{x.modalidad}}">{{x.modalidad}}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <br>
-                <div class="row-item"> {#modalidad#}
-                    <div> {{form.modalidad.label}}</div>
-                        <select name="modalidad" id="id_modalidad"  class="form-control" required>
-                            <option value='0'></option>
-                           {% for x in modalidad_evento %}
-                            <option value="{{x.modalidad}}" data-chained="{{x.id}}">{{x.modalidad|safe}}</option>
-                        {% endfor %}
-                        </select>
-                </div>
-                <br>
+                {# la modalidad (texto) se completa sola con la opcion elegida arriba #}
+                <input type="hidden" name="modalidad" id="id_modalidad" value="{{ form.modalidad.value|default_if_none:'' }}">
                 <div class="row-item">{#catgoria#}
                     <div> {{form.categoria.label}}</div>
                         <select name="categoria" id="id_categoria" class="form-select" required data-fecha-calculo="{{ eventos.0.fecha_calculo_edad|date:'Y-m-d' }}" data-bases-url="{% url 'eventos_detalles' eventos.0.id %}" data-elegida="{{ form.categoria.value|default_if_none:'' }}" data-nacimiento="{{ user.fechaNacimiento|date:'Y-m-d' }}" data-sexo="{{ user.sexo }}">
@@ -341,8 +333,10 @@
       $("#id_evento").val("{{ form.eventoRelacionado.id }}").change();
       $("#id_distancia").val("{{form.distancia.id}}").change();
       $("#id_distancia").chained("#id_evento");
-      $("#id_modalidad").val("{{form.modalidad.id}}").change();
-      $("#id_modalidad").chained("#id_evento");
+      // la modalidad elegida (texto) va en un campo oculto
+      $("#id_evento").on("change", function(){
+          $("#id_modalidad").val($(this).find("option:selected").data("modalidad") || "");
+      }).trigger("change");
       $("#id_bici").val("{{form.bici.id}}").change();
       $("#id_bici").chained("#id_evento");
 

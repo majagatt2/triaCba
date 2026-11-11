@@ -30,7 +30,7 @@
       var actual = sel.value;
 
       sel.innerHTML = '';
-      sel.add(new Option(elegida ? 'Elegí la forma de pago' : 'Primero elegí la competencia', ''));
+      sel.add(new Option(elegida ? 'Elegí la forma de pago' : 'Primero elegí tu modalidad', ''));
       lista.forEach(function (c) { sel.add(new Option(c.texto, c.valor, false, c.valor === actual)); });
       sel.disabled = !elegida;
 
