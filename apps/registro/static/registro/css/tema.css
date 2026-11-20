@@ -275,7 +275,8 @@ body.img::before { background: var(--pista); }
   border: 0;  /* sin borde: evita el filito claro alrededor de la franja azul */
   /* sombra suave hacia abajo y a la derecha */
   box-shadow: 5px 8px 18px rgba(14, 42, 71, .16), 1px 2px 4px rgba(14, 42, 71, .08);
-  transition: transform .25s ease, box-shadow .25s ease;
+  position: relative;
+  transition: transform .3s cubic-bezier(.2, .8, .3, 1.2), box-shadow .3s ease;
   animation: tarjeta-entrada .45s ease backwards;
   -webkit-tap-highlight-color: transparent;
 }
@@ -289,10 +290,15 @@ body.img::before { background: var(--pista); }
 .icono-inscribirme path { stroke-dasharray: 48; stroke-dashoffset: 0; }
 
 @media (hover: hover) {
-  .tarjeta-evento:hover { transform: translateY(-6px); box-shadow: 8px 16px 30px rgba(14, 42, 71, .24), 2px 4px 8px rgba(14, 42, 71, .10); }
+  /* con mouse: la tarjeta "da un paso al frente" (sube y se agranda un poco) */
+  .tarjeta-evento:hover { transform: translateY(-8px) scale(1.04); z-index: 2; box-shadow: 10px 20px 36px rgba(14, 42, 71, .28), 2px 4px 8px rgba(14, 42, 71, .10); }
   .tarjeta-evento:hover .tarjeta-evento-titulo::after { animation: tarjeta-destello .8s ease; }
   .tarjeta-evento:hover .icono-inscribirme path { animation: tarjeta-tilde .6s ease; }
 }
+/* en el celular: la tarjeta que queda en el centro de la pantalla al deslizar se agranda un poco
+   (la clase la pone ajustes.js) */
+.tarjeta-evento.tarjeta-centrada { transform: scale(1.04); z-index: 2; box-shadow: 8px 16px 30px rgba(14, 42, 71, .26), 2px 4px 8px rgba(14, 42, 71, .10); }
+.tarjeta-evento.tarjeta-centrada .tarjeta-evento-titulo::after { animation: tarjeta-destello .8s ease; }
 /* en el celular: al tocar, la tarjeta se "hunde" un poco y aparece el destello */
 .tarjeta-evento:active { transform: scale(.985); box-shadow: 3px 5px 12px rgba(14, 42, 71, .18); }
 .tarjeta-evento:active .tarjeta-evento-titulo::after { animation: tarjeta-destello .7s ease; }
@@ -310,7 +316,7 @@ body.img::before { background: var(--pista); }
 @keyframes tarjeta-tilde { 0% { stroke-dashoffset: 48; } 100% { stroke-dashoffset: 0; } }
 
 @media (prefers-reduced-motion: reduce) {
-  .tarjeta-evento, .tarjeta-evento:hover, .tarjeta-evento:active { animation: none; transition: none; transform: none; }
+  .tarjeta-evento, .tarjeta-evento:hover, .tarjeta-evento:active, .tarjeta-evento.tarjeta-centrada { animation: none; transition: none; transform: none; }
   .tarjeta-evento-titulo::after, .icono-inscribirme path { animation: none !important; }
 }
 .tarjeta-evento-titulo {
