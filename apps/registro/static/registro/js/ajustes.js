@@ -96,6 +96,13 @@
           });
           // solo si la tarjeta esta razonablemente cerca del centro de la pantalla
           if (mejor && distMejor > window.innerHeight * 0.35) mejor = null;
+          // para que no salte de una tarjeta a otra cuando estan casi igual de centradas,
+          // se cambia solo si la nueva esta bastante mas cerca del centro que la actual
+          if (mejor && actual && mejor !== actual) {
+            var ra = actual.getBoundingClientRect();
+            var dActual = Math.abs(ra.top + ra.height / 2 - medio);
+            if (dActual <= window.innerHeight * 0.35 && dActual - distMejor < 60) mejor = actual;
+          }
         }
         if (mejor === actual) return;
         if (actual) actual.classList.remove('tarjeta-centrada');

@@ -297,12 +297,19 @@ body.img::before { background: var(--pista); }
 }
 /* en el celular: la tarjeta que queda en el centro de la pantalla al deslizar se agranda un poco
    (la clase la pone ajustes.js) */
-.tarjeta-evento.tarjeta-centrada { transform: scale(1.04); z-index: 2; box-shadow: 8px 16px 30px rgba(14, 42, 71, .26), 2px 4px 8px rgba(14, 42, 71, .10); }
+.tarjeta-evento.tarjeta-centrada { transform: scale(1.03); z-index: 2; box-shadow: 8px 16px 30px rgba(14, 42, 71, .24), 2px 4px 8px rgba(14, 42, 71, .10); }
 .tarjeta-evento.tarjeta-centrada .tarjeta-evento-titulo::after { animation: tarjeta-destello .8s ease; }
 /* en el celular: al tocar, la tarjeta se "hunde" un poco y aparece el destello */
 .tarjeta-evento:active { transform: scale(.985); box-shadow: 3px 5px 12px rgba(14, 42, 71, .18); }
 .tarjeta-evento:active .tarjeta-evento-titulo::after { animation: tarjeta-destello .7s ease; }
 .tarjeta-evento:active .icono-inscribirme path { animation: tarjeta-tilde .5s ease; }
+/* sin mouse (celular): cambio lento y suave, sin rebote, y al tocar no se "hunde"
+   (si no, al deslizar con el dedo encima la tarjeta salta entre achicarse y agrandarse) */
+@media (hover: none) {
+  .tarjeta-evento { transition: transform .8s cubic-bezier(.45, 0, .25, 1), box-shadow .8s ease-in-out; }
+  .tarjeta-evento:active { transform: none; box-shadow: 5px 8px 18px rgba(14, 42, 71, .16), 1px 2px 4px rgba(14, 42, 71, .08); }
+  .tarjeta-evento.tarjeta-centrada:active { transform: scale(1.03); box-shadow: 8px 16px 30px rgba(14, 42, 71, .24), 2px 4px 8px rgba(14, 42, 71, .10); }
+}
 
 /* las tarjetas aparecen de a una al cargar la pagina */
 .grilla-eventos .tarjeta-evento:nth-child(2) { animation-delay: .06s; }
