@@ -58,7 +58,12 @@ SILENCED_SYSTEM_CHECKS = ["models.W001"]
 
 
 #ALLOWED_HOSTS = ['127.0.0.1']
-ALLOWED_HOSTS = ['triatloncordoba-mgattesco.pythonanywhere.com' ]
+# '.triatloncordoba.org' acepta cualquier subdominio del dominio propio (ej. portal.triatloncordoba.org)
+ALLOWED_HOSTS = ['triatloncordoba-mgattesco.pythonanywhere.com', '.triatloncordoba.org']
+
+# Direccion publica del sitio, para los links que van en los mails. Para cambiarla, poner
+# SITIO_URL=https://... en el .env (sin / al final) y recargar la web app.
+SITIO_URL = os.environ.get('SITIO_URL', 'https://triatloncordoba-mgattesco.pythonanywhere.com').rstrip('/')
 
 # Application definition
 

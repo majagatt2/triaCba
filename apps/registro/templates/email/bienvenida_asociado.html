@@ -1,4 +1,5 @@
 {% extends 'base/index3.html' %}
+{% load estaticos %}
 {% load static %}
 
 {% block aside %}
@@ -64,7 +65,7 @@
                         </ul>
                     </div>
                     <div class="container justify-content-center">
-                    <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/"><b>Ingresar</b></a>
+                    <a class="btn btn-primary" href="{% sitio_url %}/accounts/login/"><b>Ingresar</b></a>
                     </div>
 
                         </div>

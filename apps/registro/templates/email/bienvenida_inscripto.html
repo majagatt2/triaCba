@@ -1,4 +1,5 @@
 {% extends 'base/index3.html' %}
+{% load estaticos %}
 
 {% block aside %}
 {% endblock %}
@@ -24,13 +25,13 @@
                         </h1>
                         <h3>Recuerda que tu inscripción quedará firme una vez aprobada la documentación y conciliado el pago realizado. Esto puede demorar hasta 72 hs.</h3>
 
-                        <p> Para ver el listado de inscriptos puedes ir a <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/inscripcion/eventos_publico/"><b><h4>Eventos</h4></b></a> y presionar sobre <b>"Lista de Inscriptos"</b> o puedes ingresar a tu cuenta e ir a "Mis Eventos"</p>
+                        <p> Para ver el listado de inscriptos puedes ir a <a class="btn btn-primary" href="{% sitio_url %}/inscripcion/eventos_publico/"><b><h4>Eventos</h4></b></a> y presionar sobre <b>"Lista de Inscriptos"</b> o puedes ingresar a tu cuenta e ir a "Mis Eventos"</p>
                         <p> Te informamos que al inscribirte automáticamente YA has abierto una cuenta a la cual te hemos redireccionado cuando te instribiste.
                         Tu usuario (<b>usuario </b>:  <b style="color:red;">{{username}}</b>)<br>
                         Tu contraseña provisoria (<b>contraseña </b>:  <b style="color:red;">{{ password|default:"la que ya tenías" }}</b>)</p><br>
                         <p>En tu cuenta también puedes ver tu/s inscripción/es entrando en "Mis inscripciones" o actualizar tus datos pesonales, etc.</p>
 
-                        Para cambiar tu contraseña debes ir a <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/"><b><h4>Ingresar</h4></b></a>
+                        Para cambiar tu contraseña debes ir a <a class="btn btn-primary" href="{% sitio_url %}/accounts/login/"><b><h4>Ingresar</h4></b></a>
                         y presionar sobre "Olvidaste tu contraseña?",
                         ingresar tu mail registrado y seguir los pasos.<br>
 
@@ -66,7 +67,7 @@
                         </ul>
                     </div>
                     <div class="container justify-content-center">
-                    <a class="btn btn-primary" href="https://triatloncordoba-mgattesco.pythonanywhere.com/accounts/login/"><b><h1>Ingresar</h1></b></a>
+                    <a class="btn btn-primary" href="{% sitio_url %}/accounts/login/"><b><h1>Ingresar</h1></b></a>
                     </div>
 
                         </div>
