@@ -1,4 +1,4 @@
-{% load static %}
+{% load static estaticos %}
 <!DOCTYPE html>
 
 <html lang="es">
@@ -31,7 +31,7 @@
   <!-- Template Main CSS File -->
   <link href="{% static 'registro/assets/css/style.css' %}" rel="stylesheet">
   <link href="{% static 'registro/css/ajustes.css' %}" rel="stylesheet">
-  <link href="{% static 'registro/css/tema.css' %}" rel="stylesheet">
+  <link href="{% static 'registro/css/tema.css' %}?v={% version_estaticos %}" rel="stylesheet">
 
   <!-- =======================================================
   * Template Name: NiceAdmin - v2.4.1
@@ -1072,7 +1072,7 @@
 
   <!-- Template Main JS File -->
   <script src="{% static 'registro/assets/js/main.js' %}"></script>
-  <script src="{% static 'registro/js/ajustes.js' %}"></script>
+  <script src="{% static 'registro/js/ajustes.js' %}?v={% version_estaticos %}"></script>
   <script src="{% static 'inscripcion/js/archivos.js' %}"></script>
 
 

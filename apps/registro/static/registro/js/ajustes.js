@@ -73,24 +73,30 @@
     setTimeout(revisarAnchos, 800);          // las tablas con buscador se arman un poco despues
     window.addEventListener('resize', revisarAnchos);
 
-    // Celular / tablet (sin mouse): al deslizar, la tarjeta de evento mas cerca del centro
-    // de la pantalla se agranda un poco (clase .tarjeta-centrada, ver tema.css)
+    // Celular / tablet (o pantalla angosta): al deslizar, la tarjeta de evento mas cerca del
+    // centro de la pantalla se agranda un poco (clase .tarjeta-centrada, ver tema.css).
+    // Se evalua en cada movimiento, asi tambien funciona en la vista celular del navegador.
     var tarjetas = document.querySelectorAll('.grilla-eventos .tarjeta-evento');
-    var sinMouse = window.matchMedia && window.matchMedia('(hover: none)').matches;
     var sinMovimiento = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (tarjetas.length && sinMouse && !sinMovimiento) {
+    if (tarjetas.length && !sinMovimiento) {
       var actual = null, pendiente = false;
+      function modoCelular() {
+        return window.innerWidth < 768 || (window.matchMedia && window.matchMedia('(hover: none)').matches);
+      }
       function centrar() {
         pendiente = false;
-        var medio = window.innerHeight / 2, mejor = null, distMejor = Infinity;
-        tarjetas.forEach(function (t) {
-          var r = t.getBoundingClientRect();
-          if (r.bottom < 0 || r.top > window.innerHeight) return;   // fuera de la pantalla
-          var d = Math.abs(r.top + r.height / 2 - medio);
-          if (d < distMejor) { distMejor = d; mejor = t; }
-        });
-        // solo si el centro de la tarjeta esta razonablemente cerca del centro de la pantalla
-        if (mejor && distMejor > window.innerHeight * 0.35) mejor = null;
+        var mejor = null;
+        if (modoCelular()) {
+          var medio = window.innerHeight / 2, distMejor = Infinity;
+          tarjetas.forEach(function (t) {
+            var r = t.getBoundingClientRect();
+            if (r.bottom < 0 || r.top > window.innerHeight) return;   // fuera de la pantalla
+            var d = Math.abs(r.top + r.height / 2 - medio);
+            if (d < distMejor) { distMejor = d; mejor = t; }
+          });
+          // solo si la tarjeta esta razonablemente cerca del centro de la pantalla
+          if (mejor && distMejor > window.innerHeight * 0.35) mejor = null;
+        }
         if (mejor === actual) return;
         if (actual) actual.classList.remove('tarjeta-centrada');
         if (mejor) mejor.classList.add('tarjeta-centrada');
@@ -98,6 +104,7 @@
       }
       function pedir() { if (!pendiente) { pendiente = true; window.requestAnimationFrame(centrar); } }
       window.addEventListener('scroll', pedir, { passive: true });
+      document.addEventListener('scroll', pedir, { passive: true, capture: true });  // por si se desplaza otro contenedor
       window.addEventListener('resize', pedir);
       setTimeout(centrar, 600);   // despues de la animacion de entrada
     }
