@@ -165,6 +165,10 @@ label, .form-label { font-weight: 500; }
 /* ---------- Pie ---------- */
 #footer.footer { border-top: 1px solid var(--linea); color: var(--gris); }
 #footer .copyright, #footer .copyright strong { color: var(--gris); font-weight: 500; }
+/* credito del desarrollador y de la plantilla base (licencia BootstrapMade) */
+#footer .credits { margin-top: 4px; font-size: .78rem; color: var(--gris); opacity: .85; text-align: center; }
+#footer .credits strong { font-weight: 600; }
+#footer .credits a { color: inherit; text-decoration: underline dotted; }
 
 /* ---------- Alertas propias del sitio ---------- */
 .alert { border-radius: var(--radio); }
