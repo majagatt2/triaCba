@@ -24,3 +24,21 @@ def sitio_url():
     """Direccion publica del sitio, sin / al final (settings.SITIO_URL). Para los links de los mails:
     <a href="{% sitio_url %}/accounts/login/">"""
     return settings.SITIO_URL
+
+
+@register.filter
+def clave(diccionario, k):
+    """{{ dic|clave:x }} -> dic[x] (o vacio si no esta). Para tablas armadas en la vista."""
+    try:
+        return diccionario.get(k, '')
+    except AttributeError:
+        return ''
+
+
+@register.filter
+def contiene(conjunto, k):
+    """{% if conjunto|contiene:x %}"""
+    try:
+        return k in conjunto
+    except TypeError:
+        return False

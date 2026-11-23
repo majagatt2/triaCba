@@ -6,119 +6,73 @@
 {%  if user.is_authenticated %}
 {% if request.user.is_staff or request.user.username == 'cmonasterolo' or request.user.username == 'mpolo'%}
 
+    <h3>Pagos de socios</h3>
+    <p class="text-muted" style="margin-top:-6px">Los más recientes primero. Tocá el título de una columna para ordenar y usá el buscador para encontrar a un atleta.</p>
 
+    <div class="lista-acciones">
+        <div class="lista-filtros">
+            {% for f in filtros_estado %}
+            <a href="?{% if f.clave %}estado={{ f.clave }}{% endif %}{% if anio %}&amp;anio={{ anio }}{% endif %}" class="lista-filtro lista-filtro-{{ f.clave|default:'todos' }}{% if f.clave == estado %} activo{% endif %}">{{ f.nombre }} <b>{{ f.cantidad }}</b></a>
+            {% endfor %}
+        </div>
+        {% if anios %}
+        <form method="get" class="lista-botones">
+            {% if estado %}<input type="hidden" name="estado" value="{{ estado }}">{% endif %}
+            <select name="anio" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Año">
+                <option value="">Todos los años</option>
+                {% for a in anios %}<option value="{{ a }}"{% if a == anio %} selected{% endif %}>{{ a }}</option>{% endfor %}
+            </select>
+        </form>
+        {% endif %}
+    </div>
 
-
-
-    {% csrf_token %}
-    <h3>Listado de pagos Socios</h3>
     <div style="overflow-x:auto;">
-    <table class = "table table-borderless datatable">
+    <table class="table datatable">
         <thead>
             <tr class="table-info">
-
-                {% comment %} <th>Nº</th> {% endcomment %}
-                <th>Nombre</th>
-                <th>Estado</th>
+                <th></th>
                 <th>Fecha de pago</th>
-                <th>Froma de pago</th>
-                <th>Monto Abonado</th>
-                <th>Monto Correcto</th>
+                <th>Atleta</th>
+                <th>Situación socio</th>
+                <th>Tipo</th>
+                <th>Forma de pago</th>
+                <th>Abonado</th>
+                <th>Debe abonar</th>
                 <th>Diferencia</th>
-                <th>Tipo Asociado Abonado</th>
-
-                {% comment %} <th>Control</th> {% endcomment %}
                 <th>Comprobante</th>
-                <th>confirm_pago</th>
-                <th>email</th>
-
+                <th>Confirmado</th>
+                <th>Email</th>
             </tr>
         </thead>
 
         <tbody>
-            {% if asociadopagos_list %}
             {% for c in asociadopagos_list %}
-            {% for asociado in c.asociados_match %}
-            {% if asociado %}
-            {% if asociado.estado %}
-
-                <tr>
-
-                    <td>{{asociado.persona|title}}</td>
-
-                    {% if asociado.get_vigente and asociado.estado %}
-                        <td>Activo</td>
-                    {% elif asociado.get_vigente and asociado.estado == False %}
-                        <td style="color:green">Activación Pendiente</td>
-                    {% elif asociado.get_vigente == False and asociado.estado %}
-                        <td style="color:red">Desactivar</td>
-                    {% elif asociado.get_vigente == False and asociado.estado == False %}
-                        <td style="color:red">Inactivo</td>
-                    {% endif %}
-
-
-                    <td>{{c.fechaPago}}</td>
-                    <td>{{c.formaPago}}</td>
-                    <th>${{c.montoAbonado|floatformat:"-3g"}}</td>
-                    <td>${{c.montoDebeAbonar|floatformat:"-3g"}}</td>
-                    <td>
-                        {% if c.get_diferencia < 0 %}
-                        <text style="color:red">${{c.get_diferencia|floatformat:"-3g"}}</text>
-                        {% elif c.get_diferencia > 0 %}
-                        <text style="color:blue">${{c.get_diferencia|floatformat:"-3g"}}</text>
-                        {% elif c.get_diferencia == 0 %}
-                        <text style="color:blue">${{c.get_diferencia|floatformat:"-3g"}}</text>
-                        {% endif %}<br>
-                    </td>
-
-
-
-                    <th>{{c.tipoAsociadoPago}}</td>
-
-
-
-                    {% comment %} {% if c.montoAbonado == c.montoDebeAbonar %}
-                    <td><img src={% static 'registro/tilde2.png' %}  width="25" height="25"></td>
-                    {% else %}
-                    <td style="color:red">Mal monto abonado</td>
-                    {% endif %} {% endcomment %}
-
-
-                    <td><a href="{{c.comprobPago.url}}" target="_blank" rel="noopener"> <i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i></a></td>
-
-                    {% if c.confirm_pago == False  %}
-                    <th style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</td>
-                    {% else %}
-                    <td> <img src={% static 'registro/tilde2.png' %}  width="30" height="30"> </td>
-                    {% endif %}
-
-                    <td>{{asociado.persona.email}}</td>
-
-
-                        {% comment %} <td>
-                        <a class='btn btn-sm btn-primary' href=#>Editar</a>
-                    </td> {% endcomment %}
-                </tr>
-                {% endif %}
-                {% endif %}
-                {% endfor %}
-                {% endfor %}
-
-
-            {% else %}
-                <tr>
-                    <td><h3>No hay pagos registrados</h3></td>
-                </tr>
-
-            {% endif %}
+            <tr>
+                <td><a href="{% url 'admin:socio_asociadopagos_change' c.pk %}" target="_blank" rel="noopener" title="Editar el pago en el Admin" aria-label="Editar el pago en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a></td>
+                <td data-content="{{ c.fechaPago|date:'Ymd' }}">{{ c.fechaPago|date:"d/m/Y" }}</td>
+                <td>{% if c.personaAsociada %}<b>{{ c.personaAsociada.last_name|title }}</b> {{ c.personaAsociada.first_name|title }}{% else %}—{% endif %}</td>
+                <td><span class="estado-tag {{ c.situacion_clase }}">{{ c.situacion }}</span></td>
+                <td>{{ c.tipoAsociadoPago|default:"" }}</td>
+                <td>{{ c.formaPago|default:"" }}</td>
+                <td data-content="{{ c.montoAbonado|default:0 }}">${{ c.montoAbonado|floatformat:"-3g" }}</td>
+                <td data-content="{{ c.montoDebeAbonar|default:0 }}">${{ c.montoDebeAbonar|floatformat:"-3g" }}</td>
+                <td data-content="{{ c.get_diferencia }}">
+                    {% if c.get_diferencia > 0 %}<span style="color:#B01E1E;font-weight:600">Falta ${{ c.get_diferencia|floatformat:"-3g" }}</span>
+                    {% elif c.get_diferencia < 0 %}<span style="color:var(--agua)">De más ${{ c.get_diferencia|floatformat:"-3g" }}</span>
+                    {% else %}<span style="color:var(--verde)">OK</span>{% endif %}
+                </td>
+                <td>{% if c.comprobPago and c.comprobPago.name != 'comprobante de Pago' %}<a href="{{ c.comprobPago.url }}" target="_blank" rel="noopener" title="Ver comprobante"><i class="bi bi-file-earmark-image" style="font-size:1.25rem"></i></a>{% endif %}</td>
+                <td>{% if c.confirm_pago %}<span class="estado-tag estado-acreditado">Sí</span>{% else %}<span class="estado-tag estado-pendiente">Pendiente</span>{% endif %}</td>
+                <td>{% if c.personaAsociada.email %}<a href="mailto:{{ c.personaAsociada.email|lower }}">{{ c.personaAsociada.email|lower }}</a>{% endif %}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="12"><h4>No hay pagos registrados</h4></td></tr>
+            {% endfor %}
         </tbody>
     </table>
-</div>
-
-
+    </div>
 
 {% endif %}
 {% endif %}
 
 {% endblock  %}
-

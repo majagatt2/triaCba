@@ -1,84 +1,46 @@
-{% extends 'base/index3.html' %}
+{% extends 'email/base_email.html' %}
 {% load estaticos %}
+{% block asunto %}Inscripción recibida{% endblock %}
+{% block contenido %}
+<h1 style="font-size:22px; color:#0E2A47; margin:0 0 8px;">¡Gracias, {{ persona.first_name|default:persona }}!</h1>
+<p style="margin:0 0 14px;">Recibimos tu inscripción a <b style="color:#D62828;">{{ eventoRelacionado }}</b>.</p>
+<p style="margin:0 0 14px; background:#FFF6E0; border:1px solid #F0D48A; border-radius:8px; padding:10px 14px;">
+  Tu inscripción queda <b>firme cuando aprobemos la documentación y el pago</b>. Puede demorar hasta 72 horas.
+</p>
 
-{% block aside %}
+<h2 style="font-size:15px; color:#0E2A47; margin:18px 0 4px; text-transform:uppercase; letter-spacing:.03em;">Tus datos de inscripción</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;">
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Evento</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ eventoRelacionado }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Distancia</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ distancia }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Categoría</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ categoria }}</td></tr>
+  {% if bici and bici != "Elegir" %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Bici</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ bici }}</td></tr>
+  {% endif %}
+  {% if nombreEquipoPosta %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Equipo</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ nombreEquipoPosta }}</td></tr>
+  {% endif %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Costo del evento</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">${{ montoDebeAbonar }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Monto abonado</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">${{ montoAbonado }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Fecha de pago</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ fechaPago|date:'d/m/Y' }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Obra social</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ obra_social }}</td></tr>
+  {% if comentario %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Comentario</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ comentario }}</td></tr>
+  {% endif %}
+  {% if responsable_tutor %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Responsable (menor)</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ responsable_tutor }}{% if relacion_legal == '2' %} (madre){% elif relacion_legal == '3' %} (padre){% endif %}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">DNI responsable</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ dni_responsable|default:'—' }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Teléfono responsable</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ telefono_responsable|default:'—' }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Email responsable</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ mail_responsable|default:'—' }}</td></tr>
+  {% endif %}
+</table>
+
+<h2 style="font-size:15px; color:#0E2A47; margin:18px 0 4px; text-transform:uppercase; letter-spacing:.03em;">Tu cuenta</h2>
+<p style="margin:0 0 8px;">Al inscribirte quedó creada (o ya tenías) una cuenta en el portal:</p>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;">
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Usuario</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ username }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Contraseña</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ password|default:'la que ya tenías' }}</td></tr>
+</table>
+<p style="margin:0 0 8px; font-size:14px; color:#5B6776;">También podés ingresar con tu email o tu CUIL. Para cambiar la contraseña, en la pantalla de ingreso tocá “¿Olvidaste tu contraseña?”.</p>
+<p style="margin:0 0 8px;">En tu cuenta podés ver <b>Mis inscripciones</b>, actualizar <b>Mis datos</b> (foto de perfil y DNI), tu <b>Certificado federado</b> si sos socio, y subir tus pagos.</p>
+<p style="margin:0;">La lista de inscriptos está en <a href="{% sitio_url %}/inscripcion/eventos_publico/" style="color:#1C7C9C;">Eventos</a> → “Lista de inscriptos”.</p>
 {% endblock %}
-
-{% block nav %}
-{% endblock %}
-
-
-{% block content %}
-
-
-            <div class="container align-items-center justify-content-center">
-                <div class="justify-content-center">
-                    <div class="col-lg-6">
-
-                    <!-- Email input -->
-
-
-
-                    <div class="">
-                        <h1> Gracias <strong style="color:green">{{persona.first_name}}</strong> por inscribirte en:<br>
-                        <strong style="color:#F36808">{{eventoRelacionado}}</strong>
-                        </h1>
-                        <h3>Recuerda que tu inscripción quedará firme una vez aprobada la documentación y conciliado el pago realizado. Esto puede demorar hasta 72 hs.</h3>
-
-                        <p> Para ver el listado de inscriptos puedes ir a <a class="btn btn-primary" href="{% sitio_url %}/inscripcion/eventos_publico/"><b><h4>Eventos</h4></b></a> y presionar sobre <b>"Lista de Inscriptos"</b> o puedes ingresar a tu cuenta e ir a "Mis Eventos"</p>
-                        <p> Te informamos que al inscribirte automáticamente YA has abierto una cuenta a la cual te hemos redireccionado cuando te instribiste.
-                        Tu usuario (<b>usuario </b>:  <b style="color:red;">{{username}}</b>)<br>
-                        Tu contraseña provisoria (<b>contraseña </b>:  <b style="color:red;">{{ password|default:"la que ya tenías" }}</b>)</p><br>
-                        <p>En tu cuenta también puedes ver tu/s inscripción/es entrando en "Mis inscripciones" o actualizar tus datos pesonales, etc.</p>
-
-                        Para cambiar tu contraseña debes ir a <a class="btn btn-primary" href="{% sitio_url %}/accounts/login/"><b><h4>Ingresar</h4></b></a>
-                        y presionar sobre "Olvidaste tu contraseña?",
-                        ingresar tu mail registrado y seguir los pasos.<br>
-
-
-                        <strong style="font-size:20px;">Tus datos de inscripción:</strong>
-                            <ul style="font-size:15px;">
-                                <li>Evento: <b>{{eventoRelacionado}}</b></li>
-                                <li>Distancia: <b>{{distancia}}</b></li>
-                                <li>Categoria: <b>{{categoria}}</b></li>
-                                <li>Bici: <b>{{bici}}</b></li>
-                                <li>Costo evento: <b>${{montoDebeAbonar}}</b></li>
-                                <li>Monto Abonado: <b>${{montoAbonado}}</b></li>
-                                <li>Fecha de Pago: <b>{{fechaPago}}</b></li>
-                                <li>Comentario: <b>{{comentario|default:"No declara"}}</b></li>
-                                <li>Obra Social: <b>{{obra_social}}</b></li>
-                                <li>Responsable Tutor: <b>{{responsable_tutor|default:"No declara"}}</b></li>
-                                <li>Relación Legal: <b>{{relacion_legal|default:"No declara"}}</b></li>
-                                <li>DNI responsable: <b>{{dni_responsable|default:"No declara"}}</b></li>
-                                <li>eMail Responsable: <b>{{mail_responsable|default:"No declara"}}</b></li>
-                                <li>Telefono Responsable <b>{{telefono_responsable|default:"No declara"}}</b></li>
-
-                            </ul>
-
-
-                        <p>Si ingreses a tu cuenta te diriges a las distintas pestañas disponibles y sigues las indicaciones:</p>
-                        <ul>
-                            <li><b>“Mis Datos”</b> para que puedas actualizar y subir tu foto de perfil y Foto dni</li>
-                            <li><b>“Certificado Federado”</b> para que, en caso de que te hayas asociado, puedas ver tu situación asociativa actual, vencimientos, actualizar, emmac, etc</li>
-                            <li><b>“Mi Pago Anual Asociación”</b> para que puedas subir cada pago que hayas realizado y puedas ver el historial de tus pagos</li>
-                            <li><b>“Mi Pago Mensual Escuela”</b> Si asistes a nuestra Escuela, podrás subir cada pago que hayas realizado y puedes ver el historial de tus pagos</li>
-                            <li><b>“Próximos eventos”</b> también te puedes inscribir por aquí</li>
-                            <li><b>“Mis Inscripciones”</b> para ver el historial de los eventos en los que te has inscripto.</li>
-                        </ul>
-                    </div>
-                    <div class="container justify-content-center">
-                    <a class="btn btn-primary" href="{% sitio_url %}/accounts/login/"><b><h1>Ingresar</h1></b></a>
-                    </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
-{% endblock %}
-
-
-
-

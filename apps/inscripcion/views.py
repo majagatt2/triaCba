@@ -19,6 +19,7 @@ from django.template.loader import render_to_string
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 import logging
+from apps.registro.correo import enviar_html
 
 logger = logging.getLogger(__name__)
 
@@ -104,28 +105,13 @@ def enviar_emails_inscripcion(persona, nuevo, password=None):
         'telefono_responsable': nuevo.telefono_responsable,
         'password': password,
     }
-    from_email = settings.EMAIL_HOST_USER
-    ok = True
-    try:
-        msg = EmailMessage(
-            f"ALERTA NUEVO INSCRIPTO:  {persona} - {nuevo.eventoRelacionado}",
-            render_to_string('email/alerta_admin_nuevoinscripto.html', datos),
-            from_email, [from_email] + DESTINATARIOS_ADMIN)
-        msg.content_subtype = 'html'
-        msg.send()
-    except Exception:
-        ok = False
-        logger.exception('No se pudo enviar el aviso de inscripcion %s a la asociacion', nuevo.pk)
-    try:
-        msg2 = EmailMessage(
-            f"Gracias {persona} por inscribirte en {nuevo.eventoRelacionado}",
-            render_to_string('email/bienvenida_inscripto.html', datos),
-            from_email, [persona.email])
-        msg2.content_subtype = 'html'
-        msg2.send()
-    except Exception:
-        ok = False
-        logger.exception('No se pudo enviar la confirmacion de inscripcion %s a %s', nuevo.pk, persona.email)
+    # enviar_html registra en el log si Gmail falla; la inscripcion ya quedo guardada
+    ok_admin = enviar_html(f"ALERTA NUEVO INSCRIPTO:  {persona} - {nuevo.eventoRelacionado}",
+                           'email/alerta_admin_nuevoinscripto.html', datos,
+                           [settings.EMAIL_HOST_USER] + DESTINATARIOS_ADMIN)
+    ok = enviar_html(f"Gracias {persona} por inscribirte en {nuevo.eventoRelacionado}",
+                     'email/bienvenida_inscripto.html', datos, [persona.email])
+    ok = ok and ok_admin
     return ok
 
 

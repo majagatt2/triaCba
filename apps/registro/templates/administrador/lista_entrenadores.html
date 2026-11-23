@@ -1,86 +1,58 @@
 {% extends "base/index2.html" %}
 {% block content %}
+{% load static %}
 {%  if user.is_authenticated %}
 {% if request.user.is_staff %}
-    <h4><strong>ASOCIADOS POR ENTRENADOR:  </strong></h4>
+
+    <div class="lista-acciones" style="margin-top:0">
+        <h3 style="margin:0">Socios activos por entrenador</h3>
+        <div class="lista-botones">
+            <a class="btn btn-sm btn-success" href="?{% if entrenador_elegido %}entrenador={{ entrenador_elegido }}&amp;{% endif %}exportar=xlsx"><i class="bi bi-file-earmark-excel"></i> Exportar a Excel</a>
+        </div>
+    </div>
+    <div class="lista-filtros" style="margin-bottom:12px">
+        <a href="?" class="lista-filtro{% if not entrenador_elegido %} activo{% endif %}">Todos</a>
+        {% for e in por_entrenador %}
+        <a href="?entrenador={{ e.pk }}" class="lista-filtro{% if e.pk == entrenador_elegido %} activo{% endif %}">{{ e.nombre|title }} <b>{{ e.socios }}</b>{% if e.cupo_entrenador %}<span class="text-muted" style="font-weight:400">/{{ e.cupo_entrenador }}</span>{% endif %}</a>
+        {% endfor %}
+    </div>
 
     <div style="overflow-x:auto;">
-    <table class = "table table-borderless datatable">
+    <table class="table datatable">
         <thead>
             <tr class="table-info">
-
+                <th></th>
                 <th>Entrenador</th>
                 <th>Atleta</th>
-                <th>Edad Atleta</th>
-                <th>email Atleta</th>
-                <th>Sit Atleta</th>
-                <th>Vto. Emmac</th>
-                <th>Tipo Asociado</th>
-                <th>Resp Tutor</th>
-                <th>Emmac</th>
-
+                <th>Edad</th>
+                <th>Email</th>
+                <th>Situación</th>
+                <th>Vence EMMAC</th>
+                <th>Tipo de socio</th>
+                <th>Responsable (menores)</th>
+                <th>EMMAC</th>
             </tr>
         </thead>
-
         <tbody>
-
-            {% if object_list %}
-                {% for s in object_list %}
-                {% if s.estado %}
-                <tr >
-
-                    {% comment %} <td>{{s.persona.cuil}}</td> {% endcomment %}
-
-                    <td>{{s.entrenador|title}}</td>
-                    <td> {{s.persona.last_name|title}}, {{s.persona.first_name|title}}</td>
-                    <td>{{s.persona.get_edad}}</td>
-                    <td>{{s.persona.email}}</td>
-
-                    {% if s.get_estado%}
-                    <td>3.Activo</td>
-                    {% elif s.dias_vencer and s.get_sit_emmac == False %}
-                        <th style="color:#E57A15">2.Emmac vencido</td>
-                    {% elif s.dias_vencer == False and s.get_sit_emmac == False  %}
-                        <th style="color:red">1.Arreglar</td>
-                    {% endif %}
-
-                    <td>{{s.get_vencimiento_emmac}}</td>
-                    <td>{{s.tipoAsociado}}</td>
-
-
-                    {% if s.persona.get_edad >= 18 %}
-                        <td style="color:#5B2C6F" >Es Mayor</td>
-                    {% elif s.responsable_tutor == '' and s.persona.get_edad < 18 %}
-                        <td style="color:red"><p><b>Pedir Urgente</p></p></td>
-                    {% else %}
-                        <td>{{s.responsable_tutor}}</td>
-                    {% endif %}
-
-                    {% if s.emmac_file == emmac_file %}
-                    <td><a href="{{s.emmac_file.url}}" target="_blank" rel="noopener"><i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i></a></td>
-                    {% else %}
-                    <td>{{s.emmac_file}}</td>
-                    {% endif %}
-                </tr>
-                  {% endif %}
-                {% endfor %}
-            {% else %}
-                <tr>
-                    <td><h2>No hay personas asociadas</h2></td>
-                </tr>
-
-            {% endif %}
+            {% for s in object_list %}{% with sit=s.situacion edad=s.persona.get_edad %}
+            <tr>
+                <td><a href="{% url 'admin:socio_asociado_change' s.pk %}" target="_blank" rel="noopener" title="Editar el socio en el Admin" aria-label="Editar el socio en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a></td>
+                <td>{{ s.entrenador|title }}</td>
+                <td><b>{{ s.persona.last_name|title }}</b>, {{ s.persona.first_name|title }}</td>
+                <td>{{ edad }}</td>
+                <td>{% if s.persona.email %}<a href="mailto:{{ s.persona.email|lower }}">{{ s.persona.email|lower }}</a>{% endif %}</td>
+                <td><span class="estado-tag {{ sit.1 }}">{{ sit.0 }}</span></td>
+                <td data-content="{{ s.get_vencimiento_emmac|date:'Ymd' }}">{% if s.fecha_emision_emmac %}{{ s.get_vencimiento_emmac|date:"d/m/Y" }}{% else %}<span style="color:#B01E1E">Sin EMMAC</span>{% endif %}</td>
+                <td>{{ s.tipoAsociado }}</td>
+                <td>{% if edad >= 18 %}<span class="text-muted">Mayor</span>{% elif s.responsable_tutor %}{{ s.responsable_tutor }}{% if s.telefono_responsable %} · {{ s.telefono_responsable }}{% endif %}{% else %}<b style="color:#B01E1E">Pedir urgente</b>{% endif %}</td>
+                <td>{% if s.emmac_file and s.emmac_file.name != 'media/emmac/FALTA_EMMAC.png' %}<a href="{{ s.emmac_file.url }}" target="_blank" rel="noopener" title="Ver EMMAC"><i class="bi bi-file-earmark-image" style="font-size:1.25rem"></i></a>{% else %}<span style="color:#B01E1E">Falta</span>{% endif %}</td>
+            </tr>
+            {% endwith %}{% empty %}
+            <tr><td colspan="10"><h4>No hay socios activos</h4></td></tr>
+            {% endfor %}
         </tbody>
     </table>
-</div>
-
+    </div>
 {% endif %}
 {% endif %}
-
-
-
-
 {% endblock  %}
-
-
-

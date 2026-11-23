@@ -1,3 +1,4 @@
+from apps.registro.correo import enviar_html
 from django.shortcuts import render
 #from django.contrib.auth.models import User
 from django.http import HttpResponseRedirect
@@ -68,9 +69,9 @@ class PasswordResetViewTria(PasswordResetView):
             context['reset_link'] = f"{context['protocol']}://{context['domain']}{reset_link}"
 
             subject = render_to_string(self.subject_template_name, context).strip()
-            body = render_to_string(self.email_template_name, context)
-
-            send_mail(subject, body, settings.EMAIL_HOST_USER, [user.email], fail_silently=False, html_message=body)
+            subject = ' '.join(subject.split())
+            # mail liviano (HTML + texto); si Gmail falla queda en el log en vez de dar error 500
+            enviar_html(subject, self.email_template_name, context, [user.email])
 
 
         return HttpResponseRedirect(self.get_success_url())

@@ -1,210 +1,135 @@
-from django.shortcuts import get_object_or_404, render
-from django.views.generic import TemplateView,  View,  CreateView
-from apps.emails.models import Newsletter
+from django.contrib import messages
+from django.contrib.auth.mixins import UserPassesTestMixin
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse, reverse_lazy
+from django.views.generic import CreateView, TemplateView, View
+
+from apps.emails import envios
 from apps.emails.forms import NewsletterCreationForm
-from apps.usuarios.models import Persona
-from apps.socio.models import Asociado
-from apps.inscripcion.models import Eventos, Inscripcion
-from django.conf import settings
-from django.core.mail import  EmailMessage
-from django.contrib.messages.views import SuccessMessageMixin
-from django.template.loader import render_to_string
-import time
+from apps.emails.models import EnvioEmail, Newsletter, NewsletterAdjunto
+from apps.inscripcion.models import Eventos
 
-from django.urls import reverse_lazy
-
-
-# Create your views here.
 
 def error_404_view(request, exception):
     return render(request, 'base/pages-error-404.html')
 
 
-class DashboardHomeView(TemplateView):
+class SoloStaff(UserPassesTestMixin):
+    """Antes cualquier usuario logueado podia entrar y mandar mails a todos."""
+    def test_func(self):
+        return self.request.user.is_staff
+
+
+class DashboardHomeView(SoloStaff, TemplateView):
     template_name = "emails/desk_emails.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        lista = list(Newsletter.objects.order_by('-created')[:30])
+        for n in lista:
+            n.progreso = envios.progreso(n)
+            n.grupo = envios.nombre_del_grupo(n.bcc)
+        context['newsletters'] = lista
+        context['cupo'] = envios.cupo_disponible()
+        context['limite_diario'] = envios.LIMITE_DIARIO
+        context['por_tanda'] = envios.POR_TANDA
+        context['pendientes'] = EnvioEmail.objects.filter(estado=EnvioEmail.PENDIENTE).count()
+        return context
+
+    def post(self, request, *args, **kwargs):
+        if request.POST.get('accion') == 'tanda':
+            r = envios.enviar_tanda()
+            if r['frenado_por_gmail']:
+                messages.warning(request, 'Gmail limitó los envíos por hoy. Lo pendiente sale automáticamente más adelante.')
+            elif not r['cupo']:
+                messages.warning(request, 'Se llegó al máximo de envíos de las últimas 24 horas. Lo pendiente sale automáticamente más adelante.')
+            else:
+                messages.success(request, f"Se enviaron {r['enviados']} mails ({r['errores']} con error). "
+                                          f"Quedan {r['pendientes']} pendientes.")
+        return redirect('desk_email')
 
 
-class NewsletterCreateView(SuccessMessageMixin,CreateView):
+class NewsletterCreateView(SoloStaff, CreateView):
     model = Newsletter
     template_name = "emails/form_email.html"
     form_class = NewsletterCreationForm
-    success_url = reverse_lazy("create_email")
-    success_message = "El email se envió con éxito !"
+    success_url = reverse_lazy('desk_email')
 
-    def cargar_listas(self):
-        # Se calcula en cada pedido. Antes estaba en el cuerpo de la clase y se
-        # calculaba una sola vez al arrancar el servidor (listas desactualizadas).
-        self.tournaments = list(Eventos.objects.values_list('id', flat=True))
-        self.email_members = []
-        self.email_members_con_acceso = []
-        self.email_escuela = []
-        self.email_people_all = ['triatloncba@gmail.com']
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['eventos'] = Eventos.objects.select_related('tipo').order_by('-fechaEvento')[:30]
+        return kwargs
 
-        for m in Asociado.objects.filter():
-            if m.get_estado == True:
-                if m.persona.email in self.email_members:
-                    pass
-                else:
-                    self.email_members.append(m.persona.email)
+    def form_valid(self, form):
+        newsletter = form.save(commit=False)
+        newsletter.name = newsletter.subject[:250]
+        prueba = self.request.POST.get('accion') == 'prueba'
+        if prueba:
+            newsletter.status = 'Borrador'
+        newsletter.save()
+        for archivo in form.archivos():
+            NewsletterAdjunto.objects.create(newsletter=newsletter, archivo=archivo)
 
-        for m in Asociado.objects.filter(tipoAsociado = 1):
-            if m.get_estado == True:
-                if m.persona.email in self.email_members_con_acceso:
-                    pass
-                else:
-                    self.email_members_con_acceso.append(m.persona.email)
-
-        for m in Asociado.objects.filter(tipoAsociado = 5):
-            if m.get_estado == True and m.asiste == True:
-                if m.persona.email in self.email_escuela:
-                    pass
-                else:
-                    self.email_escuela.append(m.persona.email)
-
-        for p in Persona.objects.all():
-            if p.email in self.email_people_all or p.email == "" :
-                pass
-            else:
-                self.email_people_all.append(p.email)
-
-
-
-    def get_context_data(self, **kwargs):
-        context = super(NewsletterCreateView,
-                        self).get_context_data(**kwargs)
-        self.cargar_listas()
-
-        groups = []
-
-        for n in range(1):
-            groups.insert(1,'Asociados')
-        for n in range(1):
-            groups.insert(2, 'Asociados_Escuela')
-        for n in range(1):
-            groups.insert(3, 'Asociados_con_acceso_Kempes')
-        for n in range(1):
-            groups.insert(4, 'Todas_las_Personas')
-
-
-        for n in range(1):
-            groups.insert(0, 'Nadie')
-
-
-
-
-        all = self.email_people_all
-        context['all'] = all
-        context['groups'] = groups
-        context['tournament'] = Eventos.objects.all()
-        return context
-
-    def form_valid(self, form, **kwargs):
-        self.cargar_listas()
-        instance = form.save()
-
-        if instance.status == "Publicar":
-            template = render_to_string(
-                'emails/email.html', {'body': instance.body})
+        if prueba:
+            destino = self.request.user.email or envios.EMAIL_ASOCIACION
             try:
-                instance_bcc = int(instance.bcc)
-                print(f'instance_bcc: {instance_bcc}')
-            except ValueError:
-                instance_bcc = instance.bcc
-                print(f'instance_bcc: {instance_bcc}')
+                envios.enviar_prueba(newsletter, destino)
+                messages.success(self.request, f'Te mandamos una prueba a {destino}. Quedó guardado como borrador: '
+                                               'revisalo y, si está bien, abrilo y enviálo al grupo.')
+            except Exception as e:
+                messages.error(self.request, f'No se pudo mandar la prueba: {e}')
+            return redirect('detail_email', pk=newsletter.pk)
 
-            subject = instance.subject
-            body = instance.body
-            from_email = settings.EMAIL_HOST_USER
-
-            if instance_bcc == "Asociados":
-                to = [instance.email]
-                bcc = self.email_members
-                print("emails members")
-
-            elif type(instance_bcc) == int:
-                emails_tournament = []
-                for t in self.tournaments:
-
-                    if t == instance_bcc:
-                        for r in Inscripcion.objects.filter(eventoRelacionado=t):
-                            print(r.persona.email)
-                            emails_tournament.append(r.persona.email)
-                to = [instance.email]
-                bcc = emails_tournament
-            elif instance_bcc == "Nadie":
-                to = [instance.email]
-                bcc = []
-            elif instance_bcc == "Todas_las_Personas":
-                to = [instance.email]
-                bcc = self.email_people_all
-
-            elif instance_bcc == "Asociados_con_acceso_Kempes":
-                to = [instance.email]
-                bcc = self.email_members_con_acceso
-
-            elif instance_bcc == "Asociados_Escuela":
-                to = [instance.email]
-                bcc = self.email_escuela
+        if newsletter.status == 'Publicar':
+            return _publicar(self.request, newsletter)
+        messages.success(self.request, 'Guardado como borrador.')
+        return redirect('detail_email', pk=newsletter.pk)
 
 
-
-            quatity = 50
-            blocks = int(len(bcc)/quatity)
-            print(f'blocks: {blocks}')
-
-            bcc_by_block = []
-
-            for n in range(blocks):
-                print(n)
-                bcc_by_block.append(bcc[n*quatity:(n+1)*quatity])
-
-            if len(bcc) % quatity:
-                bcc_by_block.append(bcc[blocks*quatity:])
-
-            #print(bcc_by_block)
-            #time.sleep(5)
+def _publicar(request, newsletter):
+    nuevos = envios.encolar(newsletter)
+    r = envios.enviar_tanda()
+    p = envios.progreso(newsletter)
+    texto = f'Email listo para {p["total"]} destinatarios. Ya se enviaron {p["enviados"]}.'
+    if p['pendientes']:
+        texto += (f' Los otros {p["pendientes"]} se envían solos, de a tandas, sin pasar el límite diario de Gmail '
+                  f'(máximo {envios.LIMITE_DIARIO} cada 24 horas, para no bloquear los mails de inscripción).')
+    if r['frenado_por_gmail']:
+        messages.warning(request, texto + ' Gmail limitó los envíos por hoy.')
+    else:
+        messages.success(request, texto)
+    return redirect('detail_email', pk=newsletter.pk)
 
 
-            print(f'tipo instancia {type(instance.email)}')
-            print(f'instancia {instance.email}')
-            print(f'enviado a {to}')
-            #print(f'enviado BCC a {bcc}')
-
-            if len(bcc_by_block) > 0:
-                for m in range(len(bcc_by_block)):
-                    print(f'cantidad bloque {m}: {len(bcc_by_block[m])}')
-                    print(bcc_by_block[m])
-                    msg = EmailMessage(subject, template, from_email, to, bcc=bcc_by_block[m])
-                    msg.content_subtype = "html"
-                    msg.fail_silently = False
-                    msg.send()
-                    print('TIME 5seg')
-                    time.sleep(5)
-            else:
-                msg = EmailMessage(subject, template,
-                                   from_email, to, bcc=bcc_by_block)
-                msg.content_subtype = "html"
-                msg.fail_silently = False
-                msg.send()
-        else:
-            print("no published")
-
-        return super().form_valid(form)
-
-
-
-
-
-
-class NewsletterDetailView(View):
+class NewsletterDetailView(SoloStaff, View):
     def get(self, request, pk, *args, **kwargs):
         newsletter = get_object_or_404(Newsletter, pk=pk)
         context = {
-            'newsletter': newsletter
+            'newsletter': newsletter,
+            'progreso': envios.progreso(newsletter),
+            'grupo': envios.nombre_del_grupo(newsletter.bcc),
+            'errores': newsletter.envios.filter(estado=EnvioEmail.ERROR)[:50],
+            'cuerpo': envios._urls_absolutas(newsletter.body),
+            'destinatarios_estimados': None if newsletter.envios.exists() else
+                len(envios._limpiar([newsletter.email] + envios.emails_del_grupo(newsletter.bcc))),
         }
-        return render(request, 'emails/desk_emails.html', context)
+        return render(request, 'emails/detail_emails.html', context)
 
-
-
-
+    def post(self, request, pk, *args, **kwargs):
+        newsletter = get_object_or_404(Newsletter, pk=pk)
+        accion = request.POST.get('accion')
+        if accion == 'publicar':
+            newsletter.status = 'Publicar'
+            newsletter.save(update_fields=['status'])
+            return _publicar(request, newsletter)
+        if accion == 'prueba':
+            destino = request.user.email or envios.EMAIL_ASOCIACION
+            try:
+                envios.enviar_prueba(newsletter, destino)
+                messages.success(request, f'Te mandamos una prueba a {destino}.')
+            except Exception as e:
+                messages.error(request, f'No se pudo mandar la prueba: {e}')
+        if accion == 'reintentar':
+            n = newsletter.envios.filter(estado=EnvioEmail.ERROR).update(estado=EnvioEmail.PENDIENTE, error='')
+            messages.success(request, f'{n} destinatarios con error vuelven a la cola.')
+        return redirect('detail_email', pk=newsletter.pk)

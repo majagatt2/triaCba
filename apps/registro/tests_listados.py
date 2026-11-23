@@ -110,3 +110,45 @@ class ListadosTests(TestCase):
         self.assertIn(insc.emmac_file.url, html)                          # el link abre el original
         insc.comprobPago.save('pago.pdf', ContentFile(b'%PDF-1.4'), save=True)
         self.assertIn('PDF', miniatura_html(insc.comprobPago))
+
+
+@override_settings(SECURE_SSL_REDIRECT=False, MEDIA_ROOT=MEDIA_PRUEBA,
+                   STATICFILES_STORAGE='django.contrib.staticfiles.storage.StaticFilesStorage')
+class ListadosSociosTests(TestCase):
+
+    @classmethod
+    def setUpTestData(cls):
+        call_command('datos_prueba', verbosity=0)
+        cls.admin = Persona.objects.create_user(
+            cuil='20555444334', username='admin_socios', password='x', dni='2', domicilio='-', ciudad='-',
+            telefono='-', fechaNacimiento=date(1980, 1, 1), is_staff=True, is_superuser=True)
+        # persona sin foto de perfil ni DNI: antes daba error 500 en la lista de personas y en todo el sitio
+        Persona.objects.filter(pk=cls.admin.pk).update(fotoPerfil='', fotoDni='')
+
+    def setUp(self):
+        self.client.force_login(self.admin)
+
+    def test_paginas_de_administracion_responden(self):
+        for nombre in ['lista_personas', 'lista_asociados', 'lista_asociados_asamblea', 'lista_entrenadores',
+                       'lista_pagos_socios', 'cta_cte_socios', 'resumen', 'estad_escuela', 'desk_email',
+                       'create_email', 'lista_eventos']:
+            r = self.client.get(reverse(nombre))
+            self.assertEqual(r.status_code, 200, nombre)
+
+    def test_excel_de_socios_solo_staff(self):
+        r = self.client.get(reverse('lista_asociados'), {'exportar': 'xlsx'})
+        self.assertEqual(r['Content-Type'], 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        self.client.logout()
+        r = self.client.get(reverse('lista_asociados_asamblea'), {'exportar': 'xlsx'})
+        self.assertEqual(r.status_code, 403)
+
+    def test_pagos_socios_recientes_primero(self):
+        from apps.socio.models import AsociadoPagos
+        p = Persona.objects.exclude(pk=self.admin.pk).first()
+        AsociadoPagos.objects.create(personaAsociada=p, fechaPago=date(2025, 1, 1), montoAbonado=1, montoDebeAbonar=1)
+        AsociadoPagos.objects.create(personaAsociada=p, fechaPago=date(2026, 6, 1), montoAbonado=None, montoDebeAbonar=None)
+        r = self.client.get(reverse('lista_pagos_socios'))
+        fechas = [c.fechaPago for c in r.context['asociadopagos_list']]
+        self.assertEqual(fechas, sorted(fechas, reverse=True))
+        r = self.client.get(reverse('lista_pagos_socios'), {'anio': '2025'})
+        self.assertTrue(all(c.fechaPago.year == 2025 for c in r.context['asociadopagos_list']))

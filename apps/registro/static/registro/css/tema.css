@@ -397,3 +397,5 @@ body.img::before { background: var(--pista); }
 .estado-acreditado { background: #E6F4EA; color: #1E5B22; }
 .estado-pasado { background: var(--pista); color: var(--gris); }
 .estado-proximo { background: #E3F1F6; color: #0F4E63; }
+/* editor de emails: que no se salga de la tarjeta */
+#form-email .cke { width: 100% !important; max-width: 100%; }

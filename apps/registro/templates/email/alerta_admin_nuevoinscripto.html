@@ -1,45 +1,27 @@
+{% extends 'email/base_email.html' %}
 {% load estaticos %}
-<!DOCTYPE html>
-{% load static %}
-
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>alerta Inscripto</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="{% static 'general/assets/vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
-
-    </head>
-    <body>
-        <h1>Un nuevo inscripto requiere validación: <br>
-        <strong style="color:green">{{persona}}</strong> <br>
-        <strong style="color:#F36808">{{eventoRelacionado}}</strong></h1>
-
-         <strong style="font-size:20px;">Datos:</strong>
-         <ul style="font-size:15px;">
-            <li>Evento: <b>{{eventoRelacionado}}</b></li>
-            <li>Distancia: <b>{{distancia}}</b></li>
-            <li>Categoria: <b>{{categoria}}</b></li>
-            <li>Bici: <b>{{bici}}</b></li>
-            <li>Costo evento: <b>{{montoDebeAbonar}}</b></li>
-            <li>Monto Abonado: <b>{{montoAbonado}}</b></li>
-            <li>Fecha de Pago: <b>{{fechaPago}}</b></li>
-            <li>Comentario: <b>{{comentario|default:"No declara"}}</b></li>
-            <li>Obra Social: <b>{{obra_social}}</b></li>
-            <li>Responsable Tutor: <b>{{responsable_tutor|default:"No declara"}}</b></li>
-            <li>Relación Legal: <b>{{relacion_legal|default:"No declara"}}</b></li>
-            <li>DNI responsable: <b>{{dni_responsable|default:"No declara"}}</b></li>
-            <li>eMail Responsable: <b>{{mail_responsable|default:"No declara"}}</b></li>
-            <li>Telefono Responsable <b>{{telefono_responsable|default:"No declara"}}</b></li>
-
-        </ul>
-
-        <h3>Por favor ir a : </h3> <a class="btn btn-primary" href="{% sitio_url %}/admin"> <b style="font-size: 22px; color:green">Admin</b> </a></h3>
-
-
-        <script src="" async defer></script>
-
-    </body>
-</html>
+{% block asunto %}Aviso para la Asociación{% endblock %}
+{% block contenido %}
+<p style="margin:0 0 6px; font-size:13px; color:#5B6776; text-transform:uppercase; letter-spacing:.04em;">Aviso para la Asociación</p>
+<h1 style="font-size:20px; color:#0E2A47; margin:0 0 12px;">Nuevo inscripto para validar: <span style="color:#D62828;">{{ persona }}</span></h1>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;">
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Evento</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ eventoRelacionado }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Distancia</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ distancia }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Categoría</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ categoria }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Bici</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ bici }}</td></tr>
+  {% if nombreEquipoPosta %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Equipo</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ nombreEquipoPosta }}</td></tr>
+  {% endif %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Costo del evento</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">${{ montoDebeAbonar }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Monto abonado</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">${{ montoAbonado }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Fecha de pago</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ fechaPago|date:'d/m/Y' }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Obra social</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ obra_social }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Comentario</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ comentario|default:'—' }}</td></tr>
+  {% if responsable_tutor %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Responsable (menor)</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ responsable_tutor }} · DNI {{ dni_responsable|default:'—' }} · Tel. {{ telefono_responsable|default:'—' }}</td></tr>
+  {% endif %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Email</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ email }}</td></tr>
+</table>
+{% endblock %}
+{% block boton_url %}{% sitio_url %}/admin/{% endblock %}
+{% block boton_texto %}Revisar en el Admin{% endblock %}

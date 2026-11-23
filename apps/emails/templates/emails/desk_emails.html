@@ -1,166 +1,53 @@
 {% extends "base/index2.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
-{%  if user.is_authenticated %}
+{% block content %}
 {% if request.user.is_staff %}
+<div class="lista-acciones" style="margin-top:0">
+  <h3 style="margin:0">Módulo de emails</h3>
+  <div class="lista-botones">
+    <a class="btn btn-success" href="{% url 'create_email' %}"><i class="bi bi-envelope-plus"></i> Nuevo email</a>
+  </div>
+</div>
 
-{% comment %} {% block header %}
-{% endblock %}
-
-{% block content %}
-{% endblock %} {% endcomment %}
-
-
-
-
-{% block content %}
-
-
-
-
-
-<div class="pt-5" >
-<div class="justify-content-center pt-5" >
-    
-    <form method="POST" enctype="multipart/form-data"> 
-        {% csrf_token %}    
-       
-        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- Memberships -->
-            <div class="col-xl-10 ">
-                <div class="card shadow-lg">
-                    <div class="card-body pt-2">
-                    <!-- Bordered Tabs -->
-                        <div class="tab-content pt-2 ">
-                            <!-- MEMBERSHIPS -->
-                            <div class="tab-pane fade show active profile-overview " id="profile-overview">
-                                <h4 class="card-title" style="color:green"> 
-                                    <img  src="{% static 'general/assets/img/logo_nuevo-removebg.png' %}" alt="smail" width="90" height="90">
-                                    Enviar Email </h4>
-                               <div class="d-flex justify-content-end">
-                                <a class="btn btn-success"  href={% url 'create_email' %}><b>Crer nuevo email</b></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br>
-            
-        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- About Me -->
-            <div class="col-xl-2">
-                <div class="card shadow-lg">
-                    <div class="card-body pt-2">
-                        <!-- Bordered Tabs -->
-                        <div class="tab-content pt-2">
-                            <!-- ABOUT ME -->
-                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                                <h5 class="card-title text-center pt-1">List</h5>
-                                <p class="small fst-italic"></p>
-                                <div class="d-flex justify-content-end "style="padding-right:3rem"> <!-- LOGO OR BOTTON -->
-                                   
-                                    
-                                </div>
-
-                            <div class="container justify-content-center" style="width:75%">    
-                                <div class="row border-bottom" >
-                                    
-                                    <div class="col-lg-8 col-md-6" style="font-weight:bold; color: green"><a href={% url 'desk_email' %}>Enviado</a></div>
-                                </div>
-
-                                <div class="row border-bottom">
-                                    
-                                    <a href=''><div class="col-lg-8 col-md-8" style="font-weight:bold; color: red">Borrador</div></a>
-                                </div>
-
-                               
-                            </div>
-                            <br>
-                           
-
-                            </div>
-                        </div>
-                        <!-- End Bordered Tabs -->
-                    </div>
-                </div>
-            </div>
-       
-        <br>
-            
-                <div class="col-xl-8"><!-- mails enviados -->
-                    
-                   
-                        <div class="card shadow-lg ">
-                            <div class="card-body pt-2">
-                                <div class="tab-content pt-2 col-12">    
-                            <h5 class="card-title text-center pt-1">Detalles emails <i><sub></sub></i></h5>
-                                    
-                            <div class=" justify-content-center ">
-                                
-                                <div style="overflow-x:auto;">
-                                    <br>
-                                    <table class = 'table'>
-                                        <thead class="text-center">
-                                            <tr>
-                                                <td>Name</td> 
-                                                <td>Subject</td>
-                                                <td>Emails</td>
-                                                <td>Date Created</td>
-                                                <td>Status</td>
-                                                <td>Action</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="">
-                                         {% for newsletter in newsletters%}
-                                            <tr>
-                                                <td>{{newsletter.name}}</td>
-                                                <td>{{newsletter.subject}}</td>
-                                                <td>{{newsletter.email}}</td>
-                                                <td>{{newsletter.created}}</td>
-                                                <td>{{newsletter.status}}</td>
-
-                                            
-
-                                                <td>
-                                                    <a class="badge bg-primary"  href=''><b>Update</b></a>
-                                                    &nbsp;   
-                                                    <a class="badge bg-danger"  href=''><b>Delete</b></a>
-                                                </td>
-                                            </tr>
-                                            
-                                           {% endfor %}
-                                           
-                                            
-                                        </tbody>
-                                    </table>
-
-
-                                </div>    
-                            </div>
-                            </div>
-                            </div>
-                            <br>
-                            
-
-                        </div>
-                   
-                    
-                </div>
-                
-          
-        
-        </div>
-        <br><br>
-    
-           
-      
+<div class="card shadow-sm mb-3"><div class="card-body pt-3">
+  <div class="d-flex justify-content-between flex-wrap gap-2 align-items-center">
+    <div>
+      <b>Cola de envío:</b> {{ pendientes }} mail{{ pendientes|pluralize }} pendiente{{ pendientes|pluralize }} ·
+      cupo disponible ahora: <b>{{ cupo }}</b> de {{ limite_diario }} cada 24 horas.
+      <div class="form-text">Los pendientes salen solos, de a {{ por_tanda }} por hora, sin pasar el límite (así no se bloquean los mails de inscripción).</div>
+    </div>
+    {% if pendientes and cupo %}
+    <form method="post">{% csrf_token %}
+      <button class="btn btn-outline-primary" name="accion" value="tanda"><i class="bi bi-send"></i> Enviar una tanda ahora</button>
     </form>
-    
+    {% endif %}
+  </div>
+</div></div>
+
+<div style="overflow-x:auto;">
+<table class="table">
+  <thead><tr class="table-info"><th>Fecha</th><th>Asunto</th><th>Destinatarios</th><th>Estado</th><th>Progreso</th><th></th></tr></thead>
+  <tbody>
+    {% for n in newsletters %}
+    <tr>
+      <td style="white-space:nowrap">{{ n.created|date:"d/m/Y H:i" }}</td>
+      <td><a href="{% url 'detail_email' n.pk %}"><b>{{ n.subject }}</b></a></td>
+      <td>{{ n.grupo }}</td>
+      <td>{% if n.status == 'Publicar' %}<span class="estado-tag estado-acreditado">Enviado</span>{% else %}<span class="estado-tag estado-pasado">Borrador</span>{% endif %}</td>
+      <td style="min-width:180px">
+        {% if n.progreso.total %}
+          {{ n.progreso.enviados }} / {{ n.progreso.total }}
+          {% if n.progreso.pendientes %}<span class="estado-tag estado-aprobado">{{ n.progreso.pendientes }} en cola</span>{% endif %}
+          {% if n.progreso.errores %}<span class="estado-tag estado-pendiente">{{ n.progreso.errores }} con error</span>{% endif %}
+        {% else %}—{% endif %}
+      </td>
+      <td><a class="btn btn-sm btn-outline-secondary" href="{% url 'detail_email' n.pk %}">Ver</a></td>
+    </tr>
+    {% empty %}
+    <tr><td colspan="6">Todavía no hay emails. Tocá <b>Nuevo email</b>.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
 </div>
-</div>
-
-
-
-{% endblock  %}
 {% endif %}
-{% endif %}
+{% endblock %}

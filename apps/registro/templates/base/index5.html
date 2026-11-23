@@ -233,7 +233,7 @@
         <li class="nav-item dropdown pe-3">
 
           <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-            <img src="{{ request.user.fotoPerfil.url }}" alt="Foto Perfil" class="rounded-circle">
+            <img src="{% if request.user.fotoPerfil %}{{ request.user.fotoPerfil.url }}{% else %}{% static 'registro/sin-foto.png' %}{% endif %}" alt="Foto Perfil" class="rounded-circle">
             <span class="d-none d-md-block dropdown-toggle ps-2">{{request.user.first_name}}  {{request.user.last_name}}</span>
           </a><!-- End Profile Iamge Icon -->
 
@@ -1132,7 +1132,7 @@
           <div class="navbar-nav">
             <div class="container justify-content-center">
               <a>
-              <img src="{{ request.user.fotoPerfil.url }}" alt="..." width="75" class="mr-2 rounded-circle img-thumbnail shadow-sm">
+              <img src="{% if request.user.fotoPerfil %}{{ request.user.fotoPerfil.url }}{% else %}{% static 'registro/sin-foto.png' %}{% endif %}" alt="..." width="75" class="mr-2 rounded-circle img-thumbnail shadow-sm">
                 <span>{{request.user.first_name}}  {{request.user.last_name}}</span>
               </a>
 

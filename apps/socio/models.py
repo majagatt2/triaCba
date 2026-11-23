@@ -177,6 +177,20 @@ class Asociado(models.Model):
 
 
     @property
+    def situacion(self):
+        """(texto, clase css) de la situacion del socio, sin modificar nada (get_estado y dias_vencer
+        cambian self.estado al calcular). Para las listas de Administracion."""
+        carnet_ok = self.get_vigente
+        emmac_ok = self.get_sit_emmac
+        if carnet_ok and emmac_ok:
+            return 'Activo', 'estado-acreditado'
+        if carnet_ok:
+            return 'EMMAC vencido', 'estado-aprobado'
+        if emmac_ok:
+            return 'Carnet vencido', 'estado-pendiente'
+        return 'Carnet y EMMAC vencidos', 'estado-pendiente'
+
+    @property
     def fecha_actual(self):
         fecha_hora = datetime.now()
         return fecha_hora
@@ -225,7 +239,8 @@ class AsociadoPagos(models.Model):
 
 
     def get_diferencia(self):
-        dif = self.montoDebeAbonar - self.montoAbonado
+        # montos vacios cuentan como 0 (antes un pago sin monto rompia la lista con error 500)
+        dif = (self.montoDebeAbonar or 0) - (self.montoAbonado or 0)
         return dif
 
     def siAsociado(self):

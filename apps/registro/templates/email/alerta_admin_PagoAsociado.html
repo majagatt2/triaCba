@@ -1,34 +1,15 @@
+{% extends 'email/base_email.html' %}
 {% load estaticos %}
-<!DOCTYPE html>
-{% load static %}
-
-<html>
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <title>Alerta Pago Cuota Asociado</title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <link href="{% static 'general/assets/vendor/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
-
-    </head>
-    <body>
-        <h1>Un nuevo Pago Asociado requiere validación: <br>
-            <strong style="color:green">{{persona}}</strong> - 
-            <strong style="color:#F36808">{{cuota}}</strong></h1>
-
-        <strong style="font-size:20px;">Datos:</strong>
-        <ul>
-           
-            <li>Fecha Pago: <b>{{fechaPago}}</b></li>
-            <li>Monto Abonado: <b>{{montoAbonado}}</b></li>
-            <li>Comentarios ingresados: <b>{{comentario|default:"No declara"}}</b></li>
-        </ul>
-
-        <h3>Por favor ir a : </h3> <a class="btn btn-primary" href="{% sitio_url %}/admin"> <b style="color:green">Admin</b> </a></h3>
-
-
-        <script src="" async defer></script>
-        
-    </body>
-</html>
+{% block asunto %}Aviso para la Asociación{% endblock %}
+{% block contenido %}
+<p style="margin:0 0 6px; font-size:13px; color:#5B6776; text-transform:uppercase; letter-spacing:.04em;">Aviso para la Asociación</p>
+<h1 style="font-size:20px; color:#0E2A47; margin:0 0 12px;">Nuevo pago de cuota para validar: <span style="color:#D62828;">{{ persona }}</span></h1>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;">
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Cuota</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ cuota }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Fecha de pago</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ fechaPago|date:'d/m/Y' }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Monto abonado</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">${{ montoAbonado }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Comentario</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ comentario|default:'—' }}</td></tr>
+</table>
+{% endblock %}
+{% block boton_url %}{% sitio_url %}/admin/{% endblock %}
+{% block boton_texto %}Revisar en el Admin{% endblock %}

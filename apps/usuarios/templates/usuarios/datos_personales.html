@@ -13,7 +13,7 @@
     <div class="card page p-4 ">
     <div class="row" >
       <div class="col-md-2">
-          <img alt="" style="width:400px;" title="" class="img-circle img-thumbnail isTooltip" src="{{c.fotoPerfil.url}}" data-original-title="Usuario">
+          <img alt="" style="width:400px;" title="" class="img-circle img-thumbnail isTooltip" src="{% if c.fotoPerfil %}{{c.fotoPerfil.url}}{% endif %}" data-original-title="Usuario">
 
       </div>
       <div class="col-md-6">
@@ -68,7 +68,7 @@
                   </tr>
                   <tr>
                       <td><strong>Foto dni</strong></td>
-                      <td> <a href={{c.fotoDni.url}} > <img src={{c.fotoDni.url}} width="60" height="40"></a></td>
+                      <td>{% if c.fotoDni %}<a href="{{c.fotoDni.url}}" target="_blank" rel="noopener"><img src="{{c.fotoDni.url}}" width="60" height="40" loading="lazy"></a>{% else %}—{% endif %}</td>
                   </tr>
 
 

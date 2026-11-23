@@ -1,73 +1,47 @@
 {% extends "base/index2.html" %}
 {% block content %}
+{% load static %}
 {%  if user.is_authenticated %}
 {% if request.user.is_staff %}
-   <h4>Lista Asamblea: {{count}} asociados > 18 años</h4>
+
+    <div class="lista-acciones" style="margin-top:0">
+        <h3 style="margin:0">Padrón asamblea: {{ count }} socios activos mayores de 18</h3>
+        <div class="lista-botones">
+            <a class="btn btn-sm btn-success" href="?exportar=xlsx"><i class="bi bi-file-earmark-excel"></i> Exportar a Excel</a>
+            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="window.print()"><i class="bi bi-printer"></i> Imprimir</button>
+        </div>
+    </div>
+
     <div style="overflow-x:auto;">
-    <table class = "table table-borderless datatable" >
+    <table class="table datatable">
         <thead>
             <tr class="table-info">
-
-                <th>Nombre</th>
-                <th>Dni</th>
+                <th></th>
+                <th>Apellido y nombre</th>
+                <th>DNI</th>
                 <th>Edad</th>
                 <th>Email</th>
-                <!-- <th>Estado</th>
-                <th>Vto.Emmac</th>
-                <th>Vto.Carnet</th> -->
-                <th>Tipo Asociado</th>
-
-                <!-- <th>Emmac</th> -->
-
+                <th>Tipo de socio</th>
+                <th>Situación</th>
             </tr>
         </thead>
-
         <tbody>
-            {% if object_list %}
-                {% for s in object_list %}
-                {% if s.persona.get_edad >= 18 %}
-
-
-
-                <tr >
-
-
-
-                    <td>{{s.persona.last_name|title}}, {{s.persona.first_name|title}} </td>
-                    <td>{{s.persona.dni}}</td>
-
-
-                    <td>{{s.persona.get_edad}}</td>
-
-
-
-
-                    <td>{{s.persona.email}}</td>
-                    <td>{{s.tipoAsociado}}</td>
-
-
-                    {% comment %} <td><img src={{s.emmac_file.url}} width="15" height="15"></td> {% endcomment %}
-                </tr>
-
-                {% endif %}
-                {% endfor %}
-
-
-
-            {% else%}
-                <tr>
-                    <td><h2>No hay personas asociadas</h2></td>
-                </tr>
-
-            {% endif %}
+            {% for s in object_list %}{% with sit=s.situacion %}
+            <tr>
+                <td><a href="{% url 'admin:socio_asociado_change' s.pk %}" target="_blank" rel="noopener" title="Editar el socio en el Admin" aria-label="Editar el socio en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a></td>
+                <td><b>{{ s.persona.last_name|title }}</b>, {{ s.persona.first_name|title }}</td>
+                <td>{{ s.persona.dni }}</td>
+                <td>{{ s.persona.get_edad }}</td>
+                <td>{% if s.persona.email %}<a href="mailto:{{ s.persona.email|lower }}">{{ s.persona.email|lower }}</a>{% endif %}</td>
+                <td>{{ s.tipoAsociado }}</td>
+                <td><span class="estado-tag {{ sit.1 }}">{{ sit.0 }}</span></td>
+            </tr>
+            {% endwith %}{% empty %}
+            <tr><td colspan="7"><h4>No hay socios mayores de 18</h4></td></tr>
+            {% endfor %}
         </tbody>
     </table>
-    <div/>
+    </div>
 {% endif %}
 {% endif %}
-
-
-
-
 {% endblock  %}
-

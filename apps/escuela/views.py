@@ -12,6 +12,7 @@ from django.core.mail import EmailMessage
 from django.conf import settings
 from django.template.loader import render_to_string
 from apps.escuela.forms import EscuelaPagosForm
+from apps.registro.correo import enviar_html
 
 
 
@@ -53,26 +54,18 @@ class EscuelaPagoCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         asociado = form.instance.asociado
         nuevo_pago.save()
 
-        template = render_to_string(
-            'email/alerta_admin_PagoEscuela.html', {
-                'asociado': asociado,
-                'opcion_elegida': nuevo_pago.opcionElegida,
-                'tipoAsociado': nuevo_pago.tipoPago,
-                'vencimiento': asociado.get_vencimiento,
-                'cuota': nuevo_pago.formaPago,
-                'monto_debe_abonar':nuevo_pago.montoDebeAbonar,
-                'monto_abonado': nuevo_pago.montoAbonado,
-                'fecha_pago': nuevo_pago.fechaPago,
-                'comentario': nuevo_pago.comentario,
-            })
-        subject = f"ALERTA NUEVO PAGO ESCUELA:  {asociado}"
-        from_email = settings.EMAIL_HOST_USER
-        to_email = settings.EMAIL_HOST_USER
-        msg = EmailMessage(subject, template, from_email, [
-                           to_email,  'triatloncba@gmail.com', 'triatloncba.infantojuvenil@gmail.com', 'carolinamonasterolo@gmail.com','admtriacba@gmail.com'])
-        msg.content_subtype = "html"
-        msg.fail_silently = False
-        msg.send()
+        enviar_html(f"ALERTA NUEVO PAGO ESCUELA:  {asociado}", 'email/alerta_admin_PagoEscuela.html', {
+            'asociado': asociado,
+            'opcion_elegida': nuevo_pago.opcionElegida,
+            'tipoAsociado': nuevo_pago.tipoPago,
+            'vencimiento': asociado.get_vencimiento,
+            'cuota': nuevo_pago.formaPago,
+            'monto_debe_abonar': nuevo_pago.montoDebeAbonar,
+            'monto_abonado': nuevo_pago.montoAbonado,
+            'fecha_pago': nuevo_pago.fechaPago,
+            'comentario': nuevo_pago.comentario,
+        }, [settings.EMAIL_HOST_USER, 'triatloncba@gmail.com', 'triatloncba.infantojuvenil@gmail.com',
+            'carolinamonasterolo@gmail.com', 'admtriacba@gmail.com'])
 
 
 

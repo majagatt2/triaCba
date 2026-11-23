@@ -1,74 +1,59 @@
 {% extends "base/index2.html" %}
 {% block content %}
+{% load static %}
 {%  if user.is_authenticated %}
 {% if request.user.is_staff %}
-    <h4>Lista: {{object_list|length}} asociados</h4>
+
+    <div class="lista-acciones" style="margin-top:0">
+        <h3 style="margin:0">Socios activos <span class="text-muted" style="font-size:1rem">({{ object_list|length }})</span></h3>
+        <div class="lista-botones">
+            <a class="btn btn-sm btn-success" href="?exportar=xlsx"><i class="bi bi-file-earmark-excel"></i> Exportar a Excel</a>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'lista_asociados_asamblea' %}">Padrón asamblea (+18)</a>
+            <a class="btn btn-sm btn-outline-primary" href="{% url 'lista_entrenadores' %}">Por entrenador</a>
+        </div>
+    </div>
+    <p class="text-muted">Situación: <span class="estado-tag estado-acreditado">Activo</span> carnet y EMMAC al día ·
+        <span class="estado-tag estado-aprobado">EMMAC vencido</span> ·
+        <span class="estado-tag estado-pendiente">Carnet vencido</span> (hay que renovar o desactivar).</p>
+
     <div style="overflow-x:auto;">
-    <table class = "table table-borderless datatable table-light" >
+    <table class="table datatable">
         <thead>
             <tr class="table-info">
-
-                <th>Nombre</th>
+                <th></th>
+                <th>Apellido y nombre</th>
                 <th>Edad</th>
-                <th>Fecha Nac</th>
+                <th>Nacimiento</th>
                 <th>Email</th>
-                <th>Estado</th>
-                <th>Vto.Emmac</th>
-                <th>Vto.Carnet</th>
-                <th>Tipo Asociado</th>
+                <th>Situación</th>
+                <th>Vence EMMAC</th>
+                <th>Vence carnet</th>
+                <th>Tipo de socio</th>
                 <th>Entrenador</th>
-                <th>Nº Emmac</th>
-
+                <th>Nº EMMAC</th>
             </tr>
         </thead>
-
         <tbody>
-            {% if object_list %}
-                {% for s in object_list %}
-
-
-                <tr >
-
-
-
-                    <td>{{s.persona.last_name|title}}, {{s.persona.first_name|title}} </td>
-                    <td>{{s.persona.get_edad}}</td>
-                    <td>{{s.persona.fechaNacimiento}}</td>
-                    <td>{{s.persona.email}}</td>
-
-                    {% if s.get_estado %}
-                    <td>3.Activo</td>
-                    {% elif s.dias_vencer and s.get_sit_emmac == False %}
-                        <th style="color:#129FEF">2.Emmac vencido</td>
-                    {% elif s.dias_vencer == False and s.get_sit_emmac == False  %}
-                        <th style="color:red">1.Arreglar</td>
-                    {% endif %}
-
-
-                    <td>{{s.get_vencimiento_emmac|date:"Y/m/d"}}</td>
-
-                    <td>{{s.get_vencimiento|date:"Y/m/d"}}</td>
-                    <td>{{s.tipoAsociado}}</td>
-                    <td>{{s.entrenador}}</td>
-                    <td>{{s.numero_emmac}}</td>
-                    {% comment %} <td><img src={{s.emmac_file.url}} width="15" height="15"></td> {% endcomment %}
-                </tr>
-
-                {% endfor %}
-            {% else%}
-                <tr>
-                    <td><h2>No hay personas asociadas</h2></td>
-                </tr>
-
-            {% endif %}
+            {% for s in object_list %}{% with sit=s.situacion %}
+            <tr>
+                <td><a href="{% url 'admin:socio_asociado_change' s.pk %}" target="_blank" rel="noopener" title="Editar el socio en el Admin" aria-label="Editar el socio en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a></td>
+                <td><b>{{ s.persona.last_name|title }}</b>, {{ s.persona.first_name|title }}</td>
+                <td>{{ s.persona.get_edad }}</td>
+                <td data-content="{{ s.persona.fechaNacimiento|date:'Ymd' }}">{{ s.persona.fechaNacimiento|date:"d/m/Y" }}</td>
+                <td>{% if s.persona.email %}<a href="mailto:{{ s.persona.email|lower }}">{{ s.persona.email|lower }}</a>{% endif %}</td>
+                <td><span class="estado-tag {{ sit.1 }}">{{ sit.0 }}</span></td>
+                <td data-content="{{ s.get_vencimiento_emmac|date:'Ymd' }}">{% if s.fecha_emision_emmac %}{{ s.get_vencimiento_emmac|date:"d/m/Y" }}{% else %}<span style="color:#B01E1E">Sin EMMAC</span>{% endif %}</td>
+                <td data-content="{{ s.get_vencimiento|date:'Ymd' }}">{{ s.get_vencimiento|date:"d/m/Y" }}</td>
+                <td>{{ s.tipoAsociado }}</td>
+                <td>{{ s.entrenador }}</td>
+                <td>{{ s.numero_emmac }}</td>
+            </tr>
+            {% endwith %}{% empty %}
+            <tr><td colspan="11"><h4>No hay socios activos</h4></td></tr>
+            {% endfor %}
         </tbody>
     </table>
-    <div/>
+    </div>
 {% endif %}
 {% endif %}
-
-
-
-
 {% endblock  %}
-

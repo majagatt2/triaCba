@@ -1,76 +1,56 @@
 {% extends "base/index2.html" %}
+{% load estaticos %}
 {% block content %}
-
 
 {% if user.is_authenticated %}
 {% if request.user.is_staff %}
 
- <h4>Total: {{object_list|length}} personas</h4>
+<h3>Personas <span class="text-muted" style="font-size:1rem">({{ object_list|length }} en total)</span></h3>
+<p class="text-muted" style="margin-top:-6px">Todas las cuentas del sistema. Usá el buscador (nombre, DNI, CUIL o email). El lápiz abre la persona en el Admin.</p>
 
-<style type="text/css">
-    td{color:DarkSlateGray;
-    }
-</style>
-
-<form method="GET">
-    <div style="overflow-x:auto;">
-    <table class="table table-borderless datatable table-light" >
-        <thead>
-            <tr class="table-info">
-                <th scope="col">Foto</th>
-                <th scope="col">Cuil</th>
-                <th scope="col">Nombre</th>
-                {% comment %} <th>Username</th> {% endcomment %}
-                {% comment %} <th>Domicilio</th>
-                <th>Ciudad</th> {% endcomment %}
-                {% comment %} <th>situación</th> {% endcomment %}
-                <th scope="col">Email</th>
-                <th scope="col">Telefono</th>
-                <th scope="col">Fecha Nacimiento</th>
-                <th scope="col">Edad</th>
-                <th scope="col">Sexo</th>
-
-            </tr>
-        </thead>
-
-        <tbody>
-            {% if persona_list %}
-                {% for n in persona_list %}
-                    {% if n.username != "admin"  %}
-                        <tr>
-                            <td scope="row"><a href="{{n.fotoPerfil.url}}" target="_blank" rel="noopener"> <i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i></a></td>
-                            <td scope="row">{{n.cuil}}</td>
-                            <td scope="row">{{n.last_name|title}} {{n.first_name|title}}</td>
-                            {% comment %} <td>{{n.username}}</td> {% endcomment %}
-                            {% comment %} <td>{{n.domicilio|title}}</td>
-                            <td>{{n.ciudad}}</td> {% endcomment %}
-                            {% comment %} <td>{{n.asociado.get_estado|yesno:"Activo,-"}}</td> {% endcomment %}
-                            <td scope="row">{{n.email|lower}}</td>
-                            <td scope="row">{{n.telefono}}</td>
-                            <td scope="row">{{n.fechaNacimiento|date:"d/m/Y"}}</td>
-                            <td scope="row">{{n.get_edad}}</td>
-                            <td scope="row">{{n.sexo}}</td>
-
-
-                        </tr>
-                    {% endif %}
-                {% endfor %}
-            {% else%}
-                <tr>
-                    <td><h2>No hay personas registradas</h2></td>
-                </tr>
-
-            {% endif %}
-
-        </tbody>
-    </table>
+<div style="overflow-x:auto;">
+<table class="table datatable">
+    <thead>
+        <tr class="table-info">
+            <th></th>
+            <th>Apellido y nombre</th>
+            <th>DNI</th>
+            <th>CUIL</th>
+            <th>Email</th>
+            <th>Teléfono</th>
+            <th>Ciudad</th>
+            <th>Nacimiento</th>
+            <th>Edad</th>
+            <th>Sexo</th>
+            <th>Socio</th>
+            <th>Inscripciones</th>
+            <th>Foto DNI</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for n in object_list %}
+        <tr>
+            <td><a href="{% url 'admin:usuarios_persona_change' n.pk %}" target="_blank" rel="noopener" title="Editar en el Admin" aria-label="Editar en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a></td>
+            <td><b>{{ n.last_name|title }}</b> {{ n.first_name|title }}</td>
+            <td>{{ n.dni }}</td>
+            <td>{{ n.cuil }}</td>
+            <td>{% if n.email %}<a href="mailto:{{ n.email|lower }}">{{ n.email|lower }}</a>{% endif %}</td>
+            <td>{{ n.telefono }}</td>
+            <td>{{ n.ciudad }}</td>
+            <td data-sort="{{ n.fechaNacimiento|date:'Y-m-d' }}">{{ n.fechaNacimiento|date:"d/m/Y" }}</td>
+            <td>{{ n.get_edad }}</td>
+            <td>{{ n.sexo }}</td>
+            <td>{% if socios_activos|contiene:n.pk %}<span class="estado-tag estado-acreditado">Activo</span>{% endif %}</td>
+            <td class="text-center">{{ inscripciones|clave:n.pk|default:"" }}</td>
+            <td>{% if n.fotoDni and n.fotoDni.name != 'foto Dni' %}<a href="{{ n.fotoDni.url }}" target="_blank" rel="noopener" title="Ver foto del DNI"><i class="bi bi-file-earmark-image" style="font-size:1.2rem"></i></a>{% endif %}</td>
+        </tr>
+        {% empty %}
+        <tr><td colspan="13"><h4>No hay personas registradas</h4></td></tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
-</form>
-
-
-
 
 {% endif %}
 {% endif %}
-{% endblock  %}
-
+{% endblock %}

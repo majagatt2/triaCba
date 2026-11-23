@@ -63,7 +63,12 @@ ALLOWED_HOSTS = ['triatloncordoba-mgattesco.pythonanywhere.com', '.triatloncordo
 
 # Direccion publica del sitio, para los links que van en los mails. Para cambiarla, poner
 # SITIO_URL=https://... en el .env (sin / al final) y recargar la web app.
-SITIO_URL = os.environ.get('SITIO_URL', 'https://triatloncordoba-mgattesco.pythonanywhere.com').rstrip('/')
+SITIO_URL = os.environ.get('SITIO_URL', 'https://portal.triatloncordoba.org').rstrip('/')
+
+# Emails masivos (apps/emails/envios.py): se envian de a tandas para no pasar el limite diario de Gmail
+# (~500 destinatarios/dia). Se deja margen para los mails de inscripcion, que salen por la misma cuenta.
+EMAILS_LIMITE_DIARIO = int(os.environ.get('EMAILS_LIMITE_DIARIO', 300))
+EMAILS_POR_TANDA = int(os.environ.get('EMAILS_POR_TANDA', 40))
 
 # Application definition
 

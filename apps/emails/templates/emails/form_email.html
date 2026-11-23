@@ -1,167 +1,69 @@
 {% extends "base/index2.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
-{%  if user.is_authenticated %}
-{% if request.user.is_staff %}
-
-
-
-
-
-
 {% block content %}
+{% if request.user.is_staff %}
+<div class="row justify-content-center">
+  <div class="col-xl-9">
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-2">
+      <h3 style="margin:0">Nuevo email</h3>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'desk_email' %}">← Volver al módulo de emails</a>
+    </div>
+    <div class="card shadow-sm"><div class="card-body pt-3">
+      <form method="POST" enctype="multipart/form-data" id="form-email">
+        {% csrf_token %}
+        {{ form.media }}
+        {% if form.non_field_errors %}<div class="alert alert-danger">{{ form.non_field_errors }}</div>{% endif %}
 
-
-
-
-<div class="pt-1" >
-<div class="justify-content-center pt-1" >
-    
-   
-       
-        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- Memberships -->
-            <div class="col-xl-8 ">
-                <div class="card shadow-lg">
-                    <div class="card-body pt-2">
-                    <!-- Bordered Tabs -->
-                        <div class="tab-content pt-2 ">
-                            <!-- MEMBERSHIPS -->
-                            <div class="tab-pane fade show active profile-overview " id="profile-overview">
-                                <h4 class="card-title " style="color:green">
-                                    <img  src="{% static 'registro\logo_gmail.png' %}" alt="smail" width="65" height="65">
-                                    Módulo emails </h4>
-                              
-                            </div>
-                            
-
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="row g-3">
+          <div class="col-md-7">
+            <label class="form-label fw-bold" for="{{ form.bcc.id_for_label }}">{{ form.bcc.label }}</label>
+            {{ form.bcc }}
+            <div class="form-text">Cada persona recibe su propio mail (nadie ve los correos de los demás).</div>
+          </div>
+          <div class="col-md-5">
+            <label class="form-label fw-bold" for="{{ form.email.id_for_label }}">{{ form.email.label }}</label>
+            {{ form.email }}
+            <div class="form-text">{{ form.email.help_text }}</div>
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-bold" for="{{ form.subject.id_for_label }}">{{ form.subject.label }}</label>
+            {{ form.subject }}
+            {{ form.subject.errors }}
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-bold">{{ form.body.label }}</label>
+            <div class="form-text mb-1">Para poner una imagen dentro del texto: botón <b>Imagen</b> del editor → <b>Enviar al servidor</b> (o “Subir”) → elegí el archivo → <b>Aceptar</b>.</div>
+            {{ form.body }}
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-bold" for="{{ form.adjuntos.id_for_label }}">{{ form.adjuntos.label }}</label>
+            {{ form.adjuntos }}
+            <div class="form-text">{{ form.adjuntos.help_text }}</div>
+            {{ form.adjuntos.errors }}
+          </div>
+          <div class="col-md-5">
+            <label class="form-label fw-bold" for="{{ form.status.id_for_label }}">{{ form.status.label }}</label>
+            {{ form.status }}
+          </div>
         </div>
-        <br>
-            
-        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- About Me -->
-            {% comment %} <div class="col-xl-2">
-                <div class="card shadow-lg">
-                    <div class="card-body pt-2">
-                        <!-- Bordered Tabs -->
-                        <div class="tab-content pt-2">
-                            <!-- ABOUT ME -->
-                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                                <h5 class="card-title text-center pt-1">List</h5>
-                                <p class="small fst-italic"></p>
-                                <div class="d-flex justify-content-end "style="padding-right:3rem"> <!-- LOGO OR BOTTON -->
-                                   
-                                    
-                                </div>
 
-                            <div class="container justify-content-center" style="width:75%">    
-                                <div class="row border-bottom" >
-                                    
-                                    <div class="col-lg-8 col-md-6" style="font-weight:bold; color: green"><a href=''>Sended</a></div>
-                                </div>
-
-                                <div class="row border-bottom">
-                                    
-                                    <a href=''><div class="col-lg-8 col-md-8" style="font-weight:bold; color: red">Draft</div></a>
-                                </div>
-
-                               
-                            </div>
-                            <br>
-                           
-
-                            </div>
-                        </div>
-                        <!-- End Bordered Tabs -->
-                    </div>
-                </div>
-            </div> {% endcomment %}
-       
-        <br>
-            
-                <div class="col-xl-8"><!-- mails enviados -->
-                    
-                   
-                        <div class="card shadow-lg ">
-                            <div class="card-body pt-2">
-                                <div class="tab-content pt-2 col-12">    
-                            <h4 class="card-title text-center pt-1"><strong>Nuevo email</strong><i><sub></sub></i></h4>
-                                    
-                            <div class=" justify-content-center ">
-                                
-                                <div style="overflow-x:auto;">
-                                    <br>
-                                     <form method="POST" enctype="multipart/form-data" onsubmit="send();"> 
-                                            {% csrf_token %}    
-
-                                            {#{form|crispy}#}
-                                            {{form.media}}
-                                       
-                                       
-                                        <label>{{form.email.label}}</label>
-                                        <select name="email" id="" class="form-control"  required>
-                                            {% for k in all %}
-                                             <option value={{k}}>{{k}}</option>
-                                             {% endfor %}
-                                        </select>
-
-                                        <label>{{form.bcc.label}}</label>
-                                        <select name="bcc" id="" class="form-control"  required>
-                                           
-                                            {% for g in groups %}
-                                             <option value={{g}}>{{g}}</option>
-                                             {% endfor %}
-                                            {% for t in tournament %}
-                                             <option value = {{t.id}}>{{t}}</option>
-                                             {% endfor %}
-                                        </select>
-
-
-                                        <label>{{form.subject.label}}</label>
-                                        {{form.subject}}
-                                        <br>
-                                        <div class="justify-content-center">
-                                        <label>{{form.body.label}}</label>
-                                        <div class="justify-content-center">{{form.body|safe}}</div>
-                                        </div>
-                                        <br>
-                                        
-
-                                        <label>{{form.status.label}}</label>
-                                        {{form.status}}
-
-                                        <br>
-                                        <input id ='btn' class="btn btn-primary" type="submit" value= "Enviar">
-                                    </form>
-
-                                </div>    
-                            </div>
-                            </div>
-                            </div>
-                            <br>
-                            
-
-                        </div>
-                   
-                    
-                </div>
-                
-          
-        
+        <div class="d-flex gap-2 flex-wrap mt-4">
+          <button type="submit" name="accion" value="prueba" class="btn btn-outline-primary" formnovalidate>
+            <i class="bi bi-eye"></i> Mandarme una prueba
+          </button>
+          <button type="submit" name="accion" value="guardar" class="btn btn-primary" id="btn-enviar">Guardar / Enviar</button>
         </div>
-        <br><br>
-    
-           
-      
-   
-    
+        <p class="form-text mt-2">“Mandarme una prueba” te lo envía solo a vos ({{ request.user.email|default:"la cuenta de la Asociación" }}) y lo deja como borrador.
+          Los envíos a grupos salen de a tandas para no pasar el límite diario de Gmail.</p>
+      </form>
+    </div></div>
+  </div>
 </div>
-</div>
-
-
-
-{% endblock  %}
+<script>
+  // evita el doble clic (dos envios iguales)
+  document.getElementById('form-email').addEventListener('submit', function () {
+    setTimeout(function () { document.querySelectorAll('#form-email button').forEach(function (b) { b.disabled = true; }); }, 0);
+  });
+</script>
 {% endif %}
-{% endif %}
+{% endblock %}

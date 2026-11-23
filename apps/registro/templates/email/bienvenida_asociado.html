@@ -1,78 +1,30 @@
-{% extends 'base/index3.html' %}
+{% extends 'email/base_email.html' %}
 {% load estaticos %}
-{% load static %}
+{% block asunto %}Bienvenido/a{% endblock %}
+{% block contenido %}
+<h1 style="font-size:22px; color:#0E2A47; margin:0 0 8px;">¡Gracias, {{ persona }}, por ser parte del triatlón de Córdoba!</h1>
+<p style="margin:0 0 14px;">Registramos tu pago. Tu condición de socio/a queda <b>activa cuando procesemos el pago de la cuota anual</b>. La vigencia es de un año desde la fecha de pago (contado o primera cuota).</p>
+<p style="margin:0 0 14px;">Podés ver el estado de tus pagos en tu cuenta, en <b>Mi pago anual Asociación</b>.</p>
 
-{% block aside %}
-{% endblock %}
-
-{% block nav %}
-{% endblock %}
-
-
-{% block content %}
-
-
-            <div class="container align-items-center justify-content-center">
-                <div class="justify-content-center">
-                    <div class="col-lg-6">
-
-                    <!-- Email input -->
-
-
-
-                    <div class="">
-                        <h1> Gracias <strong style="color:green">{{persona}}</strong> por ser parte del triatlón de Córdoba.</h1>
-                         <h2>Tu pago ha sido registrado. Puedes consultar el estado de tus pagos ingresando a tu cuenta en la sección "Mi Pago Anual Asociación".</h2>
-                        <h3>Recuerda que tu trámite asociativo estará activo una vez que se procese el pago de tu cuota anual asociativa.</h3>
-
-                        <p>  La vigencia como persona asociada es de un año calendario a partir de la fecha de pago (contado o primer cuota, según opción elegida)</p>
-                        <p>  Tus Datos Informados:</p>
-                            <ul>
-                                 <strong style="color:blue;">Sobre condición de Asociado:</strong>
-                                <li>Fecha: <b>{{fecha}}</b></li>
-                                <li>Tipo de Asociado elegido: <b>{{tipoAsociado}}</b></li>
-
-                                {% if fecha_emision_emmac == "01 Ene 2000" %}
-                                    <li>Fecha Emisión Emmac: <b>No informa</b></li>
-                                {% else %}
-                                    <li>Fecha Emisión Emmac: <b>{{fecha_emision_emmac}}</b></li>
-                                {% endif %}
-
-                                <li>Numero Emmac: <b>{{numero_emmac|default:"No informa"}}</b></li>
-                                <li>Entrenador: <b>{{entrenador}}</b></li>
-                                <li>Responsable Tutor: <b>{{responsable_tutor|default:"No declara"}}</b></li>
-                                <br>
-                                <strong style="color:blue;">Sobre su pago de Asociado:</strong>
-                                <li>Monto que debió abonar: <b>{{montoDebeAbonar}}</b></li>
-                                <li>Monto abonado: <b>{{montoAbonado}}</b></li>
-                                <li>Fecha de Pago: <b>{{fechaPago}}</b></li>
-                                <li>Comentarios ingresados: <b>{{comentario|default:"No declara"}}</b></li>
-
-
-                            </ul>
-
-
-                        <p>  Estamos intentando darte un mejor servicio administrativo para que podamos interactuar a través de tu propia cuenta. Por cualquier dificultad que surja no dudes en escribirnos a tesoreriatriatloncba@gmail.com y lo resolveremos rápidamente.</p>
-
-                        <p>Una vez que ingreses a tu cuenta te diriges a las distintas pestañas disponibles y sigues las indicaciones:</p>
-                        <ul>
-                            <li><b>“Mis Datos”</b> para que puedas actualizar y subir tu foto de perfil y Foto dni</li>
-                            <li><b>“Certificado Federado”</b> para que puedas ver tu situación actual, vencimientos, actualizar, emmac, etc</li>
-                            <li><b>“Mi Pago Anual Asociacón”</b> para que puedas subir e informar el pago de tus cuotas asociativas (en caso de haber elegido pagar en cuotas)  y puedas ver el historial de tus pagos</li>
-                            <li><b>“Mi pago Mensual Escuela”</b> también te puedes subir e informar tus Bonos mensuales Escuela</li>
-                            <li><b>“Próximos eventos”</b> también te puedes inscribir por aquí</li>
-                            <li><b>“Mis Inscripciones”</b> para ver el historial de los eventos en los que te has inscripto.</li>
-                        </ul>
-                    </div>
-                    <div class="container justify-content-center">
-                    <a class="btn btn-primary" href="{% sitio_url %}/accounts/login/"><b>Ingresar</b></a>
-                    </div>
-
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-
+<h2 style="font-size:15px; color:#0E2A47; margin:18px 0 4px; text-transform:uppercase; letter-spacing:.03em;">Tus datos de socio/a</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;">
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Fecha</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ fecha|date:'d/m/Y' }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Tipo de socio</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ tipoAsociado }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Emisión EMMAC</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{% if not fecha_emision_emmac or fecha_emision_emmac|date:'Y' == '2000' %}No informa{% else %}{{ fecha_emision_emmac|date:'d/m/Y' }}{% endif %}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Nº EMMAC</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ numero_emmac|default:'No informa' }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Entrenador</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ entrenador }}</td></tr>
+  {% if responsable_tutor %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Responsable (menor)</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ responsable_tutor }}</td></tr>
+  {% endif %}
+</table>
+<h2 style="font-size:15px; color:#0E2A47; margin:18px 0 4px; text-transform:uppercase; letter-spacing:.03em;">Tu pago</h2>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:8px 0 18px;">
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Monto a abonar</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">${{ montoDebeAbonar }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Monto abonado</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">${{ montoAbonado }}</td></tr>
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Fecha de pago</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ fechaPago|date:'d/m/Y' }}</td></tr>
+  {% if comentario %}
+  <tr><td style="padding:6px 0; color:#5B6776; font-size:14px; width:42%; vertical-align:top; border-bottom:1px solid #EEF1F5;">Comentario</td><td style="padding:6px 0; font-size:14px; font-weight:bold; vertical-align:top; border-bottom:1px solid #EEF1F5;">{{ comentario }}</td></tr>
+  {% endif %}
+</table>
+<p style="margin:0;">En tu cuenta vas a encontrar <b>Mis datos</b>, tu <b>Certificado federado</b> (vencimientos, EMMAC), <b>Mi pago anual</b> para subir las cuotas, <b>Mi pago mensual Escuela</b> y la inscripción a los próximos eventos.</p>
 {% endblock %}

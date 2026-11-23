@@ -14,6 +14,7 @@ from apps.escuela.models import EscuelaPagos, EscuelaFormasPago,EscuelaAsignacTu
 from django.shortcuts import render
 
 from collections import Counter, defaultdict
+from datetime import date
 from django.db.models import Count, Q
 
 
@@ -62,48 +63,38 @@ def error_404_view(request, exception):
 
 
 class ResumenViews(ListView):
+    """Estadisticas generales. Antes traia TODAS las personas y socios solo para contarlos y hacia
+    3 consultas por entrenador; ahora son conteos agrupados (unas pocas consultas en total)."""
     model = Persona
     template_name = 'base/index4.html'
 
+    def get_queryset(self):
+        return Persona.objects.none()   # la lista no se usa en el template
+
     def get_context_data(self, **kwargs):
         context = super(ResumenViews,self).get_context_data(**kwargs)
-        context['personas'] = Persona.objects.all()
-        context['asociados'] = Asociado.objects.filter(estado=True)
-        context['escuela'] = Asociado.objects.filter(estado=True, entrenador=1)
+        activos = Asociado.objects.filter(estado=True)
+        # el template usa |length: se le pasan listas de largo correcto sin cargar los objetos completos
+        context['personas'] = range(Persona.objects.count())
+        context['asociados'] = range(activos.count())
+        cant_escuela = activos.filter(entrenador=1).count()
+        ultimo_escuela = activos.filter(entrenador=1).select_related('tipoAsociado').order_by('-fecha').first()
+        context['escuela'] = ([ultimo_escuela] + [None] * (cant_escuela - 1)) if ultimo_escuela else []
 
+        por_tipo = dict(activos.order_by().values_list('tipoAsociado').annotate(n=Count('id')))
+        tipos = list(AsociadoTipo.objects.all())
+        context['cant_x_tipoAsociado'] = {t.tipoAsociado: por_tipo.get(t.id, 0) for t in tipos}
+        context['cantidadTipos'] = len(tipos)
 
-        cant_tiposAsociados = 0
-        atletas_x_tipoAsociado = {}
-        for e in AsociadoTipo.objects.all():
-            atletas_x_tipoAsociado.update(
-                {e.tipoAsociado: Asociado.objects.filter(estado=True, tipoAsociado=e.id).count()})
-            cant_tiposAsociados += 1
-
-        context['cant_x_tipoAsociado'] = atletas_x_tipoAsociado
-        context['cantidadTipos'] = cant_tiposAsociados
-
-        entrenadores_con_atletas = 0
-        total_atletas_con_entrenador = 0
-        atletas_x_entrenador = {}
-        for e in EntrenadoresKempe.objects.all():
-            atletas_x_entrenador.update(
-                {e.nombre: Asociado.objects.filter(estado=True, entrenador=e.id).count()}
-                )
-            if e.id != 1 and e.id != 12: #1 es Escuela y 12 es Sinn Entrenador
-                total_atletas_con_entrenador += Asociado.objects.filter(
-                estado=True, entrenador=e.id).count()
-                if Asociado.objects.filter(
-                    estado=True, entrenador=e.id).count() > 0:
-                    entrenadores_con_atletas += 1
-
-        context['atletas_x_entrenador'] = atletas_x_entrenador
-        context['entrenadores'] = entrenadores_con_atletas
-        context['con_acceso_kempes'] = total_atletas_con_entrenador
+        por_entrenador = dict(activos.order_by().values_list('entrenador').annotate(n=Count('id')))
+        entrenadores = list(EntrenadoresKempe.objects.all())
+        context['atletas_x_entrenador'] = {e.nombre: por_entrenador.get(e.id, 0) for e in entrenadores}
+        otros = [e for e in entrenadores if e.id not in (1, 12)]   # 1 es Escuela y 12 es Sin Entrenador
+        context['entrenadores'] = sum(1 for e in otros if por_entrenador.get(e.id, 0) > 0)
+        context['con_acceso_kempes'] = sum(por_entrenador.get(e.id, 0) for e in otros)
 
         conteo = _conteo_por_evento(list(Eventos.objects.filter(estado=True)))
         context['eventos'] = {e: [c['total'], c['confirmados']] for e, c in conteo.items()}
-
-
         return context
 
 
@@ -111,44 +102,35 @@ class ResumenViewsEscuela(ListView):
     model = Persona
     template_name = 'base/estad_escuela.html'
 
+    def get_queryset(self):
+        return Persona.objects.none()   # la lista no se usa en el template
+
     def get_context_data(self, **kwargs):
         context = super(ResumenViewsEscuela, self).get_context_data(**kwargs)
         context['escuela'] = Asociado.objects.filter(
-            estado=True, entrenador=1)
+            estado=True, entrenador=1).select_related('tipoAsociado')
         context['escuela_no_asisten'] = Asociado.objects.filter(
             estado=True, entrenador=1,asiste=False)
         context['escuela_asisten'] = Asociado.objects.filter(
             estado=True, entrenador=1, asiste=True)
 
-        anios = []
-        for pagos in EscuelaPagos.objects.all():
-            if pagos.get_anio not in anios:
-                anios.append(pagos.get_anio)
-
-
-
+        # cantidad, pesos y alumnos distintos por año y forma de pago, en UNA consulta
+        # (antes: una consulta por año y forma de pago, y otra por cada pago para ver el alumno)
+        anios = sorted({d.year for d in EscuelaPagos.objects.dates('fechaPago', 'year')})
+        resumen = {}
+        for forma, anio, monto, asociado_id in (EscuelaPagos.objects.order_by()
+                                                .values_list('formaPago', 'fechaPago__year', 'montoAbonado', 'asociado_id')):
+            r = resumen.setdefault((anio, forma), {'cantidad': 0, 'pesos': 0, 'alumnos': set()})
+            r['cantidad'] += 1
+            r['pesos'] += monto or 0
+            r['alumnos'].add(asociado_id)
+        formas = list(EscuelaFormasPago.objects.all())
         pagosList = []
         for a in anios:
-            for f in EscuelaFormasPago.objects.all():
-                asociados_con_pagos = []
-                cantidadPagos = 0
-                pesos = 0
-                for n in EscuelaPagos.objects.filter(formaPago=f):
-                    if n.get_anio == a and n.formaPago == f.formaPago:
-                        cantidadPagos += 1
-                        pesos += n.get_montoAbonado
-                        if n.asociado not in asociados_con_pagos:
-                            asociados_con_pagos.append(n.asociado)
-
-
-                pagosList.append({'anio': a,
-                                  'forma': f,
-                                  'cantidad': cantidadPagos,
-                                  'asociados_con_pagos':len(asociados_con_pagos),
-                                  'pesos': pesos})
-                cantidadPagos = 0
-                pesos = 0
-                asociados_con_pagos = []
+            for f in formas:
+                r = resumen.get((a, f.formaPago), {'cantidad': 0, 'pesos': 0, 'alumnos': set()})
+                pagosList.append({'anio': a, 'forma': f, 'cantidad': r['cantidad'],
+                                  'asociados_con_pagos': len(r['alumnos']), 'pesos': r['pesos']})
 
         context['anios'] = anios
         context['pagos_escuela'] = pagosList
@@ -156,7 +138,7 @@ class ResumenViewsEscuela(ListView):
         menores = 0
         intermedio = 0
         mayores = 0
-        for a in Asociado.objects.filter(estado=True, entrenador=1, asiste=True):
+        for a in Asociado.objects.filter(estado=True, entrenador=1, asiste=True).select_related('persona'):
             if a.persona.get_edad >0 and a.persona.get_edad <= 8:
                 menores += 1
             elif a.persona.get_edad > 8 and a.persona.get_edad <= 12:
@@ -169,7 +151,7 @@ class ResumenViewsEscuela(ListView):
         context['mayores'] = mayores
 
         lista_x_edad = []
-        for a in Asociado.objects.filter(estado=True, entrenador=1):
+        for a in Asociado.objects.filter(estado=True, entrenador=1).select_related('persona'):
             lista_x_edad.append({'edad':a.persona.get_edad,'asociado':a.persona})
         context['edades'] = lista_x_edad
 
@@ -185,46 +167,103 @@ class ResumenViewsEscuela(ListView):
 
 
 class PersonasList(ListView):
-
+    """Todas las personas (antes paginaba de a 400 y el buscador solo veia esas 400)."""
     model = Persona
     template_name = 'administrador/lista_personas.html'
-    paginate_by =400
 
-    ordering = ['last_name']
-
-
-class SociosList(ListView):
-    model = Asociado
-    queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
-    ordering = ["tipoAsociado","persona"]
-    template_name = 'administrador/lista_asociados.html'
-
-
-
-class SociosListAsamblea(ListView):
-    model = Asociado
-    ordering = ["persona",]
-    template_name = 'administrador/lista_asociados_2.html'
+    def get_queryset(self):
+        return (Persona.objects.exclude(username='admin')
+                .only('cuil', 'dni', 'first_name', 'last_name', 'email', 'telefono', 'ciudad',
+                      'fechaNacimiento', 'sexo', 'fotoDni', 'date_joined')
+                .order_by('last_name', 'first_name'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador').order_by("persona")
-
-
-        def count_asociados_mayores_18():
-            queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
-            count = 0
-            for n in queryset:
-                edad = n.get_edad_persona
-                if edad >= 18:
-                    count += 1
-            return count
-
-        context['object_list'] = queryset
-        context['count'] = count_asociados_mayores_18
-
+        # una sola consulta para saber quienes son socios activos y cuantas inscripciones tiene cada uno
+        context['socios_activos'] = set(Asociado.objects.filter(estado=True).values_list('persona_id', flat=True))
+        conteo = (Inscripcion.objects.order_by().values('persona_id').annotate(n=Count('id')))
+        context['inscripciones'] = {c['persona_id']: c['n'] for c in conteo}
         return context
 
+
+def _exportar_asociados_xlsx(nombre_archivo, asociados):
+    """Planilla Excel de socios (para asamblea, seguro, entrenadores, etc.)."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font
+    from django.http import HttpResponse
+
+    libro = Workbook()
+    hoja = libro.active
+    hoja.title = 'Socios'
+    columnas = ['Apellido', 'Nombre', 'DNI', 'CUIL', 'Fecha nacimiento', 'Edad', 'Sexo', 'Email', 'Teléfono',
+                'Ciudad', 'Tipo de socio', 'Situación', 'Vence carnet', 'Vence EMMAC', 'Nº EMMAC', 'Entrenador',
+                'Obra social', 'Responsable (menores)', 'Tel. responsable']
+    hoja.append(columnas)
+    for celda in hoja[1]:
+        celda.font = Font(bold=True)
+    for a in asociados:
+        p = a.persona
+        if p is None:
+            continue
+        hoja.append([p.last_name, p.first_name, p.dni, p.cuil, p.fechaNacimiento, p.get_edad, p.sexo, p.email,
+                     p.telefono, p.ciudad, str(a.tipoAsociado), a.situacion[0], a.get_vencimiento,
+                     a.get_vencimiento_emmac if a.fecha_emision_emmac else None, a.numero_emmac,
+                     str(a.entrenador), a.obra_social, a.responsable_tutor or '', a.telefono_responsable or ''])
+    for col in ('E', 'M', 'N'):
+        for celda in hoja[col][1:]:
+            celda.number_format = 'DD/MM/YYYY'
+    for n, titulo in enumerate(columnas, start=1):
+        hoja.column_dimensions[hoja.cell(row=1, column=n).column_letter].width = max(10, len(titulo) + 2)
+    hoja.freeze_panes = 'A2'
+    hoja.auto_filter.ref = hoja.dimensions
+    respuesta = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    respuesta['Content-Disposition'] = f'attachment; filename="{nombre_archivo}-{date.today():%Y-%m-%d}.xlsx"'
+    libro.save(respuesta)
+    return respuesta
+
+
+class ExportarSociosMixin:
+    """Agrega ?exportar=xlsx a una lista de socios."""
+    nombre_excel = 'socios'
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('exportar') == 'xlsx':
+            # algunas de estas URLs no piden login (el template oculta la tabla): el Excel solo para staff
+            if not request.user.is_staff:
+                from django.core.exceptions import PermissionDenied
+                raise PermissionDenied
+            return _exportar_asociados_xlsx(self.nombre_excel, self.get_queryset())
+        return super().get(request, *args, **kwargs)
+
+
+class SociosList(ExportarSociosMixin, ListView):
+    model = Asociado
+    queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
+    template_name = 'administrador/lista_asociados.html'
+    nombre_excel = 'socios-activos'
+
+    def get_queryset(self):
+        return super().get_queryset().order_by('persona__last_name', 'persona__first_name')
+
+
+
+class SociosListAsamblea(ExportarSociosMixin, ListView):
+    """Socios activos mayores de 18 (padron de la asamblea). La edad se filtra en la vista,
+    asi el total, la tabla y el Excel coinciden."""
+    model = Asociado
+    template_name = 'administrador/lista_asociados_2.html'
+    nombre_excel = 'padron-asamblea'
+
+    def get_queryset(self):
+        socios = (Asociado.objects.filter(estado=True)
+                  .select_related('persona', 'tipoAsociado', 'entrenador')
+                  .order_by('persona__last_name', 'persona__first_name'))
+        return [a for a in socios if a.persona and a.persona.get_edad >= 18]
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['count'] = len(context['object_list'])
+        return context
 
 class AsociadosPublicoList(ListView):
     model = Asociado
@@ -252,14 +291,64 @@ def _pagos_con_asociados(pagos):
     return pagos
 
 
+ESTADOS_PAGO = {
+    'pendientes': ('Sin confirmar', Q(confirm_pago=False)),
+    'confirmados': ('Confirmados', Q(confirm_pago=True)),
+}
+
+
+def _situacion_socio(asociado):
+    if asociado is None:
+        return 'Sin ficha de socio', 'estado-pasado'
+    vigente = asociado.get_vigente
+    if vigente and asociado.estado:
+        return 'Activo', 'estado-acreditado'
+    if vigente:
+        return 'Activación pendiente', 'estado-aprobado'
+    if asociado.estado:
+        return 'Vencido (desactivar)', 'estado-pendiente'
+    return 'Inactivo', 'estado-pasado'
+
+
 class AsociadoPagosList(ListView):
+    """Pagos de socios: los mas recientes primero, filtro por confirmacion y por año.
+    Muestra TODOS los pagos (antes se ocultaban los de socios todavia no activados, que son
+    justamente los que hay que revisar)."""
     model = AsociadoPagos
     template_name = 'administrador/lista_pagos_socios.html'
-    ordering = ['fechaPago',]
+
+    def filtros(self):
+        estado = self.request.GET.get('estado', '')
+        anio = self.request.GET.get('anio', '')
+        return (estado if estado in ESTADOS_PAGO else ''), (int(anio) if anio.isdigit() else None)
+
+    def base(self):
+        _, anio = self.filtros()
+        qs = AsociadoPagos.objects.select_related('personaAsociada')
+        return qs.filter(fechaPago__year=anio) if anio else qs
+
+    def get_queryset(self):
+        estado, _ = self.filtros()
+        qs = self.base()
+        if estado:
+            qs = qs.filter(ESTADOS_PAGO[estado][1])
+        return qs.order_by('-fechaPago', '-id')
 
     def get_context_data(self, **kwargs):
         context = super(AsociadoPagosList, self).get_context_data(**kwargs)
-        context['asociadopagos_list'] = context['object_list'] = _pagos_con_asociados(context['object_list'])
+        pagos = _pagos_con_asociados(context['object_list'])
+        for c in pagos:
+            # si la persona tiene varias fichas de socio, se usa la mas reciente
+            c.asociado = max(c.asociados_match, key=lambda a: a.fecha) if c.asociados_match else None
+            c.situacion, c.situacion_clase = _situacion_socio(c.asociado)
+        context['asociadopagos_list'] = context['object_list'] = pagos
+        estado, anio = self.filtros()
+        base = self.base()
+        context['estado'], context['anio'] = estado, anio
+        context['filtros_estado'] = (
+            [{'clave': '', 'nombre': 'Todos', 'cantidad': base.count()}] +
+            [{'clave': k, 'nombre': n, 'cantidad': base.filter(f).count()} for k, (n, f) in ESTADOS_PAGO.items()])
+        context['anios'] = sorted({d.year for d in AsociadoPagos.objects.dates('fechaPago', 'year')}, reverse=True)
         return context
 
 
@@ -311,15 +400,31 @@ class AsociadoCtaCteList(ListView):
 
 
 
-class EntrenadoresList(ListView):
+class EntrenadoresList(ExportarSociosMixin, ListView):
+    """Socios activos agrupados por entrenador, con filtro por entrenador y contador de cada uno."""
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
     template_name = 'administrador/lista_entrenadores.html'
-    ordering = ['entrenador',]
+    nombre_excel = 'socios-por-entrenador'
+
+    def entrenador_elegido(self):
+        e = self.request.GET.get('entrenador', '')
+        return int(e) if e.isdigit() else None
+
+    def get_queryset(self):
+        qs = (Asociado.objects.filter(estado=True)
+              .select_related('persona', 'tipoAsociado', 'entrenador')
+              .order_by('entrenador__nombre', 'persona__last_name', 'persona__first_name'))
+        if self.entrenador_elegido():
+            qs = qs.filter(entrenador_id=self.entrenador_elegido())
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super(EntrenadoresList, self).get_context_data(**kwargs)
         context['entrenador'] = EntrenadoresKempe.objects.all()
+        context['por_entrenador'] = (EntrenadoresKempe.objects
+                                     .annotate(socios=Count('asociado', filter=Q(asociado__estado=True)))
+                                     .filter(socios__gt=0).order_by('-socios', 'nombre'))
+        context['entrenador_elegido'] = self.entrenador_elegido()
         return context
 
 
@@ -395,6 +500,9 @@ class InscriptosList(ListView):
 
     def get(self, request, *args, **kwargs):
         if request.GET.get('exportar') == 'xlsx':
+            if not (request.user.is_staff or request.user.groups.filter(name='Inscripciones').exists()):
+                from django.core.exceptions import PermissionDenied
+                raise PermissionDenied
             evento = Eventos.objects.filter(pk=self.kwargs.get('pk')).first()
             if evento:
                 return _exportar_inscriptos_xlsx(evento, self.get_queryset())

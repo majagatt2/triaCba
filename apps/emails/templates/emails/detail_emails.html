@@ -1,166 +1,49 @@
 {% extends "base/index2.html" %}
 {% load static %}
-{% load crispy_forms_tags %}
-{%  if user.is_authenticated %}
+{% block content %}
 {% if request.user.is_staff %}
+<div class="lista-acciones" style="margin-top:0">
+  <h3 style="margin:0">{{ newsletter.subject }}</h3>
+  <a class="btn btn-sm btn-outline-secondary" href="{% url 'desk_email' %}">← Volver al módulo de emails</a>
+</div>
 
-{% comment %} {% block header %}
+<div class="row g-3">
+  <div class="col-lg-4">
+    <div class="card shadow-sm"><div class="card-body pt-3">
+      <p><b>Destinatarios:</b> {{ grupo }}<br><b>Para:</b> {{ newsletter.email }}<br>
+         <b>Creado:</b> {{ newsletter.created|date:"d/m/Y H:i" }}<br>
+         <b>Estado:</b> {% if newsletter.status == 'Publicar' %}Enviado{% else %}Borrador{% endif %}</p>
+      {% if newsletter.adjuntos.all %}<p><b>Adjuntos:</b><br>{% for a in newsletter.adjuntos.all %}<a href="{{ a.archivo.url }}" target="_blank" rel="noopener">{{ a }}</a><br>{% endfor %}</p>{% endif %}
+
+      {% if progreso.total %}
+      <p><b>Progreso:</b> {{ progreso.enviados }} de {{ progreso.total }} enviados
+        {% if progreso.pendientes %}<br><span class="estado-tag estado-aprobado">{{ progreso.pendientes }} en cola</span> salen solos de a tandas{% endif %}
+        {% if progreso.errores %}<br><span class="estado-tag estado-pendiente">{{ progreso.errores }} con error</span>{% endif %}</p>
+      {% elif destinatarios_estimados is not None %}
+      <p>Si lo enviás, le llega a <b>{{ destinatarios_estimados }}</b> destinatario{{ destinatarios_estimados|pluralize }}.</p>
+      {% endif %}
+
+      <form method="post" class="d-flex flex-column gap-2">{% csrf_token %}
+        <button class="btn btn-outline-primary" name="accion" value="prueba"><i class="bi bi-eye"></i> Mandarme una prueba</button>
+        {% if newsletter.status != 'Publicar' %}
+        <button class="btn btn-success" name="accion" value="publicar"
+                onclick="return confirm('¿Enviar este email a: {{ grupo|escapejs }}?')"><i class="bi bi-send"></i> Enviar al grupo</button>
+        {% endif %}
+        {% if progreso.errores %}<button class="btn btn-outline-danger" name="accion" value="reintentar">Reintentar los que dieron error</button>{% endif %}
+      </form>
+
+      {% if errores %}
+      <hr><p class="mb-1"><b>Errores</b></p>
+      <ul style="font-size:.85rem">{% for e in errores %}<li>{{ e.email }}: {{ e.error|truncatechars:120 }}</li>{% endfor %}</ul>
+      {% endif %}
+    </div></div>
+  </div>
+  <div class="col-lg-8">
+    <div class="card shadow-sm"><div class="card-body pt-3">
+      <p class="text-muted mb-2">Así se ve el mensaje:</p>
+      <div style="border:1px solid var(--linea); border-radius:8px; padding:16px; overflow:auto;">{{ cuerpo|safe }}</div>
+    </div></div>
+  </div>
+</div>
+{% endif %}
 {% endblock %}
-
-{% block content %}
-{% endblock %} {% endcomment %}
-
-
-
-
-{% block content %}
-
-
-
-
-
-<div class="pt-5" >
-<div class="justify-content-center pt-5" >
-    
-    <form method="POST" enctype="multipart/form-data"> 
-        {% csrf_token %}    
-       
-        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- Memberships -->
-            <div class="col-xl-10 ">
-                <div class="card shadow-lg">
-                    <div class="card-body pt-2">
-                    <!-- Bordered Tabs -->
-                        <div class="tab-content pt-2 ">
-                            <!-- MEMBERSHIPS -->
-                            <div class="tab-pane fade show active profile-overview " id="profile-overview">
-                                <h4 class="card-title" style="color:green"> 
-                                    <img  src="{% static 'general/assets/img/logo_nuevo-removebg.png' %}" alt="smail" width="90" height="90">
-                                    Enviar email </h4>
-                               <div class="d-flex justify-content-end">
-                                <a class="btn btn-success"  href={% url 'create_email' %}><b>Crear email</b></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <br>
-            
-        <div class="row justify-content-center" style="margin-left: 1rem; margin-right: 0.3rem"> <!-- About Me -->
-            <div class="col-xl-2">
-                <div class="card shadow-lg">
-                    <div class="card-body pt-2">
-                        <!-- Bordered Tabs -->
-                        <div class="tab-content pt-2">
-                            <!-- ABOUT ME -->
-                            <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                                <h5 class="card-title text-center pt-1">List</h5>
-                                <p class="small fst-italic"></p>
-                                <div class="d-flex justify-content-end "style="padding-right:3rem"> <!-- LOGO OR BOTTON -->
-                                   
-                                    
-                                </div>
-
-                            <div class="container justify-content-center" style="width:75%">    
-                                <div class="row border-bottom" >
-                                    
-                                    <div class="col-lg-8 col-md-6" style="font-weight:bold; color: green"><a href=''>Enviado</a></div>
-                                </div>
-
-                                <div class="row border-bottom">
-                                    
-                                    <a href=''><div class="col-lg-8 col-md-8" style="font-weight:bold; color: red">Borrador</div></a>
-                                </div>
-
-                               
-                            </div>
-                            <br>
-                           
-
-                            </div>
-                        </div>
-                        <!-- End Bordered Tabs -->
-                    </div>
-                </div>
-            </div>
-       
-        <br>
-            
-                <div class="col-xl-8"><!-- mails enviados -->
-                    
-                   
-                        <div class="card shadow-lg ">
-                            <div class="card-body pt-2">
-                                <div class="tab-content pt-2 col-12">    
-                            <h5 class="card-title text-center pt-1">Detalles email <i><sub></sub></i></h5>
-                                    
-                            <div class=" justify-content-center ">
-                                
-                                <div style="overflow-x:auto;">
-                                    <br>
-                                    <table class = 'table'>
-                                        <thead class="text-center">
-                                            <tr>
-                                                <td>Name</td> 
-                                                <td>Subject</td>
-                                                <td>Emails</td>
-                                                <td>Date Created</td>
-                                                <td>Status</td>
-                                                <td>Action</td>
-                                            </tr>
-                                        </thead>
-                                        <tbody class="">
-                                         {% for newsletter in newsletters%}
-                                            <tr>
-                                                <td>{{newsletter.name}}</td>
-                                                <td>{{newsletter.subject}}</td>
-                                                <td>{{newsletter.email}}</td>
-                                                <td>{{newsletter.created}}</td>
-                                                <td>{{newsletter.status}}</td>
-
-                                            
-
-                                                <td>
-                                                    <a class="badge bg-primary"  href=''><b>Update</b></a>
-                                                    &nbsp;   
-                                                    <a class="badge bg-danger"  href=''><b>Delete</b></a>
-                                                </td>
-                                            </tr>
-                                            
-                                           {% endfor %}
-                                           
-                                            
-                                        </tbody>
-                                    </table>
-
-
-                                </div>    
-                            </div>
-                            </div>
-                            </div>
-                            <br>
-                            
-
-                        </div>
-                   
-                    
-                </div>
-                
-          
-        
-        </div>
-        <br><br>
-    
-           
-      
-    </form>
-    
-</div>
-</div>
-
-
-
-{% endblock  %}
-{% endif %}
-{% endif %}

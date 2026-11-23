@@ -9,6 +9,9 @@ from django.core.mail import send_mail, mail_admins, EmailMultiAlternatives, Ema
 from django.conf import settings
 from django.template.loader import render_to_string
 from datetime import date
+from apps.registro.correo import enviar_html
+
+DESTINATARIOS_ADMIN = ['triatloncba@gmail.com', 'triatloncba.infantojuvenil@gmail.com', 'admtriacba@gmail.com']
 
 # Create views SOCIOS - ADMINISTRADOR #.
 
@@ -140,52 +143,24 @@ class AsociadoCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             nuevo.save()
             pago.save()
 
-            template = render_to_string(
-                'email/alerta_admin_nuevoasociado.html', {
-                    'persona': persona,
-                    'fecha': nuevo.fecha,
-                    'tipoAsociado': nuevo.tipoAsociado,
-                    'fecha_emision_emmac': nuevo.fecha_emision_emmac,
-                    'numero_emmac': nuevo.numero_emmac,
-                    'con_entrenador': nuevo.con_entrenador,
-                    'entrenador': nuevo.entrenador,
-                    'responsable_tutor': nuevo.responsable_tutor,
-                    'montoDebeAbonar': pago.montoDebeAbonar,
-                    'montoAbonado': pago.montoAbonado,
-                    'fechaPago': pago.fechaPago,
-                    'comentario': pago.comentario,
-
-                })
-            subject = f"ALERTA NUEVO ASOCIADO:  {persona}"
-            from_email = settings.EMAIL_HOST_USER
-            to_email = settings.EMAIL_HOST_USER
-            msg = EmailMessage(subject, template, from_email, [
-                            to_email, 'triatloncba@gmail.com', 'triatloncba.infantojuvenil@gmail.com','admtriacba@gmail.com'])
-            msg.content_subtype = "html"
-            msg.fail_silently = False
-            msg.send()
-
-            template2 = render_to_string(
-                'email/bienvenida_asociado.html', {
-                    'persona': persona,
-                    'fecha': nuevo.fecha,
-                    'tipoAsociado': nuevo.tipoAsociado,
-                    'fecha_emision_emmac': nuevo.fecha_emision_emmac,
-                    'numero_emmac': nuevo.numero_emmac,
-                    'con_entrenador': nuevo.con_entrenador,
-                    'entrenador': nuevo.entrenador,
-                    'responsable_tutor': nuevo.responsable_tutor,
-                    'montoDebeAbonar': pago.montoDebeAbonar,
-                    'montoAbonado': pago.montoAbonado,
-                    'fechaPago': pago.fechaPago,
-                    'comentario': pago.comentario,
-                })
-            subject2 = f"Bienvenido {persona}"
-            to_email2 = persona.email
-            msg2 = EmailMessage(subject2, template2, from_email, [to_email2])
-            msg2.content_subtype = "html"
-            msg2.fail_silently = False
-            msg2.send()
+            datos = {
+                'persona': persona,
+                'fecha': nuevo.fecha,
+                'tipoAsociado': nuevo.tipoAsociado,
+                'fecha_emision_emmac': nuevo.fecha_emision_emmac,
+                'numero_emmac': nuevo.numero_emmac,
+                'con_entrenador': nuevo.con_entrenador,
+                'entrenador': nuevo.entrenador,
+                'responsable_tutor': nuevo.responsable_tutor,
+                'montoDebeAbonar': pago.montoDebeAbonar,
+                'montoAbonado': pago.montoAbonado,
+                'fechaPago': pago.fechaPago,
+                'comentario': pago.comentario,
+            }
+            # si Gmail falla, el socio y el pago ya quedaron guardados: se registra en el log y se sigue
+            enviar_html(f"ALERTA NUEVO ASOCIADO:  {persona}", 'email/alerta_admin_nuevoasociado.html', datos,
+                        [settings.EMAIL_HOST_USER] + DESTINATARIOS_ADMIN)
+            enviar_html(f"Bienvenido/a {persona}", 'email/bienvenida_asociado.html', datos, [persona.email])
 
         else:
             return render(request, 'socio/form_asociarse.html', {'form': form,'form2': form2})
@@ -219,24 +194,13 @@ class AsociadoPagoCreate(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.instance.personaAsociada = self.request.user
         persona = form.instance.personaAsociada
 
-        template = render_to_string(
-            'email/alerta_admin_PagoAsociado.html', {
-                'persona': persona,
-                'cuota': form.instance.formaPago,
-                'fechaPago': form.instance.fechaPago,
-                'montoAbonado': form.instance.montoAbonado,
-                'comentario': form.instance.comentario,
-
-
-            })
-        subject = f"ALERTA PAGO CUOTA ASOCIADO:  {persona}"
-        from_email = settings.EMAIL_HOST_USER
-        to_email = settings.EMAIL_HOST_USER
-        msg = EmailMessage(subject, template, from_email, [
-            to_email, 'triatloncba@gmail.com', 'triatloncba.infantojuvenil@gmail.com','admtriacba@gmail.com'])
-        msg.content_subtype = "html"
-        msg.fail_silently = False
-        msg.send()
+        enviar_html(f"ALERTA PAGO CUOTA ASOCIADO:  {persona}", 'email/alerta_admin_PagoAsociado.html', {
+            'persona': persona,
+            'cuota': form.instance.formaPago,
+            'fechaPago': form.instance.fechaPago,
+            'montoAbonado': form.instance.montoAbonado,
+            'comentario': form.instance.comentario,
+        }, [settings.EMAIL_HOST_USER] + DESTINATARIOS_ADMIN)
 
 
 
