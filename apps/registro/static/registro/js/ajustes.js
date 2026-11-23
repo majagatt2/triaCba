@@ -142,3 +142,12 @@
   });
   if (mejor) mejor.classList.add('activo');
 })();
+
+/* Celular: al entrar a Administracion (su pagina de inicio no tiene contenido propio) el menu de
+   Administracion se abre solo, para no tener que tocar el boton de las tres rayas. */
+(function () {
+  var inicioAdmin = /^\/registro\/(ir_index2|adminWeb)\/?$/.test(location.pathname);
+  if (inicioAdmin && window.innerWidth < 1200 && document.querySelector('.menu-vivo')) {
+    document.body.classList.add('toggle-sidebar');
+  }
+})();

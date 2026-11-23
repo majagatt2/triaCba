@@ -67,6 +67,9 @@ h1, h2, h3, h4, h5, .card-title, .pagetitle h1 {
 #header .badge.bg-primary-light { background: var(--rojo) !important; color: #fff !important; font-style: normal; font-weight: 600; padding: .45em .9em; }
 #header .badge.bg-warning-light { background: transparent !important; color: var(--lago) !important; border: 1px solid var(--linea); font-style: normal; font-weight: 600; padding: .45em .9em; }
 #header .nav-icon i { font-style: normal; }
+/* Fotos de perfil redondas sin deformarse: antes se estiraban a ovalo si la foto no era cuadrada */
+.header-nav .nav-profile img { width: 36px; height: 36px; max-height: none; object-fit: cover; }
+img.rounded-circle, img.foto-perfil { aspect-ratio: 1 / 1; object-fit: cover; }
 
 /* ---------- Menu lateral "vivo" (base/_menu_atleta.html y _menu_admin.html) ----------
    Cada grupo tiene un color: el icono va en un chip de ese color; al pasar el mouse el chip se pinta
