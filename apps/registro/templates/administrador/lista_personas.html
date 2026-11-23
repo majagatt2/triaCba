@@ -38,7 +38,7 @@
                 {% for n in persona_list %}
                     {% if n.username != "admin"  %}
                         <tr>
-                            <td scope="row"><a href={{n.fotoPerfil.url}}> <img  src={{n.fotoPerfil.url}} width="20" height="25"></a></td>
+                            <td scope="row"><a href="{{n.fotoPerfil.url}}" target="_blank" rel="noopener"> <i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i></a></td>
                             <td scope="row">{{n.cuil}}</td>
                             <td scope="row">{{n.last_name|title}} {{n.first_name|title}}</td>
                             {% comment %} <td>{{n.username}}</td> {% endcomment %}

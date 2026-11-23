@@ -102,6 +102,18 @@
     {% for evento in eventos %}
 
 
+        <div class="lista-acciones">
+            <div class="lista-filtros">
+                {% for f in filtros_estado %}
+                <a href="?{% if f.clave %}estado={{ f.clave }}{% endif %}" class="lista-filtro lista-filtro-{{ f.clave|default:'todos' }}{% if f.clave == estado %} activo{% endif %}">{{ f.nombre }} <b>{{ f.cantidad }}</b></a>
+                {% endfor %}
+            </div>
+            <div class="lista-botones">
+                <a class="btn btn-sm btn-success" href="?{% if estado %}estado={{ estado }}&amp;{% endif %}exportar=xlsx"><i class="bi bi-file-earmark-excel"></i> Exportar a Excel</a>
+                <a class="btn btn-sm btn-outline-primary" href="{% url 'acreditacion_evento' evento.pk %}"><i class="bi bi-person-check"></i> Acreditación</a>
+            </div>
+        </div>
+
         <form method='POST'>
             {% csrf_token %}
 
@@ -111,9 +123,10 @@
                     <tr class="table-info">
 
 
+                        <th></th>
                         <th>Nombre</th>
                         <th>Email</th>
-                        <th>Situac</th>
+                        <th>Estado</th>
 
                         {% comment %} <th>Asociado</th> {% endcomment %}
                         {% comment %} <th>Evento</th> {% endcomment %}
@@ -144,14 +157,16 @@
                         {% if inscripto.eventoRelacionado.id == evento.id %}
                         <tr >
 
-
+                            <td><a href="{% url 'admin:inscripcion_inscripcion_change' inscripto.pk %}" target="_blank" rel="noopener" title="Editar en el Admin" aria-label="Editar en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a></td>
                             <td style="vertical-align: middle;">{{inscripto.persona.last_name|title}} {{inscripto.persona.first_name|title}} </td>
                             <td>{{inscripto.persona.email}}</td>
 
-                            {% if inscripto.confirm_pago == False %}
-                            <th style="color:red">Pend</td>
+                            {% if inscripto.acreditacion %}
+                            <td><span class="estado-tag estado-acreditado">Acreditado{% if inscripto.numero %} · Nº {{ inscripto.numero }}{% endif %}</span></td>
+                            {% elif inscripto.confirm_pago %}
+                            <td><span class="estado-tag estado-aprobado">Aprobada</span></td>
                             {% else %}
-                            <td><img src={% static 'registro/tilde2.png' %}  width="30" height="30"></td>
+                            <td><span class="estado-tag estado-pendiente">Pendiente</span></td>
                             {% endif %}
 
 
@@ -193,12 +208,12 @@
                             {% endif %}
 
 
-                            <td><a href={{inscripto.comprobPago.url}}>
-                                <img src={{inscripto.comprobPago.url}} width="25" height="20">
+                            <td><a href="{{inscripto.comprobPago.url}}" target="_blank" rel="noopener">
+                                <i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i>
                             </a>
                             </td>
-                            <td><a href={{inscripto.emmac_file.url}}>
-                                <img src={{inscripto.emmac_file.url}} width="25" height="20">
+                            <td><a href="{{inscripto.emmac_file.url}}" target="_blank" rel="noopener">
+                                <i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i>
                             </a>
                             </td>
 

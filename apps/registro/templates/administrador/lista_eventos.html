@@ -6,124 +6,55 @@
 {%  if user.is_authenticated %}
 {% if request.user.is_staff or request.user.groups.all.0.name == 'Inscripciones' %}
 
-<form method='POST'>
-    <h3>Listado de Eventos </h3>
+    <h3>Listado de Eventos</h3>
+    <p class="text-muted" style="margin-top:-6px">Primero los próximos (el más cercano arriba), después los que ya pasaron. Tocá el número de pendientes para ver solo esos inscriptos.</p>
     <div style="overflow-x:auto;">
-    <table class = "table datatable" >
+    <table class="table datatable">
         <thead>
             <tr class="table-info">
-
-                <th>Fecha Evento</th>
-                <th>Temporada</th>
-                <th>Tipo</th>
-                <th>Nombre</th>
-                <th>Lugar</th>
+                <th>Fecha</th>
+                <th>Evento</th>
                 <th>Cupo</th>
-                <th>Total Inscriptos</th>
-                <th>confirmados</th>
-                <th>Pendientes</th>
-                <th>Ver Inscriptos</th>
-                <th>Estado</th>
-                {% comment %} <th>Modalidad</th>
-                <th>Distancias</th>
-                <th>Categorias</th> {% endcomment %}
-
+                <th>Inscriptos</th>
+                <th>Pendientes de aprobar</th>
+                <th>Aprobados</th>
+                <th>Acreditados</th>
+                <th>Acciones</th>
+                <th>Visible</th>
             </tr>
         </thead>
 
         <tbody>
-            {% if eventos_list %}
-                {% for c, value in inscriptos.items %}
-                <tr>
-
-                    <td>{{c.fechaEvento|date:"d/m/Y"}}</td>
-                    <td>{{c.temporada}}</td>
-                    <td>{{c.tipo}}</td>
-
-                    <td>{{c.nombreEvento}}</td>
-                    <td>{{c.lugar}}</td>
-                    <td>{{c.cupo}}</td>
-
-
-
-                    <td class="text-center fw-bold">{{value.0}}</td>
-                    <td class="text-center">{{value.1}}</td>
-
-
-
-
-
-                    <td class="text-center" style="color:red">{{value.2}}</td>
-
-
-
-                    <td>
-                        <a href={% url 'lista_inscriptos_admin' c.id %} class="badge bg-info"><b>Ver</b></a>
-
-                    </td>
-
-
-
-                    {% if c.estado is not True %}
-                        <td  style="color:red">{{c.estado|yesno:'Activo,Inactivo'}}</h1>
-                    {%  else %}
-                        <td>{{c.estado|yesno:"Activo,Inactivo"}}</td>
-                    {% endif %}
-
-                    {% comment %} <td>
-                    {% if c.modalidad_disponible.all %}
-                    {% for m in c.modalidad_disponible.all %}
-                    {{m}}
-                    {% endfor %}
-                    {% else %}
-                    <td>----</td>
-                    {% endif %}
-                    </td>
-
-                    <td>
-                    {% if c.distancia_disponible.all %}
-                    {% for d in c.distancia_disponible.all %}
-                    {{d}}-
-                    {% endfor %}
-                    {% else %}
-                    <td>----</td>
-                    {% endif %}
-                    </td>
-
-                    <td>
-                    {% if c.categoria_disponible.all %}
-                    {% for c in c.categoria_disponible.all|slice:'2' %}
-                    {{c}}-
-                    {% endfor %}
-                    Entre otras
-                    {% else %}
-                    <td>----</td>
-                    {% endif %}
-                    </td> {% endcomment %}
-
-
-
-
-
-
-
-
-
-                </tr>
-                {% endfor %}
-            {% else%}
-
-                    <td><h3>No hay eventos para mostrar</h3></td>
-
-
-            {% endif %}
+            {% for f in filas %}{% with c=f.evento %}
+            <tr>
+                <td style="white-space:nowrap">
+                    {{ c.fechaEvento|date:"d/m/Y" }}<br>
+                    {% if f.proximo %}<span class="estado-tag estado-proximo">Próximo</span>{% else %}<span class="estado-tag estado-pasado">Pasó</span>{% endif %}
+                </td>
+                <td style="min-width:240px"><b>{{ c.nombreEvento }}</b><br><span class="text-muted">{{ c.tipo }} · {{ c.lugar }} · {{ c.temporada }}</span></td>
+                <td class="text-center">{{ c.cupo }}{% if f.cupo_pct is not None %}<br><span class="text-muted" style="font-size:.85rem">{{ f.cupo_pct }}% ocupado</span>{% endif %}</td>
+                <td class="text-center fw-bold">{{ f.total }}</td>
+                <td class="text-center">
+                    {% if f.pendientes %}<a href="{% url 'lista_inscriptos_admin' c.id %}?estado=pendientes" class="estado-tag estado-pendiente" title="Ver solo los pendientes">{{ f.pendientes }}</a>{% else %}0{% endif %}
+                </td>
+                <td class="text-center">{{ f.aprobados }}</td>
+                <td class="text-center">{% if f.acreditados %}<span class="estado-tag estado-acreditado">{{ f.acreditados }}</span>{% else %}0{% endif %}</td>
+                <td style="white-space:nowrap">
+                    <a href="{% url 'lista_inscriptos_admin' c.id %}" class="btn btn-sm btn-primary" title="Ver inscriptos">Inscriptos</a>
+                    {% if f.total %}<a href="{% url 'lista_inscriptos_admin' c.id %}?exportar=xlsx" class="btn btn-sm btn-outline-success" title="Exportar inscriptos a Excel"><i class="bi bi-file-earmark-excel"></i></a>{% endif %}
+                    {% if f.proximo %}<a href="{% url 'acreditacion_evento' c.id %}" class="btn btn-sm btn-outline-primary" title="Acreditación"><i class="bi bi-person-check"></i></a>{% endif %}
+                    <a href="{% url 'admin:inscripcion_eventos_change' c.id %}" class="btn btn-sm btn-outline-secondary" target="_blank" rel="noopener" title="Editar evento en el Admin"><i class="bi bi-pencil-square"></i></a>
+                </td>
+                <td>{% if c.estado %}Sí{% else %}<span style="color:red">No</span>{% endif %}</td>
+            </tr>
+            {% endwith %}{% empty %}
+            <tr><td colspan="9"><h3>No hay eventos para mostrar</h3></td></tr>
+            {% endfor %}
         </tbody>
     </table>
-</div>
-</form>
+    </div>
 
 {% endif %}
 {% endif %}
 
 {% endblock  %}
-

@@ -3,7 +3,7 @@ from apps.registro.models import Bienvenida
 from apps.usuarios.forms import RegistroForm
 from apps.usuarios.models import  Persona
 from apps.inscripcion.models import Eventos, EventoCosto, EventoDistancia, EventoModalidade, EventoCategoria, EventoFormasPago
-from apps.inscripcion.models import Inscripcion
+from apps.inscripcion.models import Inscripcion, hoy_cordoba
 from apps.socio.models import Asociado, AsociadoPagos, AsociadoTipo, EntrenadoresKempe
 from django.views.generic import ListView
 #from django.urls import reverse_lazy
@@ -13,7 +13,7 @@ from apps.escuela.models import EscuelaPagos, EscuelaFormasPago,EscuelaAsignacTu
 #from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 
-from collections import Counter
+from collections import Counter, defaultdict
 from django.db.models import Count, Q
 
 
@@ -195,7 +195,7 @@ class PersonasList(ListView):
 
 class SociosList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True)
+    queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
     ordering = ["tipoAsociado","persona"]
     template_name = 'administrador/lista_asociados.html'
 
@@ -208,11 +208,11 @@ class SociosListAsamblea(ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        queryset = Asociado.objects.filter(estado=True).order_by("persona")
+        queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador').order_by("persona")
 
 
         def count_asociados_mayores_18():
-            queryset = Asociado.objects.filter(estado=True)
+            queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
             count = 0
             for n in queryset:
                 edad = n.get_edad_persona
@@ -228,15 +228,28 @@ class SociosListAsamblea(ListView):
 
 class AsociadosPublicoList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True)
+    queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
     ordering = ["persona",]
     template_name = 'administrador/lista_asociados_publico.html'
 
 
 class AsociadosEscuelaList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(entrenador=1, estado=True)
+    queryset = Asociado.objects.filter(entrenador=1, estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
     template_name = 'administrador/lista_escuela.html'
+
+
+def _pagos_con_asociados(pagos):
+    """A cada pago de socio le agrega .asociados_match (los Asociado de esa persona), armado en Python
+    con 1 sola consulta. Antes el template cruzaba cada pago con TODOS los asociados (pagos x asociados
+    vueltas), y eso hacia muy lentas las listas de pagos y la cuenta corriente."""
+    pagos = list(pagos)
+    por_persona = defaultdict(list)
+    for a in Asociado.objects.select_related('persona', 'tipoAsociado'):
+        por_persona[a.persona_id].append(a)
+    for c in pagos:
+        c.asociados_match = por_persona.get(c.personaAsociada_id, [])
+    return pagos
 
 
 class AsociadoPagosList(ListView):
@@ -246,7 +259,7 @@ class AsociadoPagosList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(AsociadoPagosList, self).get_context_data(**kwargs)
-        context['asociados_todos'] = Asociado.objects.all()
+        context['asociadopagos_list'] = context['object_list'] = _pagos_con_asociados(context['object_list'])
         return context
 
 
@@ -264,8 +277,18 @@ class AsociadoPagosEscuelaList_mensual(ListView):
     def get_context_data(self, **kwargs):
         context = super(AsociadoPagosEscuelaList_mensual,
                         self).get_context_data(**kwargs)
-        context['bonos'] = EscuelaFormasPago.objects.all()
-        context['asociados'] = Asociado.objects.filter(estado=True, entrenador=1,asiste=True)
+        bonos = list(EscuelaFormasPago.objects.all())
+        asociados = list(Asociado.objects.filter(estado=True, entrenador=1, asiste=True).select_related('persona'))
+        # celdas de cada fila armadas aca (antes el template recorria asociados x pagos x bonos)
+        celdas = defaultdict(list)
+        for c in context['object_list']:
+            for bono in bonos:
+                if c.formaPago == bono.formaPago:
+                    celdas[c.asociado_id].append(c)
+        for a in asociados:
+            a.pagos_celdas = celdas.get(a.id, [])
+        context['bonos'] = bonos
+        context['asociados'] = asociados
 
         return context
 
@@ -279,7 +302,7 @@ class AsociadoCtaCteList(ListView):
 
     def get_context_data(self, **kwargs):
         context = super(AsociadoCtaCteList, self).get_context_data(**kwargs)
-        context['asociados_todos'] = Asociado.objects.all()
+        context['asociadopagos_list'] = context['object_list'] = _pagos_con_asociados(context['object_list'])
         return context
 
 
@@ -290,7 +313,7 @@ class AsociadoCtaCteList(ListView):
 
 class EntrenadoresList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True)
+    queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
     template_name = 'administrador/lista_entrenadores.html'
     ordering = ['entrenador',]
 
@@ -300,14 +323,82 @@ class EntrenadoresList(ListView):
         return context
 
 
+ESTADOS_INSCRIPTOS = {
+    # clave: (titulo del filtro, condicion)
+    'pendientes': ('Pendientes de aprobar', Q(confirm_pago=False)),
+    'aprobados': ('Aprobados sin acreditar', Q(confirm_pago=True, acreditacion=False)),
+    'acreditados': ('Acreditados', Q(acreditacion=True)),
+}
+
+
+def _exportar_inscriptos_xlsx(evento, inscripciones):
+    """Planilla Excel con los inscriptos (para cronometraje, seguro, etc.)."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Font
+    from django.http import HttpResponse
+    from django.utils.text import slugify
+
+    libro = Workbook()
+    hoja = libro.active
+    hoja.title = 'Inscriptos'
+    columnas = ['Nº corredor', 'Nº chip', 'Apellido', 'Nombre', 'DNI', 'CUIL', 'Sexo', 'Fecha nacimiento',
+                'Edad', 'Edad 31/12', 'Email', 'Teléfono', 'Ciudad', 'Modalidad', 'Distancia', 'Categoría',
+                'Bici', 'Equipo', 'Grupo', 'Obra social', 'Monto abonado', 'Monto a abonar', 'Fecha pago',
+                'Aprobada', 'Acreditado']
+    hoja.append(columnas)
+    for celda in hoja[1]:
+        celda.font = Font(bold=True)
+    for i in inscripciones:
+        p = i.persona
+        hoja.append([
+            i.numero or None, i.numero_chip or None, p.last_name, p.first_name, p.dni, p.cuil, p.sexo,
+            p.fechaNacimiento, i.get_edad, i.edad_31_Dic, p.email, p.telefono, p.ciudad,
+            i.modalidad, i.distancia, i.categoria, i.bici, i.nombreEquipoPosta or '', i.grupo or '',
+            i.obra_social, i.montoAbonado, i.montoDebeAbonar, i.fechaPago,
+            'SI' if i.confirm_pago else 'NO', 'SI' if i.acreditacion else 'NO',
+        ])
+    for col in ('H', 'W'):
+        for celda in hoja[col][1:]:
+            celda.number_format = 'DD/MM/YYYY'
+    for n, titulo in enumerate(columnas, start=1):
+        hoja.column_dimensions[hoja.cell(row=1, column=n).column_letter].width = max(10, len(titulo) + 2)
+    hoja.freeze_panes = 'A2'
+    hoja.auto_filter.ref = hoja.dimensions
+
+    respuesta = HttpResponse(
+        content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    nombre = slugify(f'inscriptos {evento.nombreEvento} {evento.fechaEvento:%Y-%m-%d}') or 'inscriptos'
+    respuesta['Content-Disposition'] = f'attachment; filename="{nombre}.xlsx"'
+    libro.save(respuesta)
+    return respuesta
+
+
 class InscriptosList(ListView):
     model = Inscripcion
     #queryset = Inscripcion.objects.filter(confirm_pago=True)
     template_name = 'administrador/lista_inscriptos.html'
 
-    def get_queryset(self):
+    def base(self):
         return (Inscripcion.objects.filter(eventoRelacionado=self.kwargs.get('pk'))
                 .select_related('persona', 'eventoRelacionado__tipo'))
+
+    def estado(self):
+        estado = self.request.GET.get('estado', '')
+        return estado if estado in ESTADOS_INSCRIPTOS else ''
+
+    def get_queryset(self):
+        qs = self.base()
+        if self.estado():
+            qs = qs.filter(ESTADOS_INSCRIPTOS[self.estado()][1])
+        # los pendientes de aprobar primero, despues por apellido
+        return qs.order_by('confirm_pago', 'persona__last_name', 'persona__first_name')
+
+    def get(self, request, *args, **kwargs):
+        if request.GET.get('exportar') == 'xlsx':
+            evento = Eventos.objects.filter(pk=self.kwargs.get('pk')).first()
+            if evento:
+                return _exportar_inscriptos_xlsx(evento, self.get_queryset())
+        return super().get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(InscriptosList, self).get_context_data(**kwargs)
@@ -361,6 +452,11 @@ class InscriptosList(ListView):
 
         context['formas'] = formas
         context['eventos'] = Eventos.objects.filter(id=filtro)
+        base = self.base()
+        context['estado'] = self.estado()
+        context['filtros_estado'] = (
+            [{'clave': '', 'nombre': 'Todos', 'cantidad': base.count()}] +
+            [{'clave': k, 'nombre': n, 'cantidad': base.filter(f).count()} for k, (n, f) in ESTADOS_INSCRIPTOS.items()])
         return context
 
 
@@ -395,9 +491,28 @@ class EventosList(ListView):
     def get_context_data(self, **kwargs):
         context = super(EventosList, self).get_context_data(**kwargs)
 
-        conteo = _conteo_por_evento(list(Eventos.objects.select_related('tipo')))
+        eventos = list(Eventos.objects.select_related('tipo'))
+        conteo = _conteo_por_evento(eventos)
         context['inscriptos'] = {e: [c['total'], c['confirmados'], c['total'] - c['confirmados']]
                                  for e, c in conteo.items()}
+        # tabla nueva: proximos primero (el mas cercano arriba), despues los pasados (el mas reciente arriba)
+        hoy = hoy_cordoba()
+        vacio = {'total': 0, 'confirmados': 0, 'acreditados': 0}
+        filas = []
+        for e in eventos:
+            c = conteo.get(e, vacio)
+            filas.append({
+                'evento': e,
+                'proximo': e.fechaEvento >= hoy,
+                'total': c['total'],
+                'aprobados': c['confirmados'],
+                'pendientes': c['total'] - c['confirmados'],
+                'acreditados': c['acreditados'],
+                'cupo_pct': round(100 * c['total'] / e.cupo) if e.cupo else None,
+            })
+        proximos = sorted((f for f in filas if f['proximo']), key=lambda f: f['evento'].fechaEvento)
+        pasados = sorted((f for f in filas if not f['proximo']), key=lambda f: f['evento'].fechaEvento, reverse=True)
+        context['filas'] = proximos + pasados
 
         return context
 
@@ -405,7 +520,7 @@ class EventosList(ListView):
 
 class SeguroListAsociados(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True)
+    queryset = Asociado.objects.filter(estado=True).select_related('persona', 'tipoAsociado', 'entrenador')
     template_name = 'seguro/lista_seguro_asociados.html'
     ordering = ['persona',]
 
@@ -432,13 +547,13 @@ class SeguroListInscriptos(ListView):
 
 class KempesList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True).exclude(entrenador=12)
+    queryset = Asociado.objects.filter(estado=True).exclude(entrenador=12).select_related('persona', 'tipoAsociado', 'entrenador')
     template_name = 'administrador/lista_kempes.html'
     ordering = ['persona', ]
 
 class AgenciaList(ListView):
     model = Asociado
-    queryset = Asociado.objects.filter(estado=True).exclude(entrenador=12)
+    queryset = Asociado.objects.filter(estado=True).exclude(entrenador=12).select_related('persona', 'tipoAsociado', 'entrenador')
     template_name = 'administrador/lista_agencia.html'
     ordering = ['persona', ]
 

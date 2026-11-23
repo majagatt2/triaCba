@@ -1,0 +1,29 @@
+{% extends "base/index3.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'inscripcion/css/acreditacion.css' %}">
+<div class="acr">
+  <div class="acr-card">
+    <h1 class="acr-titulo">Acreditación</h1>
+    <p class="acr-sub">Elegí el evento para acreditar a los atletas en la mesa.</p>
+  </div>
+
+  {% if eventos %}
+  <div class="acr-eventos">
+    {% for ev in eventos %}
+    <a class="acr-card acr-evento{% if ev.fechaEvento == hoy %} hoy{% endif %}" href="{% url 'acreditacion_evento' ev.pk %}">
+      <div class="acr-fecha">{% if ev.fechaEvento == hoy %}Hoy · {% endif %}{{ ev.fechaEvento|date:"l d/m/Y" }}</div>
+      <div class="acr-titulo" style="font-size:1.35rem; margin-top:4px">{{ ev.nombreEvento }}</div>
+      <div class="acr-sub">{{ ev.tipo }} · {{ ev.lugar }}</div>
+      <div class="acr-sub" style="margin-top:8px">
+        <b style="color:var(--tinta)">{{ ev.n_acreditados }}</b> acreditados de {{ ev.n_aprobados }} aprobados
+        <span style="opacity:.75">({{ ev.n_inscriptos }} inscriptos)</span>
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="acr-card">No hay eventos entre hace 3 días y dentro de 30 días.</div>
+  {% endif %}
+</div>
+{% endblock %}

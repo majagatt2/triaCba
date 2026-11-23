@@ -63,7 +63,7 @@
                     {% endif %}
 
 
-                    <td><a href={{c.comprobPago.url}}> <img src={{c.comprobPago.url}} width="25" height="20"></td></a>
+                    <td><a href="{{c.comprobPago.url}}" target="_blank" rel="noopener"> <i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i></td></a>
 
                     {% if c.confirm_pago == False  %}
                     <th style="color:red"> {{c.confirm_pago|yesno:"Acreditado,Pendiente"}}</td>

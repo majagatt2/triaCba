@@ -36,8 +36,8 @@
         <tbody>
             {% if asociadopagos_list %}
             {% for c in asociadopagos_list %}
-            {% for asociado in asociados_todos %}
-            {% if c.personaAsociada == asociado.persona %}
+            {% for asociado in c.asociados_match %}
+            {% if asociado %}
 
             <tr>
                 <td class="align-middle">{{asociado.persona}}</td>

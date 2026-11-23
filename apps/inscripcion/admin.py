@@ -2,6 +2,7 @@ from django.contrib import admin
 from apps.inscripcion.models import *
 from django import forms
 from django.utils.html import format_html
+from apps.registro.miniaturas import miniatura_html
 
 # Register your models here.
 
@@ -103,18 +104,15 @@ class InscripcionAdmin(admin.ModelAdmin):
                       'eventoRelacionado')
 
     def comprobante(self, obj):
-        if obj.comprobPago.url[-4:] == '.pdf':
-            return format_html("<a href={url}> <p style='color:blue'><b>PDF</b></p></a>", url=obj.comprobPago.url)
-        else:
-            return format_html('<a href={url}><img src={url} width="40" height="40" /></a>', url=obj.comprobPago.url)
+        return miniatura_html(obj.comprobPago)
 
 
     def emmac_foto(self, obj):
-        return format_html('<a href={url}><img src={url} width="40" height="40" /></a>', url=obj.emmac_file.url)
+        return miniatura_html(obj.emmac_file)
 
     def foto_dni(self, obj):
 
-        return format_html('<a href={url}><img src={url} width="40" height="40" /></a>', url=obj.persona.fotoDni.url)
+        return miniatura_html(obj.persona.fotoDni)
 
 
     def get_name(self, obj):

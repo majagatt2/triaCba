@@ -42,14 +42,8 @@
                 {% for asociado in asociados %}
                     <tr style="font-size:12px;">
                         <td >{{asociado|title}}</td>
-                                {% for c in object_list %}
-                                {% for bono in bonos %}
-                                {%  if c.formaPago == bono.formaPago %}
-                                    {% if c.asociado == asociado  %}
+                                {% for c in asociado.pagos_celdas %}
                                         <td>${{c.montoAbonado|floatformat:"-3g"}}<br><span style="font-size:9px;">{{c.fechaPago|date:"d/m/Y"}}</span><br><span style="font-size:9px;">{{c.formaPago}}</span></td>
-                                    {% endif %}
-                                {% endif %}
-                                {% endfor %}
                                 {% endfor %}
                     </tr>
                 {% endfor %}

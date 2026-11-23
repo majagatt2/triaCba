@@ -5,6 +5,7 @@ from django.contrib import admin
 from django.contrib import admin
 from apps.escuela.models import *
 from django.utils.html import format_html
+from apps.registro.miniaturas import miniatura_html
 
 
 # Register your models here.
@@ -21,7 +22,7 @@ class EscuelaPagosAdmin(admin.ModelAdmin):
 
 
     def comprobante(self, obj):
-        return format_html('<a href={url}><img src={url} width="30" height="30" /></a>', url=obj.comprobPago.url)
+        return miniatura_html(obj.comprobPago, 30)
 
 
 

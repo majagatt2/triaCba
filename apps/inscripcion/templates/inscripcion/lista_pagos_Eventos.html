@@ -62,8 +62,8 @@
                                     <td>{{c.fechaPago|date:"d/m/Y"}}</td>
 
                                     <th>$ {{c.montoAbonado|floatformat:"-3g"}}</td>
-                                    <td><a href={{c.comprobPago.url}}>
-                                            <img src={{c.comprobPago.url}} width="20" height="20">
+                                    <td><a href="{{c.comprobPago.url}}" target="_blank" rel="noopener">
+                                            <i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i>
                                         </a>
                                     </td>
 

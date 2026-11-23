@@ -2,6 +2,7 @@ from django.contrib import admin
 # from import_export.Admin import ImportExportMixin
 from apps.socio.models import *
 from django.utils.html import format_html
+from apps.registro.miniaturas import miniatura_html
 
 # Register your models here.
 
@@ -16,7 +17,7 @@ class AsociadoAdmin(admin.ModelAdmin):
     list_per_page= 10
 
     def emmac_foto(self, obj):
-        return format_html('<a href={url}><img src={url} width="40" height="40" /></a>', url=obj.emmac_file.url)
+        return miniatura_html(obj.emmac_file)
 
 
 class AsociadoTipoAdmin(admin.ModelAdmin):
@@ -39,7 +40,7 @@ class AsociadoPagosAdmin(admin.ModelAdmin):
     list_per_page = 10
 
     def comprobante(self, obj):
-        return format_html('<a href={url}><img src={url} width="30" height="30" /></a>', url=obj.comprobPago.url)
+        return miniatura_html(obj.comprobPago, 30)
 
     # def get_name(self, obj):
     #     nombre = obj.asociado.last_name + " " + obj.asociado.first_name

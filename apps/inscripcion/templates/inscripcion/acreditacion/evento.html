@@ -1,0 +1,219 @@
+{% extends "base/index3.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'inscripcion/css/acreditacion.css' %}">
+<div class="acr">
+
+  <div class="acr-card">
+    <a class="acr-volver" href="{% url 'acreditacion' %}">← Eventos</a>
+    <h1 class="acr-titulo" style="margin-top:4px">{{ evento.nombreEvento }}</h1>
+    <p class="acr-sub">{{ evento.tipo }} · {{ evento.lugar }} · {{ evento.fechaEvento|date:"d/m/Y" }}</p>
+
+    <div class="acr-avance" style="margin-top:12px">
+      <span class="num">{{ total.acreditados }}</span>
+      <span>acreditados de <b>{{ total.aprobados }}</b> aprobados
+        <span style="color:var(--gris)">({{ total.total }} inscriptos)</span></span>
+    </div>
+    <div class="acr-barra"><span style="width:{% widthratio total.acreditados total.aprobados|default:1 100 %}%"></span></div>
+    {% if resumen|length > 1 %}
+    <ul class="acr-modalidades">
+      {% for r in resumen %}<li>{{ r.modalidad }}: <b>{{ r.acreditados }}/{{ r.aprobados }}</b></li>{% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+
+  {% if aviso %}<div class="acr-aviso {{ aviso.tipo }}" role="status">{{ aviso.texto }}</div>{% endif %}
+
+  <div class="acr-card">
+    <form method="get" class="acr-buscar" autocomplete="off">
+      <input type="search" name="q" id="acr-q" value="{{ q }}" placeholder="DNI, apellido o Nº de corredor"
+             aria-label="Buscar atleta"{% if not ver %}{% if not ficha or ficha.i.acreditacion %} autofocus{% endif %}{% endif %}>
+      <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+    <p class="acr-ayuda">Escribí el DNI (o parte), el apellido o el número de corredor y apretá Enter.</p>
+    <div class="acr-ver-lista">
+      <span>Ver listado:</span>
+      <a href="?ver=pendientes" class="btn btn-sm {% if ver == 'pendientes' %}btn-primary{% else %}btn-outline-primary{% endif %}">Para acreditar</a>
+      <a href="?ver=todos" class="btn btn-sm {% if ver == 'todos' %}btn-primary{% else %}btn-outline-primary{% endif %}">Todos</a>
+    </div>
+  </div>
+
+  {% if ver %}
+  <div class="acr-card" id="acr-listado">
+    <div class="acr-filtros">
+      {% for f in filtros %}
+      <a href="?ver={{ f.clave }}{% if mod %}&mod={{ mod|urlencode }}{% endif %}"
+         class="acr-filtro acr-filtro-{{ f.clave }}{% if f.clave == ver %} activo{% endif %}">{{ f.nombre }} <b>{{ f.cantidad }}</b></a>
+      {% endfor %}
+    </div>
+    <div class="acr-filtros-2">
+      {% if modalidades|length > 1 %}
+      <form method="get">
+        <input type="hidden" name="ver" value="{{ ver }}">
+        <select name="mod" class="form-select form-select-sm" onchange="this.form.submit()" aria-label="Filtrar por modalidad">
+          <option value="">Todas las modalidades</option>
+          {% for m in modalidades %}<option value="{{ m }}"{% if m == mod %} selected{% endif %}>{{ m }}</option>{% endfor %}
+        </select>
+      </form>
+      {% endif %}
+      <input type="search" id="acr-filtro-rapido" class="form-control form-control-sm" placeholder="Filtrar esta lista…" aria-label="Filtrar esta lista">
+    </div>
+
+    {% if listado %}
+    <table class="acr-resultados acr-lista">
+      <thead><tr><th>Nº</th><th>Atleta</th><th class="ocultar-cel">DNI</th><th class="ocultar-cel">Modalidad</th><th class="ocultar-cel">Categoría</th><th class="ocultar-cel">Estado</th></tr></thead>
+      <tbody>
+        {% for r in listado %}
+        <tr id="i{{ r.pk }}" class="fila {% if r.acreditacion %}est-acreditado{% elif r.confirm_pago %}est-pendiente{% else %}est-sinaprobar{% endif %}"
+            onclick="location.href='?id={{ r.pk }}&ver={{ ver }}{% if mod %}&mod={{ mod|urlencode }}{% endif %}'"
+            data-texto="{{ r.persona.last_name|lower }} {{ r.persona.first_name|lower }} {{ r.persona.dni }} {{ r.numero|default:'' }}">
+          <td class="nro">{% if r.numero %}{{ r.numero }}{% else %}–{% endif %}</td>
+          <td><a href="?id={{ r.pk }}&ver={{ ver }}{% if mod %}&mod={{ mod|urlencode }}{% endif %}">{{ r.persona.last_name }}, {{ r.persona.first_name }}</a>
+            <div class="solo-cel">{{ r.modalidad }} · {{ r.categoria }}<br>
+              {% if r.acreditacion %}<span class="acr-tag si">✔ Acreditado</span>{% elif r.confirm_pago %}<span class="acr-tag pend">Para acreditar</span>{% else %}<span class="acr-tag no">Sin aprobar</span>{% endif %}</div></td>
+          <td class="ocultar-cel">{{ r.persona.dni }}</td>
+          <td class="ocultar-cel">{{ r.modalidad }}</td>
+          <td class="ocultar-cel">{{ r.categoria }}</td>
+          <td class="ocultar-cel">
+            {% if r.acreditacion %}<span class="acr-tag si">✔ Acreditado</span>
+            {% elif r.confirm_pago %}<span class="acr-tag pend">Para acreditar</span>
+            {% else %}<span class="acr-tag no">Sin aprobar</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <p class="acr-ayuda" id="acr-sin-coincidencias" hidden>Nadie de esta lista coincide con lo que escribiste.</p>
+    {% else %}
+    <p class="acr-ayuda">No hay inscriptos en esta lista.</p>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  {% if resultados %}
+  <div class="acr-card">
+    <table class="acr-resultados">
+      <thead><tr><th>Atleta</th><th>DNI</th><th class="ocultar-cel">Modalidad</th><th>Estado</th></tr></thead>
+      <tbody>
+        {% for r in resultados %}
+        <tr class="fila" onclick="location.href='?id={{ r.pk }}'">
+          <td><a href="?id={{ r.pk }}">{{ r.persona.last_name }}, {{ r.persona.first_name }}</a></td>
+          <td>{{ r.persona.dni }}</td>
+          <td class="ocultar-cel">{{ r.modalidad }}</td>
+          <td>
+            {% if r.acreditacion %}<span class="acr-tag si">Acreditado{% if r.numero %} · Nº {{ r.numero }}{% endif %}</span>
+            {% elif r.confirm_pago %}<span class="acr-tag neutro">Aprobado</span>
+            {% else %}<span class="acr-tag no">Sin aprobar</span>{% endif %}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% if hay_mas %}<p class="acr-ayuda">Hay más resultados: escribí algo más para acotar la búsqueda.</p>{% endif %}
+  </div>
+  {% elif q and not ficha %}
+  <div class="acr-card">No se encontró ningún inscripto con “{{ q }}” en este evento.</div>
+  {% endif %}
+
+  {% if ficha %}{% with i=ficha.i p=ficha.p %}
+  {% if url_lista %}<a class="acr-volver" href="{{ url_lista }}#i{{ i.pk }}" style="display:inline-block; margin:0 0 8px 4px">← Volver al listado</a>{% endif %}
+  <div class="acr-card acr-ficha{% if i.acreditacion %} ya{% elif ficha.alertas %} con-alertas{% endif %}">
+    <div class="acr-ficha-cab">
+      <div>
+        <h2 class="acr-nombre">{{ p.last_name }}, {{ p.first_name }}</h2>
+        <div class="acr-sub">DNI {{ p.dni }} · {{ ficha.edad }} años · {% if p.sexo == 'F' %}Mujer{% else %}Hombre{% endif %}</div>
+      </div>
+      {% if i.acreditacion %}<span class="acr-tag si" style="font-size:1rem">ACREDITADO</span>
+      {% elif ficha.alertas %}<span class="acr-tag no" style="font-size:1rem">REVISAR</span>
+      {% else %}<span class="acr-tag si" style="font-size:1rem">OK PARA ACREDITAR</span>{% endif %}
+    </div>
+
+    <div class="acr-datos">
+      <div><small>Modalidad</small><span>{{ i.modalidad }}</span></div>
+      <div><small>Distancia</small><span>{{ i.distancia }}</span></div>
+      <div><small>Categoría</small><span>{{ i.categoria }}</span></div>
+      {% if i.bici and i.bici != 'Elegir' %}<div><small>Bici</small><span>{{ i.bici }}</span></div>{% endif %}
+      {% if i.nombreEquipoPosta %}<div><small>Equipo</small><span>{{ i.nombreEquipoPosta }}</span></div>{% endif %}
+      <div><small>Obra social</small><span>{{ i.obra_social|default:"—" }}</span></div>
+      <div><small>Teléfono</small><span>{{ p.telefono|default:"—" }}</span></div>
+    </div>
+
+    <div class="acr-controles">
+      <span class="acr-tag {% if ficha.pago_ok %}si{% else %}no{% endif %}">Inscripción {% if ficha.pago_ok %}aprobada ✔{% else %}NO aprobada ✘{% endif %}</span>
+      {% if ficha.certificado_ok %}<a class="acr-tag si" href="{{ ficha.certificado_url }}" target="_blank" rel="noopener">Certificado / EMMAC ✔ ver</a>
+      {% else %}<span class="acr-tag no">Sin certificado ✘</span>{% endif %}
+      {% if ficha.comprobante_url %}<a class="acr-tag neutro" href="{{ ficha.comprobante_url }}" target="_blank" rel="noopener">Comprobante de pago · ver</a>{% endif %}
+      {% if ficha.dni_url %}<a class="acr-tag neutro" href="{{ ficha.dni_url }}" target="_blank" rel="noopener">Foto DNI · ver</a>{% endif %}
+      {% if ficha.menor %}<span class="acr-tag no">Menor de edad</span>{% endif %}
+    </div>
+
+    {% if ficha.alertas and not i.acreditacion %}
+    <div class="acr-alertas"><ul>{% for a in ficha.alertas %}<li>{{ a }}</li>{% endfor %}</ul>
+      {% if not ficha.pago_ok and request.user.is_staff %}
+      <form method="post" class="acr-aprobar">
+        {% csrf_token %}
+        <input type="hidden" name="inscripcion" value="{{ i.pk }}">{% if ver %}<input type="hidden" name="ver" value="{{ ver }}"><input type="hidden" name="mod" value="{{ mod }}">{% endif %}
+        <button type="submit" name="accion" value="aprobar" class="btn btn-sm btn-outline-success"
+                onclick="return confirm('¿Aprobar la inscripción de {{ p.last_name|escapejs }}? (pago, certificado y datos revisados; como tildar CP y Aprobado en el Admin)')">Aprobar</button>
+        {% if ficha.comprobante_url %}<a href="{{ ficha.comprobante_url }}" target="_blank" rel="noopener">ver comprobante</a>{% endif %}
+      </form>
+      {% endif %}
+    </div>
+    {% endif %}
+
+    {% if ficha.menor %}
+    <div class="acr-responsable">
+      <b>Responsable:</b> {{ i.responsable_tutor|default:"—" }}
+      {% if i.relacion_legal == '2' %}(Madre){% elif i.relacion_legal == '3' %}(Padre){% elif i.relacion %}({{ i.relacion }}){% endif %}
+      · DNI {{ i.dni_responsable|default:"—" }} · Tel. {{ i.telefono_responsable|default:"—" }}
+    </div>
+    {% endif %}
+
+    {% if i.acreditacion %}
+    <div class="acr-ya">
+      Ya acreditado{% if ficha.acreditado_en %} el {{ ficha.acreditado_en|date:"d/m H:i" }}{% endif %}{% if i.acreditado_por %} por {{ i.acreditado_por.first_name|default:i.acreditado_por.username }}{% endif %}
+      {% if i.numero %} · Nº <b style="font-size:1.2rem">{{ i.numero }}</b>{% endif %}{% if i.numero_chip %} · Chip {{ i.numero_chip }}{% endif %}.
+      No entregar otro kit.
+    </div>
+    <form method="post" class="acr-form" style="border-top:0; padding-top:0">
+      {% csrf_token %}
+      <input type="hidden" name="inscripcion" value="{{ i.pk }}">{% if ver %}<input type="hidden" name="ver" value="{{ ver }}"><input type="hidden" name="mod" value="{{ mod }}">{% endif %}
+      <button type="submit" name="accion" value="deshacer" class="btn btn-outline-secondary btn-deshacer"
+              onclick="return confirm('¿Quitar la acreditación de {{ p.last_name|escapejs }}?')">Quitar acreditación</button>
+    </form>
+    {% else %}
+    <form method="post" class="acr-form">
+      {% csrf_token %}
+      <input type="hidden" name="inscripcion" value="{{ i.pk }}">{% if ver %}<input type="hidden" name="ver" value="{{ ver }}"><input type="hidden" name="mod" value="{{ mod }}">{% endif %}
+      <div>
+        <label for="acr-numero">Nº corredor</label>
+        <input class="numero" type="number" min="1" id="acr-numero" name="numero" value="{% if i.numero %}{{ i.numero }}{% endif %}" inputmode="numeric" autofocus>
+      </div>
+      <div>
+        <label for="acr-chip">Nº chip</label>
+        <input class="chip" type="number" min="1" id="acr-chip" name="chip" value="{% if i.numero_chip %}{{ i.numero_chip }}{% endif %}" inputmode="numeric">
+      </div>
+      <button type="submit" name="accion" value="acreditar" class="btn btn-success btn-acreditar"
+              {% if ficha.alertas %}onclick="return confirm('Esta inscripción tiene observaciones. ¿Acreditar igual?')"{% endif %}>Acreditar</button>
+    </form>
+    {% endif %}
+  </div>
+  {% endwith %}{% endif %}
+
+</div>
+<script>
+  (function () {
+    var caja = document.getElementById('acr-filtro-rapido');
+    if (!caja) return;
+    var filas = document.querySelectorAll('.acr-lista tbody tr');
+    var nada = document.getElementById('acr-sin-coincidencias');
+    function sinTildes(t) { return t.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase(); }
+    var textos = Array.prototype.map.call(filas, function (f) { return sinTildes(f.dataset.texto || ''); });
+    caja.addEventListener('input', function () {
+      var q = sinTildes(caja.value.trim()), visibles = 0;
+      filas.forEach(function (f, n) { var ok = !q || textos[n].indexOf(q) > -1; f.hidden = !ok; if (ok) visibles++; });
+      if (nada) nada.hidden = visibles > 0;
+    });
+  })();
+</script>
+{% endblock %}

@@ -5,6 +5,7 @@ from django.conf.urls.static import static
 #from apps.inscripcion.views import *
 from apps.inscripcion.views import EventosListDetalles, EventosList, EventosPublicoList,InscripcionEventoUsuarioList,InscripcionEventoCreate, InscripcionEventoList,InscripcionEventoListPublico, listPruebas, InscripcionPublicoEventoCreate, inscripcion_recibida, cuil_registrado
 from django.contrib.auth.decorators import login_required
+from apps.inscripcion.views_acreditacion import acreditacion_inicio, acreditacion_evento
 
 
 urlpatterns = [
@@ -26,6 +27,10 @@ urlpatterns = [
 
     path('mis_inscripciones/', login_required(InscripcionEventoList.as_view()), name='mis_inscripciones'),
     path('eventos_detalles/<parametro>', EventosListDetalles.as_view(), name='eventos_detalles'),
+
+    # mesa de acreditacion del evento (staff o grupo Acreditador)
+    path('acreditacion/', acreditacion_inicio, name='acreditacion'),
+    path('acreditacion/<int:pk>/', acreditacion_evento, name='acreditacion_evento'),
 
 ]
 

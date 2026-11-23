@@ -1,6 +1,7 @@
 
 
 from unittest.util import _MAX_LENGTH
+from django.conf import settings
 from django.db import models
 from ckeditor.fields import RichTextField
 from datetime import date, timedelta
@@ -309,6 +310,11 @@ class Inscripcion(models.Model):
     numero = models.IntegerField(("Nº corredor"), default=0, null=True, blank=True)
     numero_chip = models.IntegerField(
         ("Nº Chip"), default=0, null=True, blank=True)
+    # acreditacion en la mesa del evento (pantalla de acreditacion, ver views_acreditacion.py)
+    acreditado_en = models.DateTimeField('Acreditado el', null=True, blank=True)
+    acreditado_por = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+        related_name='+', verbose_name='Acreditado por')
 
 
     class Meta:

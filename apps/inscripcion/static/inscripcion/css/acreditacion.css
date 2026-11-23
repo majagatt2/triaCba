@@ -1,0 +1,113 @@
+/* Pantalla de acreditacion (mesa del evento). Usa los colores de tema.css. */
+.acr { max-width: 980px; margin: 0 auto; }
+.acr-card { background: #fff; border-radius: var(--radio, 10px); box-shadow: 3px 6px 16px rgba(14, 42, 71, .12); padding: 18px 20px; margin-bottom: 16px; }
+.acr-titulo { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; color: var(--lago); font-size: 1.7rem; margin: 0; line-height: 1.1; }
+.acr-sub { color: var(--gris); margin: 2px 0 0; }
+.acr-volver { color: var(--agua); text-decoration: none; font-weight: 600; font-size: .95rem; }
+
+/* lista de eventos */
+.acr-eventos { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.acr-evento { display: block; text-decoration: none; color: inherit; border-left: 6px solid var(--rojo); }
+.acr-evento:hover { box-shadow: 6px 12px 24px rgba(14, 42, 71, .2); }
+.acr-evento .acr-fecha { color: var(--rojo); font-weight: 700; text-transform: uppercase; font-size: .85rem; letter-spacing: .03em; }
+.acr-evento.hoy { border-left-color: var(--verde); }
+.acr-evento.hoy .acr-fecha { color: var(--verde); }
+
+/* contador de avance */
+.acr-avance { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.acr-avance .num { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 2.2rem; color: var(--lago); line-height: 1; }
+.acr-barra { height: 10px; background: var(--linea); border-radius: 6px; overflow: hidden; margin-top: 8px; }
+.acr-barra > span { display: block; height: 100%; background: var(--verde); }
+.acr-modalidades { margin: 10px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .9rem; color: var(--gris); }
+.acr-modalidades b { color: var(--tinta); }
+
+/* buscador */
+.acr-buscar { display: flex; gap: 8px; }
+.acr-buscar input { flex: 1; font-size: 1.35rem; padding: 12px 14px; border: 2px solid var(--lago); border-radius: 8px; min-width: 0; }
+.acr-buscar input:focus { outline: 3px solid rgba(28, 124, 156, .35); }
+.acr-buscar button { font-size: 1.1rem; padding: 0 18px; }
+.acr-ayuda { color: var(--gris); font-size: .9rem; margin: 6px 0 0; }
+
+/* avisos */
+.acr-aviso { border-radius: 8px; padding: 12px 16px; font-weight: 600; margin-bottom: 14px; font-size: 1.05rem; }
+.acr-aviso.ok { background: #E6F4EA; color: #1E5B22; border: 1px solid #A8D5B0; }
+.acr-aviso.error { background: #FDECEC; color: #8E1B1B; border: 1px solid #F2B3B3; }
+.acr-aviso.aviso { background: #FFF6E0; color: #7A5300; border: 1px solid #F0D48A; }
+
+/* resultados */
+.acr-resultados { width: 100%; border-collapse: collapse; }
+.acr-resultados td, .acr-resultados th { padding: 10px 8px; border-bottom: 1px solid var(--linea); text-align: left; }
+.acr-resultados th { color: var(--gris); font-weight: 600; font-size: .85rem; text-transform: uppercase; }
+.acr-resultados tr.fila { cursor: pointer; }
+.acr-resultados tr.fila:hover { background: var(--pista); }
+.acr-resultados a { color: var(--lago); font-weight: 700; text-decoration: none; }
+
+/* etiquetas */
+.acr-tag { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: .82rem; font-weight: 700; white-space: nowrap; }
+.acr-tag.si { background: #E6F4EA; color: #1E5B22; }
+.acr-tag.no { background: #FDECEC; color: #8E1B1B; }
+.acr-tag.neutro { background: var(--pista); color: var(--gris); }
+
+/* ficha */
+.acr-ficha { border-top: 8px solid var(--verde); }
+.acr-ficha.con-alertas { border-top-color: var(--rojo); }
+.acr-ficha.ya { border-top-color: var(--agua); }
+.acr-ficha-cab { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: flex-start; }
+.acr-nombre { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 2.1rem; color: var(--lago); line-height: 1.05; margin: 0; }
+.acr-datos { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px 18px; margin: 14px 0; }
+.acr-datos div small { display: block; color: var(--gris); font-size: .78rem; text-transform: uppercase; letter-spacing: .03em; }
+.acr-datos div span { font-weight: 600; }
+.acr-controles { display: flex; flex-wrap: wrap; gap: 8px; margin: 6px 0 12px; }
+.acr-controles a { text-decoration: none; }
+.acr-alertas { background: #FDECEC; border: 1px solid #F2B3B3; color: #8E1B1B; border-radius: 8px; padding: 10px 14px; margin: 0 0 12px; }
+.acr-alertas ul { margin: 0; padding-left: 18px; }
+.acr-responsable { background: var(--pista); border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-size: .95rem; }
+.acr-ya { background: #E3F1F6; color: #0F4E63; border-radius: 8px; padding: 10px 14px; margin-bottom: 12px; font-weight: 600; }
+
+.acr-form { display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end; border-top: 1px solid var(--linea); padding-top: 14px; }
+.acr-form label { display: block; font-size: .8rem; color: var(--gris); text-transform: uppercase; font-weight: 600; }
+.acr-form .numero { width: 150px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 2rem; text-align: center; padding: 4px 8px; border: 2px solid var(--lago); border-radius: 8px; }
+.acr-form .chip { width: 150px; font-size: 1.1rem; padding: 10px 8px; border: 1px solid var(--linea); border-radius: 8px; }
+.acr-form .btn-acreditar { font-size: 1.3rem; font-weight: 700; padding: 12px 28px; }
+.acr-form .btn-deshacer { margin-left: auto; }
+
+.acr-aprobar { margin-top: 10px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.acr-aprobar a { color: #8E1B1B; font-weight: 600; }
+
+/* listado completo */
+.acr-ver-lista { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 10px; color: var(--gris); font-size: .9rem; }
+.acr-filtros { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+.acr-filtro { padding: 6px 12px; border-radius: 20px; border: 2px solid var(--linea); color: var(--tinta); text-decoration: none; font-weight: 600; font-size: .92rem; background: #fff; }
+.acr-filtro b { margin-left: 4px; }
+.acr-filtro.activo { border-color: var(--lago); background: var(--lago); color: #fff; }
+.acr-filtro-pendientes { border-color: #F0C24A; }
+.acr-filtro-acreditados { border-color: #8CCB95; }
+.acr-filtro-sinaprobar { border-color: #F2B3B3; }
+.acr-filtros-2 { display: flex; gap: 8px; margin-bottom: 8px; }
+.acr-filtros-2 form { flex: 0 0 auto; }
+.acr-filtros-2 select { min-width: 260px; }
+.acr-lista .solo-cel .acr-tag { margin-top: 4px; }
+.acr-filtros-2 input { flex: 1; min-width: 0; }
+.acr-lista td.nro { font-family: 'Barlow Condensed', sans-serif; font-weight: 700; font-size: 1.15rem; color: var(--lago); width: 56px; }
+.acr-lista tr.est-acreditado { background: #EEF8F0; }
+.acr-lista tr.est-acreditado td:first-child { box-shadow: inset 5px 0 0 var(--verde); }
+.acr-lista tr.est-pendiente td:first-child { box-shadow: inset 5px 0 0 #F0C24A; }
+.acr-lista tr.est-sinaprobar { background: #FFF5F5; }
+.acr-lista tr.est-sinaprobar td:first-child { box-shadow: inset 5px 0 0 var(--rojo); }
+.acr-lista tr.est-acreditado a { color: #1E5B22; }
+.acr-lista tr:target { outline: 3px solid var(--agua); outline-offset: -3px; }
+.acr-tag.pend { background: #FFF3D1; color: #7A5300; }
+.acr-lista .solo-cel { display: none; color: var(--gris); font-size: .82rem; }
+
+@media (max-width: 576px) {
+  .acr-lista .solo-cel { display: block; }
+  .acr-filtros-2 { flex-direction: column; }
+  .acr-filtros-2 select { min-width: 0; }
+  .acr-card { padding: 14px; }
+  .acr-nombre { font-size: 1.7rem; }
+  .acr-buscar input { font-size: 1.15rem; }
+  .acr-form .btn-acreditar { width: 100%; }
+  .acr-form .numero, .acr-form .chip { width: 100%; }
+  .acr-form > div { flex: 1 1 45%; }
+  .acr-resultados .ocultar-cel { display: none; }
+}

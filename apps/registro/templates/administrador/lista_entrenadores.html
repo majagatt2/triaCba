@@ -57,7 +57,7 @@
                     {% endif %}
 
                     {% if s.emmac_file == emmac_file %}
-                    <td><a href={{s.emmac_file.url}}><img src={{s.emmac_file.url}} width="15" height="15"></a></td>
+                    <td><a href="{{s.emmac_file.url}}" target="_blank" rel="noopener"><i class="bi bi-file-earmark-image" style="font-size:1.25rem" title="Ver archivo" aria-label="Ver archivo"></i></a></td>
                     {% else %}
                     <td>{{s.emmac_file}}</td>
                     {% endif %}

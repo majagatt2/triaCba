@@ -133,7 +133,7 @@ class InscripcionTests(TestCase):
         Inscripcion.objects.create(persona=self.atleta, eventoRelacionado=self.evento, formaPago='1', montoDebeAbonar=1,
                                    fechaPago=date(2026, 10, 1), obra_social='x')
         self.client.force_login(self.atleta)
-        with self.assertNumQueries(4):  # sesion + usuario + inscripciones (con evento y tipo) + conteo
+        with self.assertNumQueries(5):  # sesion + usuario + grupo (menu staff) + grupo Acreditador (menu) + inscripciones
             r = self.client.get(reverse('mis_inscripciones'))
         self.assertEqual(r.status_code, 200)
 
