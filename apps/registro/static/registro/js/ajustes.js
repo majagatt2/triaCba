@@ -129,3 +129,16 @@
     });
   });
 })();
+
+/* Menu lateral: marca el item de la pagina actual (el de direccion mas larga que coincida). */
+(function () {
+  var links = document.querySelectorAll('.menu-vivo .sidebar-nav a.nav-link[href]');
+  var aqui = location.pathname, mejor = null, largo = 0;
+  links.forEach(function (a) {
+    var p = a.pathname;
+    if (!p || p === '/' || a.getAttribute('href') === '#') return;
+    var base = p.replace(/\/$/, '');
+    if ((aqui === p || aqui.indexOf(base + '/') === 0 || aqui === base) && p.length > largo) { mejor = a; largo = p.length; }
+  });
+  if (mejor) mejor.classList.add('activo');
+})();

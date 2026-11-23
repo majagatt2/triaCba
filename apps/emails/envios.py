@@ -9,7 +9,7 @@ Como funciona ahora:
   1. Al publicar un email se arma la lista de destinatarios (EnvioEmail, uno por direccion, sin repetir).
   2. enviar_tanda() manda hasta EMAILS_POR_TANDA mails, sin pasar EMAILS_LIMITE_DIARIO en 24 horas,
      de a uno por destinatario (nadie ve los demas correos) y con una pausa corta entre cada uno.
-  3. Una tarea programada de PythonAnywhere corre cada hora `python manage.py enviar_newsletters`.
+  3. Una tarea "Always-on" de PythonAnywhere corre `python manage.py enviar_newsletters --cada-minutos 60`.
      Tambien se puede apretar "Enviar una tanda ahora" en el modulo de emails.
 El cupo deja margen para los mails de inscripcion, que salen por la misma cuenta.
 """

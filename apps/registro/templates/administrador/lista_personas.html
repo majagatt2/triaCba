@@ -30,7 +30,7 @@
     <tbody>
         {% for n in object_list %}
         <tr>
-            <td><a href="{% url 'admin:usuarios_persona_change' n.pk %}" target="_blank" rel="noopener" title="Editar en el Admin" aria-label="Editar en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a></td>
+            <td>{% if n.pk %}<a href="{% url 'admin:usuarios_persona_change' n.pk %}" target="_blank" rel="noopener" title="Editar en el Admin" aria-label="Editar en el Admin"><i class="bi bi-pencil-square" style="font-size:1.1rem"></i></a>{% endif %}</td>
             <td><b>{{ n.last_name|title }}</b> {{ n.first_name|title }}</td>
             <td>{{ n.dni }}</td>
             <td>{{ n.cuil }}</td>

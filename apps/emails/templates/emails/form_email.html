@@ -47,13 +47,21 @@
           </div>
         </div>
 
-        <div class="d-flex gap-2 flex-wrap mt-4">
+        <div class="row g-3 mt-2"><div class="col-md-7">
+        <div class="prueba-a">
+          <label class="form-label fw-bold mb-1" for="prueba_a">Mandar la prueba a</label>
+          <input type="text" class="form-control" id="prueba_a" name="prueba_a" value="{{ request.user.email }}"
+                 placeholder="{{ request.user.email|default:'email@ejemplo.com' }}" autocomplete="email">
+          <div class="form-text">Podés poner hasta 5 direcciones separadas por coma. Vacío: a tu email.</div>
+        </div>
+        </div></div>
+        <div class="d-flex gap-2 flex-wrap mt-3">
           <button type="submit" name="accion" value="prueba" class="btn btn-outline-primary" formnovalidate>
-            <i class="bi bi-eye"></i> Mandarme una prueba
+            <i class="bi bi-eye"></i> Mandar prueba
           </button>
           <button type="submit" name="accion" value="guardar" class="btn btn-primary" id="btn-enviar">Guardar / Enviar</button>
         </div>
-        <p class="form-text mt-2">“Mandarme una prueba” te lo envía solo a vos ({{ request.user.email|default:"la cuenta de la Asociación" }}) y lo deja como borrador.
+        <p class="form-text mt-2">“Mandar prueba” lo envía solo a las direcciones de arriba y lo deja como borrador.
           Los envíos a grupos salen de a tandas para no pasar el límite diario de Gmail.</p>
       </form>
     </div></div>

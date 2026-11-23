@@ -7,6 +7,7 @@ from apps.usuarios.views import UsuariosList, UsuariosUpdate, UsuariosCreate , U
 from django.contrib.auth.views import LoginView, LogoutView, PasswordResetView, PasswordResetDoneView, PasswordResetConfirmView, PasswordResetCompleteView
 
 from django.contrib.auth.decorators import login_required
+from apps.registro.views import PersonasList   # la misma lista que /registro/lista_personas/
 
 
 urlpatterns = [
@@ -30,7 +31,7 @@ urlpatterns = [
 
 
     path('registro_usuarios/', UsuariosCreate.as_view(), name='registro_usuarios'),
-    path('lista_personas/', login_required(UsuariosList.as_view()),name='lista_personas'),
+    path('lista_personas/', login_required(PersonasList.as_view()),name='lista_personas'),
     path('datos_usuarios/', login_required(DatosList.as_view()), name='datos_usuarios'),
     path(r'editar_usuarios/<pk>/', login_required(UsuariosUpdate.as_view()),name='editar_usuarios'),
     path(r'eliminar_usuarios/<pk>/', login_required(UsuariosEliminar.as_view()), name='eliminar_usuarios'),

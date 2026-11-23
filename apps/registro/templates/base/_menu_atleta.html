@@ -1,0 +1,54 @@
+{% comment %}
+  Menu lateral del atleta (lo usan base/index3 y base/index5).
+  Cada grupo tiene su color (clase m-...): el icono va en un "chip" de ese color y el item de la
+  pagina actual queda marcado (lo marca ajustes.js comparando la direccion).
+{% endcomment %}
+{% load static acreditacion_tags %}
+<aside id="sidebar" class="sidebar menu-vivo">
+  <div class="menu-saludo">
+    <a class="menu-saludo-logo" href="https://triatloncordoba.org" target="_blank" rel="noopener" title="triatloncordoba.org">
+      <img src="{% static 'registro/logo_triatloncba.png' %}" alt="Triatlón Córdoba">
+    </a>
+    <div class="menu-saludo-franja"></div>
+    <div class="menu-saludo-pie">
+    <img src="{% if request.user.fotoPerfil %}{{ request.user.fotoPerfil.url }}{% else %}{% static 'registro/sin-foto.png' %}{% endif %}" alt="" class="menu-saludo-foto" onerror="this.onerror=null;this.src='{% static 'registro/sin-foto.png' %}'">
+    <div>
+      <div class="menu-saludo-hola">Hola, {{ request.user.first_name|default:request.user.username|title }}</div>
+      <div class="menu-saludo-sub">Temporada {% now "Y" %}</div>
+    </div>
+    </div>
+  </div>
+
+  <ul class="sidebar-nav" id="sidebar-nav">
+    <li class="nav-heading">Mi cuenta</li>
+    <li class="nav-item m-azul"><a class="nav-link collapsed" href="{% url 'datos_usuarios' %}"><i class="bi bi-person-fill"></i><span>Mis Datos</span></a></li>
+    <li class="nav-item m-azul"><a class="nav-link collapsed" href="{% url 'carnet' %}"><i class="bi bi-postcard-fill"></i><span>Certificado Federado</span></a></li>
+
+    <li class="nav-heading">Pagos</li>
+    <li class="nav-item m-verde"><a class="nav-link collapsed" href="{% url 'lista_pagos_socio' %}"><i class="bi bi-wallet-fill"></i><span>Mi Pago Anual Asociación</span></a></li>
+    <li class="nav-item m-verde"><a class="nav-link collapsed" href="{% url 'lista_pagos_escuela' %}"><i class="bi bi-cash-coin"></i><span>Mi Pago Mensual Escuela</span></a></li>
+
+    <li class="nav-heading">Competencias</li>
+    <li class="nav-item m-naranja"><a class="nav-link collapsed" href="{% url 'eventos' %}"><i class="bi bi-calendar2-plus-fill"></i><span>Inscripción a Eventos</span></a></li>
+    <li class="nav-item m-naranja"><a class="nav-link collapsed" href="{% url 'mis_inscripciones' %}"><i class="bi bi-trophy-fill"></i><span>Mis Inscripciones</span></a></li>
+
+    {% if request.user.is_staff or request.user.groups.all.0.name == 'Inscripciones' or request.user|puede_acreditar %}
+    <li class="nav-heading">Staff</li>
+    {% if request.user.is_staff or request.user.groups.all.0.name == 'Inscripciones' %}
+    <li class="nav-item m-violeta"><a class="nav-link collapsed" href="{% url 'index2' %}"><i class="bi bi-grid-fill"></i><span>Administración</span></a></li>
+    {% endif %}
+    {% if request.user|puede_acreditar %}
+    <li class="nav-item m-violeta"><a class="nav-link collapsed" href="{% url 'acreditacion' %}"><i class="bi bi-person-check-fill"></i><span>Acreditación</span></a></li>
+    {% endif %}
+    {% endif %}
+
+    {% if request.user.username == 'cmonasterolo' or request.user.username == 'mpolo' %}
+    <li class="nav-heading">Escuela</li>
+    <li class="nav-item m-celeste"><a class="nav-link collapsed" href="{% url 'lista_escuela' %}"><i class="bi bi-people-fill"></i><span>Escuela</span></a></li>
+    {% endif %}
+
+    <li class="menu-separador"></li>
+    <li class="nav-item m-gris"><a class="nav-link collapsed" href="{% url 'index' %}"><i class="bi bi-house-door-fill"></i><span>Inicio</span></a></li>
+    <li class="nav-item m-rojo"><a class="nav-link collapsed" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i><span>Salir</span></a></li>
+  </ul>
+</aside>

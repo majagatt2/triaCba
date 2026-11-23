@@ -152,3 +152,11 @@ class ListadosSociosTests(TestCase):
         self.assertEqual(fechas, sorted(fechas, reverse=True))
         r = self.client.get(reverse('lista_pagos_socios'), {'anio': '2025'})
         self.assertTrue(all(c.fechaPago.year == 2025 for c in r.context['asociadopagos_list']))
+
+    def test_lista_personas_de_ambas_direcciones(self):
+        # /lista_personas/ (la del menu) daba error 500 con una persona sin CUIL
+        Persona.objects.create_user(cuil='', username='sin_cuil', password='x', dni='9', domicilio='-',
+                                    ciudad='-', telefono='-', fechaNacimiento=date(1980, 1, 1))
+        for url in ['/lista_personas/', '/registro/lista_personas/']:
+            r = self.client.get(url)
+            self.assertEqual(r.status_code, 200, url)

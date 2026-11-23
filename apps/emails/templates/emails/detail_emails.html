@@ -24,7 +24,13 @@
       {% endif %}
 
       <form method="post" class="d-flex flex-column gap-2">{% csrf_token %}
-        <button class="btn btn-outline-primary" name="accion" value="prueba"><i class="bi bi-eye"></i> Mandarme una prueba</button>
+        <div class="prueba-a">
+          <label class="form-label fw-bold mb-1" for="prueba_a">Mandar la prueba a</label>
+          <input type="text" class="form-control" id="prueba_a" name="prueba_a" value="{{ request.user.email }}"
+                 placeholder="{{ request.user.email|default:'email@ejemplo.com' }}" autocomplete="email">
+          <div class="form-text">Podés poner hasta 5 direcciones separadas por coma. Vacío: a tu email.</div>
+        </div>
+        <button class="btn btn-outline-primary" name="accion" value="prueba"><i class="bi bi-eye"></i> Mandar prueba</button>
         {% if newsletter.status != 'Publicar' %}
         <button class="btn btn-success" name="accion" value="publicar"
                 onclick="return confirm('¿Enviar este email a: {{ grupo|escapejs }}?')"><i class="bi bi-send"></i> Enviar al grupo</button>

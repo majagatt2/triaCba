@@ -68,15 +68,83 @@ h1, h2, h3, h4, h5, .card-title, .pagetitle h1 {
 #header .badge.bg-warning-light { background: transparent !important; color: var(--lago) !important; border: 1px solid var(--linea); font-style: normal; font-weight: 600; padding: .45em .9em; }
 #header .nav-icon i { font-style: normal; }
 
+/* ---------- Menu lateral "vivo" (base/_menu_atleta.html y _menu_admin.html) ----------
+   Cada grupo tiene un color: el icono va en un chip de ese color; al pasar el mouse el chip se pinta
+   lleno; la pagina actual queda marcada (clase .activo, la pone ajustes.js). */
 .sidebar { background: #fff !important; border-right: 1px solid var(--linea); box-shadow: none; }
 .sidebar-nav .nav-link,
 .sidebar-nav .nav-link.collapsed {
-  background: transparent; color: var(--lago); font-weight: 600; border-radius: 8px;
+  background: transparent; color: var(--lago); font-weight: 600; border-radius: 10px;
 }
 .sidebar-nav .nav-link span[style] { color: inherit !important; }   /* colores sueltos de cada item */
 .sidebar-nav .nav-link i, .sidebar-nav .nav-link.collapsed i { color: var(--agua); }
 .sidebar-nav .nav-link:hover, .sidebar-nav .nav-link.collapsed:hover { background: #EAF0F6; color: var(--lago); }
 .sidebar-nav .nav-heading { color: var(--gris); font-weight: 600; }
+
+.menu-vivo { padding-top: 14px; }
+/* Colores del logo de la Asociacion: rojo #EA3B45, azul #17466A, gris #7B7D7F (y tonos de ellos) */
+.menu-vivo .m-azul    { --m: #17466A; --m-suave: #E4ECF3; }
+.menu-vivo .m-verde   { --m: #1F6E9C; --m-suave: #E2EFF7; }   /* pagos: azul agua */
+.menu-vivo .m-naranja { --m: #EA3B45; --m-suave: #FDE8E9; }   /* competencias: rojo del logo */
+.menu-vivo .m-violeta { --m: #0E2A47; --m-suave: #E3E8EF; }   /* staff: azul noche */
+.menu-vivo .m-celeste { --m: #3A86B8; --m-suave: #E5F1F9; }
+.menu-vivo .m-rojo    { --m: #B8242D; --m-suave: #FBE6E7; }
+.menu-vivo .m-gris    { --m: #7B7D7F; --m-suave: #EFF0F1; }
+
+.menu-vivo .sidebar-nav .nav-item { margin-bottom: 3px; }
+.menu-vivo .sidebar-nav .nav-link {
+  position: relative; padding: 7px 10px; gap: 2px; color: var(--tinta);
+  transition: background-color .18s ease, transform .18s ease, color .18s ease;
+}
+.menu-vivo .sidebar-nav .nav-link > i:first-child {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 34px; height: 34px; margin-right: 10px; border-radius: 10px; font-size: 17px;
+  color: var(--m, var(--agua)) !important; background: var(--m-suave, #EEF1F5);
+  transition: background-color .18s ease, color .18s ease, box-shadow .18s ease;
+}
+.menu-vivo .sidebar-nav .nav-link:hover {
+  background: var(--m-suave, #EEF1F5); color: var(--tinta); transform: translateX(3px);
+}
+.menu-vivo .sidebar-nav .nav-link:hover > i:first-child,
+.menu-vivo .sidebar-nav .nav-link.activo > i:first-child {
+  background: var(--m); color: #fff !important; box-shadow: 0 4px 10px -4px var(--m);
+}
+.menu-vivo .sidebar-nav .nav-link.activo { background: var(--m-suave); color: var(--lago); font-weight: 700; }
+.menu-vivo .sidebar-nav .nav-link.activo::before {
+  content: ""; position: absolute; left: -20px; top: 8px; bottom: 8px; width: 4px;
+  border-radius: 0 4px 4px 0; background: var(--m);
+}
+.menu-vivo .sidebar-nav .menu-flecha { color: var(--gris) !important; font-size: 12px; }
+
+.menu-vivo .sidebar-nav .nav-heading {
+  margin: 16px 0 6px 6px; font-size: 11px; letter-spacing: .09em; text-transform: uppercase; color: #8A95A3;
+}
+.menu-vivo .sidebar-nav .menu-separador { height: 1px; background: var(--linea); margin: 14px 6px; list-style: none; }
+.menu-vivo .sidebar-nav .nav-content a { color: var(--tinta); font-weight: 500; }
+.menu-vivo .sidebar-nav .nav-content a:hover { color: var(--m, var(--rojo)); }
+.menu-vivo .sidebar-nav .nav-content a i { color: var(--m, var(--rojo)); font-size: 7px; }
+
+/* Tarjeta de arriba del menu: logo de la Asociacion + saludo, con la franja roja y azul del logo */
+.menu-saludo {
+  margin: 0 0 8px; border-radius: 14px; overflow: hidden; background: #fff;
+  border: 1px solid var(--linea); box-shadow: 0 8px 20px -14px rgba(23, 70, 106, .7);
+}
+.menu-saludo-logo { display: block; padding: 14px 16px 10px; text-align: center; background: #fff; }
+.menu-saludo-logo img { height: 46px; width: auto; max-width: 100%; }
+.menu-saludo-franja { height: 5px; background: linear-gradient(90deg, #EA3B45 0 62%, #17466A 62% 100%); }
+.menu-saludo-pie {
+  display: flex; align-items: center; gap: 12px; padding: 12px 14px; color: #fff;
+  background: linear-gradient(135deg, #0E2A47 0%, #17466A 60%, #1F5A86 100%);
+}
+.menu-saludo-foto { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; border: 2px solid #fff; background: #fff; flex: none; }
+.menu-saludo-icono { width: 44px; height: 44px; border-radius: 12px; display: inline-flex; align-items: center; justify-content: center; background: #EA3B45; font-size: 21px; flex: none; }
+.menu-saludo-hola { font-family: 'Barlow Condensed', 'Barlow', sans-serif; font-size: 21px; font-weight: 700; line-height: 1.1; }
+.menu-saludo-sub { font-size: 12.5px; opacity: .85; }
+
+@media (prefers-reduced-motion: reduce) {
+  .menu-vivo .sidebar-nav .nav-link, .menu-vivo .sidebar-nav .nav-link > i:first-child { transition: none; }
+  .menu-vivo .sidebar-nav .nav-link:hover { transform: none; }
+}
 
 /* ---------- Titulos de pagina: la franja de carril ---------- */
 #main h2.bg-black, #main h3.bg-black, #main h2.bg-dark, #main h3.bg-dark {

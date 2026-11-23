@@ -136,3 +136,15 @@ class EmailsTests(TestCase):
         with mock.patch.object(envios, 'PAUSA', 0):
             call_command('enviar_newsletters', cantidad=2, stdout=salida)
         self.assertIn('Enviados: 2', salida.getvalue())
+
+    def test_prueba_a_otras_direcciones(self):
+        self.client.force_login(self.admin)
+        self.client.post(reverse('create_email'), {
+            'subject': 'Prueba2', 'body': '<p>x</p>', 'email': 'triatloncba@gmail.com', 'bcc': 'Todas_las_Personas',
+            'status': 'Publicar', 'accion': 'prueba', 'prueba_a': 'ale@x.com; pablo@x.com'})
+        self.assertEqual([m.to for m in mail.outbox], [['ale@x.com'], ['pablo@x.com']])
+        n = Newsletter.objects.get(subject='Prueba2')
+        mail.outbox.clear()
+        self.client.post(reverse('detail_email', args=[n.pk]), {'accion': 'prueba', 'prueba_a': 'no-es-un-mail'})
+        self.assertEqual(mail.outbox, [])          # direccion invalida: no manda nada
+        self.assertFalse(n.envios.exists())

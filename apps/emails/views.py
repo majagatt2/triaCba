@@ -71,19 +71,42 @@ class NewsletterCreateView(SoloStaff, CreateView):
             NewsletterAdjunto.objects.create(newsletter=newsletter, archivo=archivo)
 
         if prueba:
-            destino = self.request.user.email or envios.EMAIL_ASOCIACION
-            try:
-                envios.enviar_prueba(newsletter, destino)
-                messages.success(self.request, f'Te mandamos una prueba a {destino}. Quedó guardado como borrador: '
-                                               'revisalo y, si está bien, abrilo y enviálo al grupo.')
-            except Exception as e:
-                messages.error(self.request, f'No se pudo mandar la prueba: {e}')
+            _mandar_prueba(self.request, newsletter, ' Quedó guardado como borrador: '
+                                                     'revisalo y, si está bien, enviálo al grupo.')
             return redirect('detail_email', pk=newsletter.pk)
 
         if newsletter.status == 'Publicar':
             return _publicar(self.request, newsletter)
         messages.success(self.request, 'Guardado como borrador.')
         return redirect('detail_email', pk=newsletter.pk)
+
+
+def _destinos_prueba(request):
+    """Direcciones para la prueba: las que se escriben en el campo (hasta 5, separadas por coma);
+    si se deja vacio, la del usuario. Devuelve (lista, error)."""
+    texto = (request.POST.get('prueba_a') or '').replace(';', ',')
+    escritas = [e.strip() for e in texto.split(',') if e.strip()]
+    if not escritas:
+        return [request.user.email or envios.EMAIL_ASOCIACION], None
+    validas = envios._limpiar(escritas)
+    if len(validas) != len(set(e.lower() for e in escritas)):
+        return [], 'Revisá las direcciones de la prueba: alguna no es un email válido.'
+    if len(validas) > 5:
+        return [], 'La prueba se puede mandar a 5 direcciones como máximo.'
+    return validas, None
+
+
+def _mandar_prueba(request, newsletter, extra=''):
+    destinos, error = _destinos_prueba(request)
+    if error:
+        messages.error(request, error)
+        return
+    try:
+        for destino in destinos:
+            envios.enviar_prueba(newsletter, destino)
+        messages.success(request, f'Mandamos una prueba a {", ".join(destinos)}.{extra}')
+    except Exception as e:
+        messages.error(request, f'No se pudo mandar la prueba: {e}')
 
 
 def _publicar(request, newsletter):
@@ -123,12 +146,7 @@ class NewsletterDetailView(SoloStaff, View):
             newsletter.save(update_fields=['status'])
             return _publicar(request, newsletter)
         if accion == 'prueba':
-            destino = request.user.email or envios.EMAIL_ASOCIACION
-            try:
-                envios.enviar_prueba(newsletter, destino)
-                messages.success(request, f'Te mandamos una prueba a {destino}.')
-            except Exception as e:
-                messages.error(request, f'No se pudo mandar la prueba: {e}')
+            _mandar_prueba(request, newsletter)
         if accion == 'reintentar':
             n = newsletter.envios.filter(estado=EnvioEmail.ERROR).update(estado=EnvioEmail.PENDIENTE, error='')
             messages.success(request, f'{n} destinatarios con error vuelven a la cola.')

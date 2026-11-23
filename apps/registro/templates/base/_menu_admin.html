@@ -1,0 +1,71 @@
+{% comment %}
+  Menu lateral de Administracion (base/index2). Mismo estilo que el del atleta: grupos con color.
+{% endcomment %}
+{% load static %}
+<aside id="sidebar" class="sidebar menu-vivo">
+  <div class="menu-saludo">
+    <a class="menu-saludo-logo" href="https://triatloncordoba.org" target="_blank" rel="noopener" title="triatloncordoba.org">
+      <img src="{% static 'registro/logo_triatloncba.png' %}" alt="Triatlón Córdoba">
+    </a>
+    <div class="menu-saludo-franja"></div>
+    <div class="menu-saludo-pie">
+    <span class="menu-saludo-icono"><i class="bi bi-speedometer2"></i></span>
+    <div>
+      <div class="menu-saludo-hola">Administración</div>
+      <div class="menu-saludo-sub">Asociación de Triatlón de Córdoba</div>
+    </div>
+    </div>
+  </div>
+
+  <ul class="sidebar-nav" id="sidebar-nav">
+  {% if user.is_authenticated %}
+
+    {% if request.user.is_staff and request.user.groups.all.0.name == 'Admin' %}
+    <li class="nav-heading">Gestión</li>
+    <li class="nav-item m-azul"><a class="nav-link collapsed" href="{% url 'resumen' %}"><i class="bi bi-bar-chart-fill"></i><span>Estadísticas</span></a></li>
+    <li class="nav-item m-azul"><a class="nav-link collapsed" href="{% url 'desk_email' %}"><i class="bi bi-envelope-paper-fill"></i><span>Emails</span></a></li>
+
+    <li class="nav-heading">Personas y socios</li>
+    <li class="nav-item m-verde"><a class="nav-link collapsed" href="{% url 'lista_personas' %}"><i class="bi bi-people-fill"></i><span>Personas</span></a></li>
+    <li class="nav-item m-verde"><a class="nav-link collapsed" href="{% url 'lista_asociados' %}"><i class="bi bi-person-badge-fill"></i><span>Asociados</span></a></li>
+    <li class="nav-item m-verde"><a class="nav-link collapsed" href="{% url 'lista_asociados_asamblea' %}"><i class="bi bi-people"></i><span>Asociados asamblea +18</span></a></li>
+    <li class="nav-item m-verde"><a class="nav-link collapsed" href="{% url 'lista_entrenadores' %}"><i class="bi bi-stopwatch-fill"></i><span>Entrenadores</span></a></li>
+    <li class="nav-item m-verde"><a class="nav-link collapsed" href="{% url 'lista_pagos_socios' %}"><i class="bi bi-wallet-fill"></i><span>Pagos Socios</span></a></li>
+
+    <li class="nav-heading">Competencias</li>
+    <li class="nav-item m-naranja"><a class="nav-link collapsed" href="{% url 'lista_eventos' %}"><i class="bi bi-flag-fill"></i><span>Eventos</span></a></li>
+    <li class="nav-item m-naranja"><a class="nav-link collapsed" href="{% url 'acreditacion' %}"><i class="bi bi-person-check-fill"></i><span>Acreditación</span></a></li>
+
+    <li class="nav-heading">Para terceros</li>
+    <li class="nav-item m-rojo">
+      <a class="nav-link collapsed" data-bs-target="#forms-nav" data-bs-toggle="collapse" href="#"><i class="bi bi-shield-fill-check"></i><span>Seguros</span><i class="bi bi-chevron-down ms-auto menu-flecha"></i></a>
+      <ul id="forms-nav" class="nav-content collapse" data-bs-parent="#sidebar-nav">
+        <li><a href="{% url 'seguro_asociados' %}"><i class="bi bi-circle"></i><span>Seguro Asociados</span></a></li>
+        <li><a href="{% url 'seguro_entrenadores' %}"><i class="bi bi-circle"></i><span>Seguro Entrenadores</span></a></li>
+        <li><a href="{% url 'seguro_inscriptos' %}"><i class="bi bi-circle"></i><span>Seguro Inscriptos Eventos</span></a></li>
+      </ul>
+    </li>
+    <li class="nav-item m-violeta"><a class="nav-link collapsed" href="{% url 'lista_kempes' %}"><i class="bi bi-bank2"></i><span>Kempes</span></a></li>
+    <li class="nav-item m-violeta"><a class="nav-link collapsed" href="{% url 'lista_agencia' %}"><i class="bi bi-briefcase-fill"></i><span>Agencia</span></a></li>
+    <li class="nav-item m-violeta"><a class="nav-link collapsed" href="{% url 'lista_inscriptos_publico' %}"><i class="bi bi-globe2"></i><span>Inscriptos Andrés</span></a></li>
+    <li class="nav-item m-violeta"><a class="nav-link collapsed" href="{% url 'lista_asociados_publico' %}"><i class="bi bi-globe2"></i><span>Personas Asociadas Activas</span></a></li>
+    {% endif %}
+
+    {% if request.user.username == 'cmonasterolo' or request.user.username == 'mpolo' or request.user.is_staff %}
+    <li class="nav-heading">Escuela</li>
+    <li class="nav-item m-celeste"><a class="nav-link collapsed" href="{% url 'lista_escuela' %}"><i class="bi bi-mortarboard-fill"></i><span>Escuela</span></a></li>
+    <li class="nav-item m-celeste"><a class="nav-link collapsed" href="{% url 'lista_pagos_escuelaAdmin' %}"><i class="bi bi-cash-coin"></i><span>Escuela Pagos</span></a></li>
+    <li class="nav-item m-celeste"><a class="nav-link collapsed" href="{% url 'lista_pagos_escuelaAdmin_mensual' %}"><i class="bi bi-calendar3"></i><span>Pagos por Mes</span></a></li>
+    <li class="nav-item m-celeste"><a class="nav-link collapsed" href="{% url 'estad_escuela' %}"><i class="bi bi-pie-chart-fill"></i><span>Escuela Estadísticas</span></a></li>
+    {% endif %}
+
+    {% if request.user.groups.all.0.name == 'Inscripciones' %}
+    <li class="nav-heading">Competencias</li>
+    <li class="nav-item m-naranja"><a class="nav-link collapsed" href="{% url 'lista_eventos' %}"><i class="bi bi-flag-fill"></i><span>Eventos</span></a></li>
+    {% endif %}
+
+    <li class="menu-separador"></li>
+    <li class="nav-item m-gris"><a class="nav-link collapsed" href="{% url 'index' %}"><i class="bi bi-arrow-left-circle-fill"></i><span>Volver a mi cuenta</span></a></li>
+  {% endif %}
+  </ul>
+</aside>

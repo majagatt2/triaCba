@@ -157,6 +157,7 @@ class UsuariosUpdate(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 # Create your views para ADMIN
 
 class UsuariosList(ListView):
+    """Se deja por compatibilidad; la direccion /lista_personas/ usa PersonasList (ver urls.py)."""
     model = Persona
     template_name = 'administrador/lista_personas.html'
 
